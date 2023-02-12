@@ -1,0 +1,116 @@
+:root {
+    --clr1: #0466C8;
+    --clr2: #28386d;
+    --clr3: #001233;
+    --clr4: #001845;
+    --clr5: #33415C;
+    --clr6: #979DAC;
+}
+
+#admin-control-container {
+    margin: 0 auto;
+    max-width: 800px;
+    margin-top: 4rem;
+    background-color: white;
+    border: 2px solid var(--clr1);
+    margin-bottom: 4rem;
+    padding-bottom: 2rem;
+    padding-top: 20px;
+    border-radius: 4px;
+    position: relative;
+}
+
+#control-urls {
+    margin: 0 auto;
+    margin-top: 4rem;
+    background-color: var(--clr4);
+    padding: 0 1.2rem;
+    padding-bottom: 1.2rem;
+    padding-top: 1.2rem;
+    border-radius: 4px;
+    position: sticky;
+    top: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border: 2px solid var(--clr6);
+    gap: 1rem;
+}
+
+#control-urls div {
+    transition: 0.2s ease;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: inherit;
+}
+
+.block {
+    width: 30px;
+    height: 30px;
+    border: 1px solid white;
+    border-radius: 5px;
+    text-align: center;
+    padding-top: 3px;
+}
+
+.flex-block {
+    height: 30px;
+    border: 1px solid white;
+    border-radius: 5px;
+    padding: 0 3px;
+    padding-top: 2px;
+    text-align: center;
+}
+
+.ramadan-table-message-color:nth-of-type(odd) td {
+    box-shadow: inset 0px 0px 9999px #433d79 !important;
+}
+
+.ramadan-table-message-color:nth-of-type(even) td {
+    background-color: #2d2953 !important;
+}
+
+.search-table-control-p {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    width: 100%;
+}
+
+.search-table-control-p div {
+    display: flex;
+}
+
+.search-table-control-p div label {
+    background-color: white;
+    padding: 7px;
+    cursor: pointer;
+    position: relative;
+    background-color: white;
+    transition: .3s ease;
+}
+
+.search-table-control-p div label input {
+    position: absolute;
+    left: 0;
+    opacity: 0;
+    transition: .3s ease;
+}
+
+.search-table-control-p div label:nth-of-type(1) {
+    border-radius: 0 4px 4px 0;
+
+}
+
+.search-table-control-p div label:nth-of-type(2) {
+    border-radius: 4px 0 0 4px;
+}
+
+.activeChooseTable {
+    background-color: rgb(109, 40, 193, 1) !important;
+    color: white !important;
+}

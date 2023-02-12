@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    سجل الحضور
+{% endblock title %}
+
+{% block extrastyle %}
+    <link rel="stylesheet" href="{% static 'css/coming_list_style.css' %}">
+{% endblock extrastyle %}
+
+
+{% block content %}
+    <section id="coming-list" class="container gap-5">
+        {% for coming in object_list %}
+            {% include 'partials/coming_list_card.html' with coming=coming %}
+        {% empty %}
+            <div class="text-white text-center fs-5" style="padding-top: calc(2rem - 20px)">
+                لا يوجد أي تسجيل حضور حالياً !!
+            </div>
+        {% endfor %}
+    </section>
+{% endblock content %}

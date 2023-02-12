@@ -1,0 +1,45 @@
+{% load humanize %}
+
+{% if adding == "True" %}
+    <div class="card bg-success w-100">
+        <div class="card-header bg-light py-3" style="background-color: #F6F6F6; font-size: 18px">
+            <b>الاسم:</b> {{ content.student }}
+        </div>
+        <ul class="card-body " style="list-style-type: none;">
+            <li class="bg-light rounded px-2 py-3 fs-6 mb-3 shadow"><b>القيمة:</b> {{ content.value }}</li>
+            <li class="bg-light rounded px-2 py-3 fs-6 shadow"><b>السبب:</b> {{ content.cause }}</li>
+        </ul>
+        <div class="text-white text-start mb-2 ms-3 d-flex flex-row-reverse justify-content-between">
+            <div>
+                <i class="bi bi-clock"></i>
+                <time datetime="{{ content.created_at }}">
+                    {{ content.created_at|naturaltime }}
+                </time>
+            </div>
+            <a href="{% url 'editing_points_delete_add' content.id %}" class="btn btn-dark shadow text-white me-3">
+                <i class="bi bi-trash3-fill"></i>
+            </a>
+        </div>
+    </div>
+{% else %}
+    <div class="card bg-danger w-100">
+        <div class="card-header bg-light py-3" style="background-color: #F6F6F6; font-size: 18px">
+            <b>الاسم:</b> {{ content.student }}
+        </div>
+        <ul class="card-body" style="list-style-type: none;">
+            <li class="bg-light rounded px-2 py-3 fs-6 mb-3 shadow"><b>القيمة:</b> {{ content.value }}</li>
+            <li class="bg-light rounded px-2 py-3 fs-6 shadow"><b>السبب:</b> {{ content.cause }}</li>
+        </ul>
+        <div class="text-white text-start mb-2 ms-3 d-flex flex-row-reverse justify-content-between">
+            <div>
+                <i class="bi bi-clock"></i>
+                <time datetime="{{ content.created_at }}">
+                    {{ content.created_at|naturaltime }}
+                </time>
+            </div>
+            <a href="{% url 'editing_points_delete_remove' content.id %}" class="btn btn-dark shadow text-white me-3">
+                <i class="bi bi-trash3-fill"></i>
+            </a>
+        </div>
+    </div>
+{% endif %}

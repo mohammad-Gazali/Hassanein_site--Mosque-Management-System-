@@ -1,0 +1,33 @@
+{% load static %}
+
+<section id="control-urls" class="w-100">
+    <div class="w-100 d-flex gap-3 flex-wrap">
+        <div><a href="{% url 'admin_main' %}" class="btn btn-primary">القسم الرئيسي</a></div>
+        <div><a href="{% url 'admin_site_settings' 1 %}" class="btn btn-primary">إعدادت الموقع</a></div>
+        <div><a href="{% url 'admin_awqaf' %}" class="btn btn-primary">الأوقاف</a></div>
+        <div><a href="{% url 'admin_master_activities' %}" class="btn btn-primary">نشاطات الأساتذة</a></div>
+        <div><a href="{% url 'admin_master_list' %}" class="btn btn-primary">الأساتذة</a></div>
+        <div><a href="{% url 'admin_coming_list' %}" class="btn btn-primary">سجل الحضور</a></div>
+        <div><a href="{% url 'admin_editing_points_log' %}" class="btn btn-primary">إضافات وخصومات النقاط</a></div>
+        <div><a href="{% url 'reports_all_students' %}" class="btn btn-primary">تقارير الطلاب</a></div>
+        <div><a href="{% url 'money_deleting' %}" class="btn btn-primary">الغرامات</a></div>
+        <div><a href="{% url 'admin_specializations' %}" class="btn btn-primary">الاختصاصات</a></div>
+        <div><a href="{% url 'admin:index' %}" class="btn btn-primary">لوحة التحكم العليا</a></div>
+    </div>
+    {% if request.path == "/control" %}
+        {% include 'partials/search_control_panel.html' with current_url="admin_main" %}
+    {% elif request.path == "/control/activities" %}
+        {% include 'partials/search_control_panel.html' with current_url="admin_master_activities" %}
+    {% elif request.path == "/control/master" %}
+        {% include 'partials/search_control_panel.html' with current_url="admin_master_list" %}
+    {% elif request.path == "/control/settings/1" %}
+        {% include 'partials/search_control_panel.html' with current_url="HIDDEN" %}
+    {% elif request.path == "/control/coming" %}
+        {% include 'partials/search_control_panel.html' with current_url="admin_coming_list" %}
+    {% elif request.path == "/control/points/log" %}
+        {% include 'partials/search_control_panel.html' with current_url="admin_editing_points_log" %}
+    {% else %}
+        <h1 class="text-white">{{ request.path }}</h1>
+    {% endif %}
+    <script src="{% static 'js/search_table_script.js' %}"></script>
+</section>

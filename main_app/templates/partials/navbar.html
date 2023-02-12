@@ -1,0 +1,51 @@
+{% load static %}
+
+<nav id="main-nav" class="navbar navbar-expand-lg py-3">
+    <div class="container-fluid position-relative">
+        <span class="navbar-brand fs-4">
+            <a class="nav-link text-white p-0" href="{% url 'home' %}">
+                <img class="position-absolute logo-image" width="50" src="{% static 'white-logo-icon.svg' %}" alt="logo">
+            </a>
+        </span>
+        {% if user.is_authenticated %}
+        {% endif %}
+        <button id="toggler-icon" class="navbar-toggler p-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-list" aria-hidden="true" style="color: white; font-size: 1.5rem"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a href="{% url 'home' %}" class="nav-link me-auto">الصفحة الرئيسية</a>
+                </li>
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a href="{% url 'master_activity' %}" class="nav-link me-auto">نشاطات الأستاذ</a>
+                    </li>
+                    {% if user.is_superuser %}
+                        <li class="nav-item">
+                            <a href="{% url 'admin_main' %}" class="nav-link me-auto">لوحة التحكم</a>
+                        </li>
+                    {% endif %}
+                    {% if 'حضور' in groups or user.is_superuser %}
+                        <li class="nav-item">
+                            <a href="{% url 'search_coming' %}" class="nav-link me-auto">نقاط الحضور</a>
+                        </li>
+                    {% endif %}
+                    {% if 'نقاط' in groups or user.is_superuser %}
+                        <li class="nav-item">
+                            <a href="{% url 'editing_points' %}" class="nav-link me-auto">إضافة وخصم نقاط</a>
+                        </li>
+                    {% endif %}
+                    
+                    <li class="nav-item">
+                        <a href="{% url 'before_logout' %}" class="nav-link me-auto">تسجيل الخروج</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a href="{% url 'login' %}" class="nav-link me-auto">تسجيل الدخول</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>

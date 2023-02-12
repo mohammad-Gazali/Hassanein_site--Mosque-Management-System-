@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    تسجيل الدخول
+{% endblock title %}
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="row justify-content-md-center">
+            <div class="card col-md-6 px-0"  style="background-color: rgba(135, 135, 161, 0.103); border: 1px solid rgba(255, 255, 255, 0.098);">
+                <div class="card-header" style="background-color: #001233; border-color: rgba(255, 255, 255, 0.098);">
+                    <h3 class="mb-0 py-2 text-center text-white">تسجيل الدخول</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        {% include 'common/form.html' with form=form %}
+                        <button class="btn btn-primary">
+                            تسجيل الدخول
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

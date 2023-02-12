@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block extrastyle %}
+    <link rel="stylesheet" href="{% static 'css/admin_control_style.css' %}">
+{% endblock extrastyle %}
+
+{% block title %}
+    لوحة التحكم
+{% endblock title %}
+
+{% block content %}
+    {% include 'partials/control_urls.html' %}
+    {% block admin_content %}{% endblock admin_content %}
+{% endblock content %}
+

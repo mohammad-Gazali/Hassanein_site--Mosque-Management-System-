@@ -1,0 +1,41 @@
+{% load static %}
+
+<div class="container">
+    <section class="text-white container mb-4 pb-4 pl-4 pr-4 rounded-3 search">
+        <h5 style="text-align: center;
+                margin: 2rem auto;
+                margin-top: -2rem;
+                padding: 1rem;
+                width: 60%;
+                border-radius: 15px;
+                background: rgb(109, 40, 193);
+                border: 2px solid white;
+                ">
+                البحث عن طالب</h5>
+        <div id="filter-search-radio" class="d-flex flex-column gap-3 mb-3 rounded p-3" style="background-color: #001845; border: 1px solid rgba(255, 255, 255, 0.8)"> 
+            <div>
+                <input type="radio" name="search-filter" id="name-search-filter" checked>
+                <label for="name-search-filter">البحث بالاسم</label>
+            </div>
+            <div>
+                <input type="radio" name="search-filter" id="id-search-filter">
+                <label for="id-search-filter">البحث بالمعرف</label>
+            </div>
+        </div>
+        <form id="search_form" action="{% url 'search_results' %}">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-9 col-12" id="search-text">
+                    <input placeholder="ادخل اسم الطالب" name="q_text" type="text" class="form-control" required>
+                </div>
+                <div class="col-md-9 col-12 mt-md-0 d-none" id="search-id">
+                    <input placeholder="ادخل المعرف" name="q_search_id" type="number" class="form-control">
+                </div>
+                <div class="col-md-3 mt-md-0 mt-4">
+                    <button type="submit" class="btn btn-primary w-100">ابحث <i class="bi bi-search"></i></button>
+                </div>
+            </div>
+        </form>
+    </section>
+    <script src="{% static 'js/search_script.js' %}"></script>
+</div>

@@ -1,0 +1,24 @@
+:root {
+    --clr1: #0466C8;
+    --clr2: #28386d;
+    --clr3: #001233;
+    --clr4: #001845;
+    --clr5: #33415C;
+    --clr6: #979DAC;
+}
+
+#main-container-delete-message {
+    max-width: 800px;
+    margin-top: 6rem;
+    margin-bottom: 4rem;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(135, 135, 161, 0.103);
+    border: 1px solid rgba(255, 255, 255, 0.098);
+    padding-bottom: 2rem;
+    padding-top: 20px;
+    border-radius: 5px;
+}

@@ -1,0 +1,18 @@
+:root {
+    --clr1: #0466C8;
+    --clr2: #28386d;
+    --clr3: #001233;
+    --clr4: #001845;
+    --clr5: #33415C;
+    --clr6: #979DAC;
+}
+
+.error-content-coming {
+    width: 100%;
+    text-align: center;
+    border: 2px solid #dc3545;
+    background-color: #dc35461d;
+    border-radius: 5px;
+    transition: .5s;
+    padding: 1rem 0;
+}

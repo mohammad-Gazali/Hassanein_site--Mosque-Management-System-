@@ -1,0 +1,20 @@
+{% load static %}
+
+<section id="student-q-test-awqaf-{{ id }}" class="student-q-test-awqaf">
+    <h6 class="text-white title">
+        سبر الطالب للقرآن في وزارة الأوقاف
+    </h6>
+    <div class="container text-white q-test-awqaf-container">
+        {% for key, value in q_awqaf_test.items %}
+            {% if value == 'NON' %}
+                <div class="other-block bg-secondary">{{ key }}</div>
+            {% elif value == 'NEW' %}
+                <div class="other-block bg-success">{{ key }}</div>
+            {% elif value == 'OLD' %}
+                <div class="other-block bg-warning">{{ key }}</div>
+            {% else %}
+                <div class="other-block bg-danger">{{ key }}</div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</section>

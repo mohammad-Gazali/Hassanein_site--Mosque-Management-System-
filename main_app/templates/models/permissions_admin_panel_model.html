@@ -1,0 +1,208 @@
+{% load static %}
+
+<div class="model" id="model-{{ master.id }}-id-{{type}}" style="color: black !important">
+    <div class="model-header">
+        <div class="title-model">{{key}} : {{master}}</div>
+        <button data-close-button class="close-btn">&times;</button>
+    </div>
+    <div class="model-body pb-3">
+        <link rel="stylesheet" href="{% static 'css/edit_permissions_style.css' %}">
+        <div id="master-list-permissions-{{ master.id }}" class="w-100 container py-3 d-flex flex-column gap-5">
+            <div class="box">
+                <h3 class="title text-white">تسميع</h3>
+                <div class="d-flex flex-wrap justify-content-center gap-2">
+                    {% for part, val in master.permissions.q_memo.items %}
+                        {% if val == "NON" %}
+                        <span class="bg-secondary text-white block border border-0">
+                                {{ part }}
+                            </span>
+                        {% else %}
+                        <span class="bg-success text-white block border border-0">
+                                {{ part }}
+                            </span>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="box">
+                <h3 class="title text-white">سبر</h3>
+                <div class="d-flex flex-wrap justify-content-center gap-2">
+                    {% for part, val in master.permissions.q_test.items %}
+                        {% if val == "NON" %}
+                            <span class="bg-secondary text-white block border border-0">
+                                {{ part }}
+                            </span>
+                        {% else %}
+                            <span class="bg-success text-white block border border-0">
+                                {{ part }}
+                            </span>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="box">
+                <h3 class="title text-white">سبر ترشيحي</h3>
+                <div class="d-flex flex-wrap justify-content-center gap-2">
+                    {% for part, val in master.permissions.q_test_candidate.items %}
+                        {% if val == "NON" %}
+                        <span class="bg-secondary text-white block border border-0">
+                            {{ part }}
+                        </span>
+                        {% else %}
+                        <span class="bg-success text-white block border border-0">
+                            {{ part }}
+                        </span>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            <button id="master-permissions-button-{{ master.id }}" class="btn btn-warning">
+                تعديل الصلاحيات <i class="bi bi-gear-fill"></i>
+            </button>
+        </div>
+        <form action="{% url 'admin_master_permission_edit' master.id %}" method="POST" class="d-none w-100 container flex-column gap-5 text-white py-3" id="permissions-master-edit-{{ master.id }}">
+            {% csrf_token %}
+            <div class="box">
+                <h3 class="title text-white">تسميع</h3>
+                <div class="my-2">
+                    <span id="per-q-memo-toggle-all-{{master.id}}" class="btn btn-primary">تحديد الكل</span>
+                    <span id="per-q-memo-toggle-non-all-{{master.id}}" class="btn btn-secondary">إلغاء تحديد الكل</span>
+                </div>
+                <div class="d-flex flex-wrap justify-content-evenly gap-2 align-items-center px-5 per_qmemo_{{master.id}}">
+                    {% for part, val in master.permissions.q_memo.items %}
+                        {% if val == "NON" %}
+                            <div class="form-check form-switch py-1" style="width: 120px">
+                                <input name="q_memo_{{part}}" class="form-check-input" type="checkbox" role="switch" id="permissions-edit-master_{{master.id}}-part_{{ part }}__qmemo" style="margin-left: 0.8rem">
+                                <label class="form-check-label" for="permissions-edit-master_{{master.id}}-part_{{ part }}__qmemo" style="margin-right: -1.3rem">الجزء {{part}}</label>
+                            </div>
+                        {% else %}
+                            <div class="form-check form-switch py-1" style="width: 120px">
+                                <input name="q_memo_{{part}}" class="form-check-input" type="checkbox" role="switch" id="permissions-edit-master_{{master.id}}-part_{{ part }}__qmemo" checked style="margin-left: 0.8rem">
+                                <label class="form-check-label" for="permissions-edit-master_{{master.id}}-part_{{ part }}__qmemo" style="margin-right: -1.3rem">الجزء {{part}}</label>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="box">
+                <h3 class="title text-white">سبر</h3>
+                <div class="my-2">
+                    <span id="per-q-test-toggle-all-{{master.id}}" class="btn btn-primary">تحديد الكل</span>
+                    <span id="per-q-test-toggle-non-all-{{master.id}}" class="btn btn-secondary">إلغاء تحديد الكل</span>
+                </div>
+                <div class="d-flex flex-wrap justify-content-evenly gap-2 align-items-center px-5 per_qtest_{{master.id}}">
+                    {% for part, val in master.permissions.q_test.items %}
+                        {% if val == "NON" %}
+                            <div class="form-check form-switch py-1" style="width: 120px">
+                                <input name="q_test_{{part}}" class="form-check-input" type="checkbox" role="switch" id="permissions-edit-master_{{master.id}}-part_{{ part }}__qtest" style="margin-left: 0.8rem">
+                                <label class="form-check-label" for="permissions-edit-master_{{master.id}}-part_{{ part }}__qtest" style="margin-right: -1.3rem">الجزء {{part}}</label>
+                            </div>
+                        {% else %}
+                            <div class="form-check form-switch py-1" style="width: 120px">
+                                <input name="q_test_{{part}}" class="form-check-input" type="checkbox" role="switch" id="permissions-edit-master_{{master.id}}-part_{{ part }}__qtest" style="margin-left: 0.8rem" checked>
+                                <label class="form-check-label" for="permissions-edit-master_{{master.id}}-part_{{ part }}__qtest" style="margin-right: -1.3rem">الجزء {{part}}</label>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="box">
+                <h3 class="title text-white">سبر ترشيحي</h3>
+                <div class="my-2">
+                    <span id="per-q-test-candidate-toggle-all-{{master.id}}" class="btn btn-primary">تحديد الكل</span>
+                    <span id="per-q-test-candidate-toggle-non-all-{{master.id}}" class="btn btn-secondary">إلغاء تحديد الكل</span>
+                </div>
+                <div class="d-flex flex-wrap justify-content-evenly gap-2 align-items-center px-5 per_qtestcandidate_{{master.id}}">
+                    {% for part, val in master.permissions.q_test_candidate.items %}
+                        {% if val == "NON" %}
+                            <div class="form-check form-switch py-1" style="width: 120px">
+                                <input name="q_test_candidate_{{part}}" class="form-check-input" type="checkbox" role="switch" id="permissions-edit-master_{{master.id}}-part_{{ part }}__qtestcandidate" style="margin-left: 0.8rem">
+                                <label class="form-check-label" for="permissions-edit-master_{{master.id}}-part_{{ part }}__qtestcandidate" style="margin-right: -1.3rem">الجزء {{part}}</label>
+                            </div>
+                        {% else %}
+                            <div class="form-check form-switch py-1" style="width: 120px">
+                                <input name="q_test_candidate_{{part}}" class="form-check-input" type="checkbox" role="switch" id="permissions-edit-master_{{master.id}}-part_{{ part }}__qtestcandidate" style="margin-left: 0.8rem" checked>
+                                <label class="form-check-label" for="permissions-edit-master_{{master.id}}-part_{{ part }}__qtestcandidate" style="margin-right: -1.3rem">الجزء {{part}}</label>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="d-flex flex-column gap-2">
+                <button class="btn btn-success" type="submit">
+                    حفظ التغييرات <i class="bi bi-check-lg"></i>
+                </button>
+                <span class="btn btn-secondary" id="master-permissions-button-{{ master.id }}-reverse">
+                    تراجع <i class="bi bi-x-lg"></i>
+                </span>
+            </div>
+        </form>
+        <script>
+            let permissionsToggleBtn_{{master.id}} = document.getElementById("master-permissions-button-{{ master.id }}")
+            let permissionsToggleBtnReverse_{{master.id}} = document.getElementById("master-permissions-button-{{ master.id }}-reverse")
+            let permissionsList_{{master.id}} = document.getElementById("master-list-permissions-{{ master.id }}")
+            let permissionsMasterEdit_{{ master.id }} = document.getElementById("permissions-master-edit-{{ master.id }}")
+
+            permissionsToggleBtn_{{master.id}}.onclick = () => {
+                permissionsMasterEdit_{{ master.id }}.classList.remove("d-none");
+                permissionsMasterEdit_{{ master.id }}.classList.add("d-flex");
+                permissionsList_{{master.id}}.classList.add("d-none");
+            }
+
+            permissionsToggleBtnReverse_{{master.id}}.onclick = () => {
+                permissionsMasterEdit_{{ master.id }}.classList.add("d-none");
+                permissionsMasterEdit_{{ master.id }}.classList.remove("d-flex");
+                permissionsList_{{master.id}}.classList.remove("d-none");
+            }
+
+
+            // toggle all checkbox
+            let btnAll_1_{{ master.id }} = document.getElementById("per-q-memo-toggle-all-{{master.id}}")
+            let btnAll_2_{{ master.id }} = document.getElementById("per-q-test-toggle-all-{{master.id}}")
+            let btnAll_3_{{ master.id }} = document.getElementById("per-q-test-candidate-toggle-all-{{master.id}}")
+            let btnNonAll_1_{{ master.id }} = document.getElementById("per-q-memo-toggle-non-all-{{master.id}}")
+            let btnNonAll_2_{{ master.id }} = document.getElementById("per-q-test-toggle-non-all-{{master.id}}")
+            let btnNonAll_3_{{ master.id }} = document.getElementById("per-q-test-candidate-toggle-non-all-{{master.id}}")
+            let allQMemoCheck_{{ master.id }} = document.querySelectorAll(".per_qmemo_{{master.id}} input")
+            let allQTestCheck_{{ master.id }} = document.querySelectorAll(".per_qtest_{{master.id}} input")
+            let allQTestCandidateCheck_{{ master.id }} = document.querySelectorAll(".per_qtestcandidate_{{master.id}} input")
+
+
+            btnAll_1_{{ master.id }}.onclick = () => {
+                Array.from(allQMemoCheck_{{ master.id }}).forEach((item) => {
+                    item.checked = true;
+                })
+            }
+
+            btnNonAll_1_{{ master.id }}.onclick = () => {
+                Array.from(allQMemoCheck_{{ master.id }}).forEach((item) => {
+                    item.checked = false;
+                })
+            }
+
+            btnAll_2_{{ master.id }}.onclick = () => {
+                Array.from(allQTestCheck_{{ master.id }}).forEach((item) => {
+                    item.checked = true;
+                })
+            }
+
+            btnNonAll_2_{{ master.id }}.onclick = () => {
+                Array.from(allQTestCheck_{{ master.id }}).forEach((item) => {
+                    item.checked = false;
+                })
+            }
+
+            btnAll_3_{{ master.id }}.onclick = () => {
+                Array.from(allQTestCandidateCheck_{{ master.id }}).forEach((item) => {
+                    item.checked = true;
+                })
+            }
+
+            btnNonAll_3_{{ master.id }}.onclick = () => {
+                Array.from(allQTestCandidateCheck_{{ master.id }}).forEach((item) => {
+                    item.checked = false;
+                })
+            }
+        </script>
+    </div>
+</div>

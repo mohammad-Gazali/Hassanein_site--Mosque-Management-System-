@@ -1,0 +1,54 @@
+{% load static %}
+
+<div class="model" id="model-{{ student.id }}-id-{{type}}">
+    <div class="model-header">
+        <div class="title-model">{{key}} : {{student.name}}</div>
+        <button data-close-button class="close-btn">&times;</button>
+    </div>
+    <div class="model-body">
+        <link rel="stylesheet" href="{% static 'css/add_q_memo_style.css' %}">
+        <div class="text-white main-edit-q-memo container">
+            <h3 class="title text-center px-4" style="width: unset;">إضافة تسميع للطالب: {{student.name}}</h3>
+            <form class="form-control form-add-q-memo" action="{% url 'add_q_memo' student.id %}" method="POST">
+                {% csrf_token %}
+                <div class="error-content text-danger"></div>
+                <label class="form-label pt-3" for="input-page-q-memo">رقم الصفحة (خارج جزء عم)</label>
+                <input class="form-control" type="number" name="page" id="input-page-q-memo" min="1" max="581">
+                <span class="form-label pt-5 d-block">مجموعة متتالية من الصفحات</span>
+                <div style="background-color: #d8d8d8;" class="border rounded p-3 d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+                    <div style="width: 100%">
+                        <label style="width: 45px;" class="ms-3" name="start form-label" for="range-start">البداية</label>
+                        <input name="start" class="form-control" id="range-start" min="1" max="580" type="number">
+                    </div>
+                    <div style="width: 100%">
+                        <label style="width: 45px;" class="ms-3" name="end form-label" for="range-end">النهاية</label>
+                        <input name="end" class="form-control" id="range-end" min="2" max="581" type="number">
+                    </div>
+                </div>
+                <label class="from-label my-2 d-block" for="drop-button">اسم السورة (داخل جزء عم)</label>
+                <span id="drop-button" class="form-control w-100 border d-flex justify-content-between align-items-center mb-4" style="background-color: #d8d8d8" data-bs-toggle="collapse" href="#checkbox-list-q-name" aria-expanded="false" aria-controls="checkbox-list-q-name">
+                    اضغط لإظهار السور
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+                    </svg>
+                </span>
+                <ul class="list-group p-0 collapse pb-5" id="checkbox-list-q-name">
+                    {% for q_name in student.q_memorizing %}
+                        {% if q_name|length <= 3 and q_name != 'عبس' %}
+                        {% else %}
+                            <li class="list-group-item">
+                                <div class="form-check">
+                                    <label class="form-check-label" for="{{ q_name }}-id-{{ student.id }}">
+                                        <input class="form-check-input" style="float: none; margin-left: 10px" type="checkbox" name="{{ q_name }}" id="{{ q_name }}-id-{{ student.id }}"> 
+                                        {{q_name}}
+                                    </label>
+                                </div>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+                <button class="btn btn-success w-100" type="submit">إضافة</button>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extrastyle %}
+    <link rel="stylesheet" href="{% static 'css/search_coming_style.css' %}">
+{% endblock extrastyle %}
+
+{% block title %}
+    تسجيل الحضور
+{% endblock title %}
+
+{% block content %}
+    {% include 'partials/search_coming_part.html' %}
+{% endblock content %}

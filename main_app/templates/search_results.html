@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extrastyle %}
+    <link rel="stylesheet" href="{% static 'css/search_results_style.css' %}">
+{% endblock extrastyle %}
+
+{% block title %}نتائج البحث{% endblock title %}
+
+{% block content %}
+    <section id="search_results">
+        <h5 class="text-white title">
+            نتائج البحث
+        </h5>
+        {% if not text %}
+            {% if not one_student %}
+                <h6 class="text-white text-center mt-3">لا يوجد نتيجة. الرجاء محاولة إدخال المعرف الصحيح</h6>            
+            {% else %}
+                <div class="container one-card-container">
+                    {% include 'partials/student_card.html' with student=one_student.first %}
+                </div>
+            {% endif %}
+        {% else %}
+            {% if students %}
+                <div class="container cards-container">
+                    {% for student in students %}
+                        {% include 'partials/student_card.html' with student=student %}
+                    {% endfor %}
+                </div>
+            {% else %}
+                <h6 class="text-white text-center mt-3">لا يوجد نتيجة. الرجاء محاولة إدخال الاسم بدقة</h6>            
+            {% endif %}
+        {% endif %}
+    </section>
+    <div id="overlay"></div>
+    <script src="{% static 'js/popped_up_models.js' %}"></script>
+    <script src="{% static 'js/search_results_script.js' %}"></script>
+{% endblock content %}

@@ -1,0 +1,66 @@
+<form 
+    class="search-table-control-p {% if current_url == "HIDDEN" %}d-none{% endif %}" 
+    {% if current_url == "HIDDEN" %}action="#"{% else %}action="{% url current_url %}"{% endif %}
+    >
+    {% if current_url == "admin_master_activities" or current_url == "admin_coming_list" or current_url == "admin_editing_points_log" %}
+        <input name="text-search-table" class="form-control" type="text" style="width: 40%" placeholder="أدخل الاسم" {% if val %}value="{{ val }}"{% endif %}>
+        <div class="d-flex">
+            <label data-place="أدخل الاسم" class="activeChooseTable">
+                البحث باسم الأستاذ
+                <input name="type-search-table-admin-p" type="radio" value="by-master" checked>
+            </label>
+            <label data-place="أدخل الاسم">
+                البحث باسم الطالب
+                <input name="type-search-table-admin-p" type="radio" value="by-student">
+            </label>
+        </div>
+        <button class="btn btn-primary">
+            بحث <i class="bi bi-search"></i>
+        </button>
+    {% elif current_url == "admin_master_list" %}
+        <input name="text-search-table" class="form-control" type="text" style="width: 40%" placeholder="أدخل الاسم" {% if val %}value="{{ val }}"{% endif %}>
+        <div class="d-none">
+            <label data-place="أدخل الاسم" class="activeChooseTable">
+                البحث باسم الأستاذ
+                <input name="type-search-table-admin-p" type="radio" value="by-master" checked>
+            </label>
+            <label data-place="أدخل الاسم">
+                البحث باسم الطالب
+                <input name="type-search-table-admin-p" type="radio" value="by-student">
+            </label>
+        </div>
+        <button class="btn btn-primary">
+            بحث <i class="bi bi-search"></i>
+        </button>
+    {% elif current_url == "HIDDEN" %}
+        <input name="text-search-table" class="form-control d-none" type="text" style="width: 40%" placeholder="أدخل الاسم" {% if val %}value="{{ val }}"{% endif %}>
+        <div class="d-none">
+            <label data-place="أدخل الاسم" class="activeChooseTable">
+                البحث باسم الأستاذ
+                <input name="type-search-table-admin-p" type="radio" value="by-master" checked>
+            </label>
+            <label data-place="أدخل الاسم">
+                البحث باسم الطالب
+                <input name="type-search-table-admin-p" type="radio" value="by-student">
+            </label>
+        </div>
+        <button class="btn btn-primary d-none">
+            بحث <i class="bi bi-search"></i>
+        </button>
+    {% else %}
+        <input name="text-search-table" class="form-control" type="text" style="width: 40%" placeholder="أدخل الاسم" {% if val %}value="{{ val }}"{% endif %}>
+        <div class="d-flex">
+            <label data-place="أدخل الاسم" class="activeChooseTable">
+                البحث بالاسم
+                <input name="type-search-table-admin-p" type="radio" value="by-text" checked>
+            </label>
+            <label data-place="أدخل المعرف">
+                البحث بالمعرف
+                <input name="type-search-table-admin-p" type="radio" value="by-id">
+            </label>
+        </div>
+        <button class="btn btn-primary">
+            بحث <i class="bi bi-search"></i>
+        </button>
+    {% endif %}
+</form>

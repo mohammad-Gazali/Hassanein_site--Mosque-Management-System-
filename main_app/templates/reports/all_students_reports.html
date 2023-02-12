@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    تقارير الطلاب
+{% endblock title %}
+
+{% block content %}
+    <div class="container common-box" style="margin-top: 4rem;">
+        <h3 class="title text-white mb-4">
+            تقارير الطلاب
+        </h3>
+        <section id="search-student-section-students-reports" class="w-100 d-none mb-5">
+            <form action="#" class="gap-3 d-flex flex-column p-4 form-control">
+                {% csrf_token %}
+                <h5 class="title text-white">
+                    البحث عن طالب
+                </h5>
+                <div id="displaying-students-students-reports"></div>
+                <label class="form-label" for="students-reports-search-student">اسم الطالب</label>
+                <input id="students-reports-search-student" type="text" class="form-control" required>
+                <button class="btn btn-primary d-flex align-items-center justify-content-center gap-2" type="submit">
+                    بحث <i class="bi bi-search"></i>
+                </button>
+            </form>
+        </section>
+        <form id="reports-form-students-reports" class="form-control p-4" action="{% url 'reports_all_students' %}" method="POST">
+            {% csrf_token %}
+            <div id="error-section-for-not-choosing-student-students-reports"></div>
+            <input name="student-id" value="" type="hidden">
+            <div class="d-flex align-items-center gap-2 mb-1 mt-3">
+                <input class="form-check-input" type="radio" name="type" value="all" id="reports-type-all" checked>
+                <label class="form-check-label" for="reports-type-all">كل الطلاب</label>
+            </div>
+            <div class="d-flex align-items-center gap-2 mb-3">
+                <input class="form-check-input" type="radio" name="type" value="one" id="reports-type-one">
+                <label class="form-check-label" for="reports-type-one">طالب واحد</label>
+            </div>
+            <div role="alert" id="div-for-displaying-student-in-form-body-students-reports"></div>
+            <label class="form-label" for="start-time">
+                وقت البداية
+            </label>
+            <input class="form-control" type="date" name="start" id="start-time" required>
+            <label class="form-label mt-3" for="end-time">
+                وقت النهاية <small class="text-secondary">(ملاحظة: وقت النهاية غير مضمن)</small>
+            </label>
+            <input class="form-control" type="date" name="end" id="end-time" required>
+            <button class="btn btn-success mt-4" type="submit">
+                إيجاد التقارير
+            </button>
+        </form>
+    </div>
+    <script src="{% static 'js/student_reports_script.js' %}"></script>
+{% endblock content %}

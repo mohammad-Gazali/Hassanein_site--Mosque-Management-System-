@@ -1,0 +1,56 @@
+{% load static %}
+    <style>
+        #add-note-btn {
+            background-color: #6f42c1;
+        }
+        
+        #add-note-btn:hover {
+            background-color: #4f3188;
+        }
+
+        #add-note-btn:focus {
+            box-shadow: 0 0 0 4px #876cbaa3;
+        }
+
+        #add-q-test-btn {
+            background-color: orange;
+        }
+        
+        #add-q-test-btn:hover {
+            background-color: #da8d00;
+        }
+
+        #add-q-test-btn:focus {
+            box-shadow: 0 0 0 4px #ffd993;
+        }
+
+        
+    </style>
+    <div class="card position-relative card-border" style="width: 285px">
+        <div class="card-body">
+            <div class="card-title text-dark mb-3">
+                <b>الاسم الثلاثي:</b> {{ student.name }}
+            </div>
+            <div class="card-text">
+                <ul class="list-group p-0 mb-3">
+                    <li class="list-group-item"><b>المعرف: </b>{{ student.id }}</li>
+                    <li class="list-group-item"><b>الفئة: </b>{{ student.category }}</li>
+                    <li class="list-group-item"><b>العمر: </b>{% if student.age != 'تاريخ الميلاد غير محدد' %}{{ student.age }} سنة{% else %}غير محدد{% endif %}</li>
+                    {% if user.is_authenticated %}  
+                        <li class="list-group-item"><b>اسم الأم: </b>{{ student.mother_name }}</li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+        <div data-model-target="#model-{{ student.id }}-id-detail" class="btn btn-primary position-absolute-bottom mt-3 translate-middle col-6 text-white">عرض التفاصيل</div>
+        {% include 'models/student_detail_model.html' with student=student key="تفاصيل الطالب" type="detail" %}
+        {% if user.is_authenticated %}
+            <div data-model-target="#model-{{ student.id }}-id-add_q_memorize" class="btn btn-success position-absolute-bottom mt-3 translate-middle col-6 text-white">إضافة تسميع</div>
+            {% include 'models/q_memorize_add_model.html' with student=student key="إضافة تسميع للطالب" type="add_q_memorize" %}
+            <div id="add-note-btn" data-model-target="#model-{{ student.id }}-id-create_note" class="btn position-absolute-bottom mt-3 translate-middle col-6 text-white">إضافة ملاحظة</div>
+            {% include 'models/create_notes_model.html' with student=student key="إضافة ملاحظة" type="create_note" %}
+            <div id="add-q-test-btn" data-model-target="#model-{{ student.id }}-id-add_q_test" class="btn position-absolute-bottom mt-3 translate-middle col-6 text-white">إضافة سبر</div>
+            {% include 'models/q_test_add_model.html' with student=student key="إضافة سبر" type="add_q_test" %}    
+        {% endif %}
+    </div>
+    

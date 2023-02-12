@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extrastyle %}
+    <link rel="stylesheet" href="{% static 'css/index_style.css' %}">
+{% endblock extrastyle %}
+
+{% block title %}موقع مسجد الحسنين{% endblock title %}
+
+{% block content %}
+    {% include 'partials/search.html' %}
+    {% if ramadan %}
+        {% include 'partials/ramadan.html' %}
+    {% endif %}
+{% endblock content %}

@@ -1,0 +1,6 @@
+db.sqlite3
+venv
+project's_notes.txt
+superusers.txt
+.env
+__pycache__

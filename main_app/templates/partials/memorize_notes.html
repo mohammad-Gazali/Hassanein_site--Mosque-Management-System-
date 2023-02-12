@@ -1,0 +1,41 @@
+{% load static %}
+{% load humanize %}
+
+<section id="memorize-notes-{{ id }}" class="memorize-notes">
+    <h6 class="text-white title" style="background: rgb(109, 40, 193);">
+        ملاحظات التسميع
+    </h6>
+        {% if student.memorizenotes_set.all %}
+            <div class="container d-flex flex-column gap-3 align-items-center mt-3">
+                {% for note in student.memorizenotes_set.all %}
+                    <div class="memorize-note-card">
+                        <div class="card-img-overlay d-flex flex-column align-items-center justify-content-center">
+                            <p class="text-white text-center">هل أنت متأكد من حذف هذه الملاحظة ؟</p>
+                            <div class="mt-2">
+                                <a href="{% url 'delete_note' note.id %}" class="btn btn-danger ms-3">نعم</a>
+                                <button class="btn btn-primary btn-save">لا</button>
+                            </div>
+                        </div>
+                        {% if user.is_authenticated %}
+                            <button class="btn btn-danger btn-dan">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        {% endif %}
+                        <span>
+                            <b>الأستاذ: {{ note.master_name }}</b>
+                        </span>
+                        <div class="memorize-note-content">
+                            {{ note.content }}
+                        </div>
+                        <span class="fs-6 mt-4 text-muted" style="align-self: flex-end;">
+                            <time datetime="{{ note.sended_at }}">
+                                {{ note.sended_at|naturaltime }}
+                            </time>
+                        </span>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <h6 class="text-white text-center">لا يوجد ملاحظات للطالب</h6>
+        {% endif %}
+</section>

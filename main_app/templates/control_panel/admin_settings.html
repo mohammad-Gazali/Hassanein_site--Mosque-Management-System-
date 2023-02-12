@@ -1,0 +1,13 @@
+{% extends 'control_panel/admin_control_base.html' %}
+{% load static %}
+
+{% block admin_content %}
+    <section id="admin-control-container" class="px-5">
+        <h3 class="title text-white">إعدادت الموقع</h3>
+        <form method="POST" class="container border rounded pb-3" style="border-color: black !important; background-color: rgba(221, 221, 221);">
+            {% csrf_token %}
+            {% include 'common/control_form.html' with form=form %}
+            <button class="btn btn-primary" type="submit">حفظ التغييرات</button>
+        </form>
+    </section>
+{% endblock admin_content %}

@@ -1,0 +1,285 @@
+:root {
+    --clr1: #0466C8;
+    --clr2: #28386d;
+    --clr3: #001233;
+    --clr4: #001845;
+    --clr5: #33415C;
+    --clr6: #979DAC;
+}
+
+/* information start */
+
+.student-information {
+    position: relative;
+    width: 100%;
+    background-color: rgba(135, 135, 161, 0.103);
+    border: 1px solid rgba(255, 255, 255, 0.098);
+    padding: 2rem 0.5rem;
+    padding-top: 20px;
+    border-radius: 4px;
+}
+
+.student-information-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
+/* information end */
+
+/* instructions start */
+
+.instructions {
+    position: relative;
+    width: 100%;
+    background-color: rgba(135, 135, 161, 0.103);
+    border: 1px solid rgba(255, 255, 255, 0.098);
+    padding: 2rem 0.5rem;
+    padding-top: 20px;
+    border-radius: 4px;
+}
+
+.basics-of-memorizing-and-testing {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
+/* instructions end */
+
+/* q-memorizing start */
+
+.student-q-memorizing {
+    position: relative;
+    width: 100%;
+    background-color: rgba(135, 135, 161, 0.103);
+    border: 1px solid rgba(255, 255, 255, 0.098);
+    padding: 2rem 0.5rem;
+    padding-top: 20px;
+    border-radius: 4px;
+}
+
+.q-memorizing-container {
+    justify-content: space-evenly;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.block {
+    width: 30px;
+    height: 30px;
+    border: 1px solid black;
+    border-radius: 5px;
+    text-align: center;
+    padding-top: 3px;
+}
+
+.flex-block {
+    height: 30px;
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 0 3px;
+    padding-top: 2px;
+    text-align: center;
+}
+
+/* q-memorizing end */
+
+/* q-test start */
+
+.student-q-test {
+    position: relative;
+    width: 100%;
+    background-color: rgba(135, 135, 161, 0.103);
+    border: 1px solid rgba(255, 255, 255, 0.098);
+    padding: 2rem 0.5rem;
+    padding-top: 20px;
+    border-radius: 4px;
+}
+
+.q-test-container{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+
+.test-card {
+    width: 100%;
+    border-radius: 7px;
+    background-color: #0c132541;
+    border: 1px solid rgba(255, 255, 255, 0.098);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.test-card-title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    background-color: white;
+    border: 1px solid black;
+    border-radius: 7px;
+}
+
+.card-grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    align-items: center;
+    width: 100%;
+    gap: 5px;
+}
+
+.flex-grid-block {
+    height: 100%;
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 0 3px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.flex-block-two {
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 0 3px;
+    padding-top: 2px;
+    text-align: center;
+}
+
+@media (max-width: 289px) {
+    .flex-block-two {
+        height: 52px;
+        border: 1px solid black;
+        border-radius: 5px;
+        padding: 0 3px;
+        padding-top: 2px;
+        text-align: center;
+    }    
+}
+
+/* q-test end */
+
+/* q-candidate-test start */
+
+.student-q-candidate-test-awqaf {
+    position: relative;
+    width: 100%;
+    background-color: rgba(135, 135, 161, 0.103);
+    border: 1px solid rgba(255, 255, 255, 0.098);
+    padding: 2rem 0.5rem;
+    padding-top: 20px;
+    border-radius: 4px;
+}
+
+.q-candidate-test-container {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+
+.q-test-awqaf-container {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+
+.other-block {
+    width: 68px;
+    text-align: center;
+    border-radius: 5px;
+    padding: 3px;
+    border: 1px solid black;
+}
+
+/* q-candidate-test end */
+
+.student-q-test-awqaf {
+    position: relative;
+    width: 100%;
+    background-color: rgba(135, 135, 161, 0.103);
+    border: 1px solid rgba(255, 255, 255, 0.098);
+    padding: 2rem 0.5rem;
+    padding-top: 20px;
+    border-radius: 4px;
+}
+
+
+/* memorize notes start */
+
+.memorize-notes {
+    position: relative;
+    width: 100%;
+    background-color: rgba(40, 40, 54, 0.993);
+    border: 1px solid rgb(73, 73, 73);
+    padding: 2rem 0.5rem;
+    padding-top: 20px;
+    border-radius: 4px;
+}
+
+.memorize-note-card {
+    width: 100%;
+    border: 2px solid var(--clr1);
+    border-radius: 5px;
+    padding: 15px;
+    padding-top: 54px;
+    padding-bottom: 2px;
+    background-color: white;
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    gap: 5px;
+    z-index: 1;
+}
+
+.memorize-note-content {
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 15px;
+    background-color: #d9d9d9;
+    text-align: center;
+    width: 100%;
+}
+
+.btn-dan {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    z-index: -1;
+}
+
+.card-img-overlay {
+    background-color: var(--clr3);
+    opacity: 0;
+    pointer-events: none;
+    transition: .3s;
+}
+
+.card-img-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+
+/* memorize notes end */

@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extrastyle %}{% endblock extrastyle %}
+
+{% block title %}تسجيل الخروج{% endblock title %}
+
+{% block content %}
+    <div class="container-fluid mt-5 position-relative p-3" style="background-color: rgba(135, 135, 161, 0.103); border: 1px solid rgba(255, 255, 255, 0.098); border-radius: 4px; width: 70%">
+        <h4 class="text-center text-white">هل أنت متأكد من تسجيل الخروج؟</h4>
+        <a href="{% url 'logout' %}" class="btn btn-danger position-absolute start-50 mt-4" style="transform: translateX(-122%); width:80px">نعم</a>
+        <a href="{% url 'home' %}" class="btn btn-primary position-absolute start-50 mt-4" style="transform: translateX(15%); width:80px">لا</a>
+    </div>
+{% endblock content %}z

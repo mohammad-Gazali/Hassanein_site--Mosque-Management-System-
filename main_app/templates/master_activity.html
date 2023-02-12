@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+
+{% block extrastyle %}
+    <link rel="stylesheet" href="{% static 'css/master_activity_style.css'%}">
+{% endblock extrastyle %}
+
+{% block title %}
+    نشاطات الأستاذ
+{% endblock title %}
+
+{% block content %}
+    <div id="main-master-activity-container" class="container">
+        {% for object in object_list %}
+            {% include 'partials/message_card.html' with message=object %}
+        {% empty %}
+            <div class="text-white text-center fs-5" style="padding-top: calc(2rem - 20px)">
+                لا يوجد أي نشاطات حالياً !!
+            </div>
+        {% endfor %}
+    </div>
+{% endblock content %}

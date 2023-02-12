@@ -1,0 +1,37 @@
+{% load static %}
+
+<div class="model" id="model-{{ message.id }}-id-{{type}}" style="color: black !important">
+    <div class="model-header">
+        <div class="title-model">{{key}} : {{message}}</div>
+        <button data-close-button class="close-btn">&times;</button>
+    </div>
+    <div class="model-body">
+        <link rel="stylesheet" href="{% static 'css/master_activity_model_style.css' %}">
+        <div class="position-relative q_memo_content text-white py-4 my-5">
+            {% if message.message_type == 1 %}
+                <h5 class="title position-absolute" style="top: -40px ;width: 100px">التسميع</h5>
+                {% for key in message.first_info %}
+                    {% if key|length <= 3 and key != 'عبس' %}
+                        <div class="block bg-light text-dark">{{key}}</div>
+                    {% else %}
+                        <div class="flex-block bg-light text-dark">{{ key }}</div>
+                    {% endif %}
+                {% endfor %}
+            {% elif message.message_type == 2 %}
+                <h5 class="title position-absolute" style="top: -40px ;width: 100px">السبر</h5>
+                {% if message.second_info.type == 'whole' %}
+                    <div class="flex-block bg-light text-dark">{{ message.second_info.part }}</div>
+                {% elif message.second_info.type == 'half' %}
+                    <div class="flex-block bg-light text-dark">{{ message.first_info.content }}</div>
+                {% else %}
+                    <div class="flex-block bg-light text-dark">{{ message.first_info.content }}</div>
+                {% endif %} 
+            {% else %}
+                <h5 class="title position-absolute" style="top: -40px;">السبر الترشيحي</h5>
+                {% for key in message.first_info %}
+                    <div class="flex-block bg-light text-dark">{{key}}</div>
+                {% endfor %}   
+            {% endif %}
+        </div>
+    </div>
+</div>

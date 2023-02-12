@@ -1,0 +1,31 @@
+{% load static %}
+{% load filters %}
+
+<section id="student-q-test-{{ id }}" class="student-q-test">
+    <h6 class="text-white title">
+        سبر الطالب في المسجد
+    </h6>
+    <div class="q-test-container">
+        {% for key, value in q_test.items %}
+            <div class="test-card container">
+                <div class="test-card-title text-black text-center">{{ key }}</div>
+                <div class="card-grid-container">
+                    {% for key2, value2 in value.items %}
+                        <div class="flex-grid-block text-black bg-light text-center" {% if key2|quarter %} style="grid-row: 3 / span 2;" {% else %} style="grid-row: 1 / span 2;" {% endif %} >{{ key2 }}</div>
+                        {% for key3, value3 in value2.items %}
+                            {% if value3 == 'NON' %}
+                                <div class="flex-block-two bg-secondary text-white">{{ key3 }}</div>
+                            {% elif value3 == 'OLD' %}
+                                <div class="flex-block-two bg-warning text-white">{{ key3 }}</div>
+                            {% elif value3 == 'NEW' %}
+                                <div class="flex-block-two bg-success text-white">{{ key3 }}</div>
+                            {% else %}
+                                <div class="flex-block-two bg-danger text-white">{{ key3 }}</div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</section>

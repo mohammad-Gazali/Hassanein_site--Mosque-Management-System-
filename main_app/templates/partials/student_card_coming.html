@@ -1,0 +1,25 @@
+{% load static %}
+
+<div class="card position-relative card-border {% if student.id in reg_today %} card-border-danger {% endif %}" style="width: 285px">
+    <div class="card-body">
+        <div class="card-title text-dark mb-3">
+            <b>الاسم الثلاثي:</b> {{ student.name }}
+        </div>
+        <div class="card-text">
+            <ul class="list-group p-0 mb-3">
+                <li class="list-group-item"><b>المعرف: </b>{{ student.id }}</li>
+                <li class="list-group-item"><b>الفئة: </b>{{ student.category }}</li>
+                <li class="list-group-item"><b>العمر: </b>{% if student.age != 'تاريخ الميلاد غير محدد' %}{{ student.age }} سنة{% else %}غير محدد{% endif %}</li>
+                <li class="list-group-item"><b>اسم الأم: </b>{{ student.mother_name }}</li>
+            </ul>
+        </div>
+    </div>
+    {% if user.is_authenticated %}
+            <div data-model-target="#model-{{ student.id }}-id-add_coming" class="btn {% if student.id in reg_today %} btn-danger {% else %} btn-success {% endif %} position-absolute-bottom mt-3 translate-middle col-6 text-white">تسجيل حضور</div>
+            {% if student.id in reg_today %}
+                {% include 'models/coming_model.html' with student=student key="تسجيل حضور" type="add_coming" reg=True %}
+            {% else %}
+                {% include 'models/coming_model.html' with student=student key="تسجيل حضور" type="add_coming" reg=False %}
+            {% endif %}
+    {% endif %}
+</div>

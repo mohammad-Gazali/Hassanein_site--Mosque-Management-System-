@@ -1,0 +1,32 @@
+{% load static %}
+
+<div class="model" id="model-{{ student.id }}-id-{{type}}">
+    <div class="model-header">
+        <div class="title-model">{{key}} : {{student.name}}</div>
+        <button data-close-button class="close-btn">&times;</button>
+    </div>
+    <div class="model-body pb-3">
+        <link rel="stylesheet" href="{% static 'css/add_coming_style.css' %}">
+        <div class="main-create-note container">
+            <h3 class="title text-white">الحضور</h3>
+            <form class="form-control" action="{% url "add_coming" %}" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="student-id" value="{{ student.id }}" required>
+                {% if reg %}
+                    <div class="error-content-coming text-danger"><b>انتباه !!</b> لقد سجل الطالب حضوراً اليوم</div>
+                {% endif %}
+                <label class="form-label mt-3" for="coming-points">النقاط</label>
+                <input id="coming-points" class="form-control" min="1" type="number" name="points" required>
+                <label class="form-label mt-3" for="coming-category">نوع الحضور</label>
+                <select class="form-select" name="coming-category" id="coming-category">
+                    {% for category in coming_categories %}
+                        <option value="{{ category.id }}">{{ category }}</option>
+                    {% endfor %}
+                </select>
+                <label class="form-label mt-3" for="coming-points">ملاحظة</label>
+                <textarea id="note-for-coming" placeholder="محتوى الملاحظة" type="text" name="note-for-coming" class="form-control"></textarea>
+                <button type="submit" class="btn btn-success w-100 mt-3">تسجيل</button>
+            </form>
+        </div>
+    </div>
+</div>

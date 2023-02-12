@@ -1,0 +1,119 @@
+:root {
+    --clr1: #0466C8;
+    --clr2: #28386d;
+    --clr3: #001233;
+    --clr4: #001845;
+    --clr5: #33415C;
+    --clr6: #979DAC;
+}
+
+.model {
+    overflow: overlay;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    border: 2px solid black;
+    border-radius: 10px;
+    z-index: 10;
+    background-color: var(--clr2);
+    width: 500px;
+    height: 80vh;
+    max-width: 89%;
+    transition: .2s ease-in-out;
+    box-shadow: 0px 0px 7px 0px white;
+}
+
+.model.active {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.model-header {
+    background-color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    border-bottom: 2px solid black;
+}
+
+.model-header .title-model {
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+.model-header .close-btn {
+    font-size: 1.5rem;
+    font-weight: bolder;
+    border: none;
+    outline: none;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.model-body {
+    padding: 10px 15px;
+    background-color: var(--clr2);
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.model::-webkit-scrollbar {
+    background-color: transparent;
+    width: 15px;
+}
+
+.model::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+  
+.model::-webkit-scrollbar-thumb {
+    border-radius: 20px;
+    border: 4px solid transparent;
+    background-color: rgba(0,0,0,0.2);
+    background-clip: content-box;
+}
+
+#overlay {
+    position: fixed;
+    z-index: 5;
+    opacity: 0;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    pointer-events: none;
+    transition: .2s ease-in-out;
+}
+
+#overlay.active {
+    opacity: 1;
+    pointer-events: all;
+    cursor: pointer;
+}
+
+.q_memo_content {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    padding: 8px;
+    min-width: 60%;
+    border: 3px solid var(--clr1);
+    background-color: rgba(135, 135, 161, 0.103);
+    border-radius: 5px;
+}
+
+.title {
+    width: 50%;
+    position: relative;
+    margin: 0 auto;
+    margin-bottom: 1rem;
+    border-radius: 12px;
+    text-align: center;
+    background-color: var(--clr1);
+    padding: 12px;
+}

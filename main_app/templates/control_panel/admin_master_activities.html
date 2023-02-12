@@ -1,0 +1,34 @@
+{% extends 'control_panel/admin_control_base.html' %}
+{% load static %}
+
+{% block admin_content %}
+    <table class="table table-dark table-bordered table-striped mt-3 rounded">
+        <thead>
+            <tr>
+                <th class="text-center">اسم الأستاذ</th>
+                <th class="text-center">اسم الطالب</th>
+                <th class="text-center">تاريخ الإرسال</th>
+                <th class="text-center">نوع الرسالة</th>
+                <th class="text-center">المحتوى</th>
+                <th class="text-center"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for message in messages %}
+                <tr class="{% if message.doublepointmessage %}ramadan-table-message-color{% endif %}">
+                    <td class="text-center" style="white-space: nowrap;">{{ message.master_name }}</td>
+                    <td class="text-center" style="white-space: nowrap;">{{ message.student_string }}</td>
+                    <td class="text-center" style="white-space: nowrap;">{{ message.sended_at|date:'Y/m/d - h:i A'  }}</td>
+                    <td class="text-center" style="white-space: nowrap;">{% if message.message_type == 1 %}تسميع{% else %}سبر{% endif %}</td>
+                    <td class="text-center" style="white-space: nowrap;">
+                        <div data-model-target="#model-{{ message.id }}-id-master_activity_admin_content" class="btn btn-primary w-100">عرض المحتوى</div>
+                        {% include 'models/activity_content_admin_model.html' with message=message key="المحتوى" type="master_activity_admin_content" %}
+                    </td>
+                    <td class="text-center" style="white-space: nowrap;"><a href="{% url 'admin_delete_activity' message.id %}" class="btn btn-danger w-100">حذف</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div id="overlay"></div>
+    <script src="{% static 'js/popped_up_models.js' %}"></script>
+{% endblock admin_content %}

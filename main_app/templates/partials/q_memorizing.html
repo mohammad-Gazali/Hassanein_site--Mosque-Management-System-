@@ -1,0 +1,81 @@
+{% load static %}
+
+<section id="student-q-memorizing-{{id}}" class="student-q-memorizing">
+    <h6 class="text-white title">
+        تسميع الطالب
+    </h6>
+    <hr class="bg-light">
+    <div  class="container filter-container">
+        <label class="text-white mb-3 fs-6 d-block form-check-label filter-one">
+            <input data-target-display="one-display-{{id}}" data-target-display-opposite="two-display-{{id}}" type="radio" name="filter-{{id}}" class="form-check-input m-2" value="one" checked>
+            التصنيف حسب ترتيب السور والصفحات
+        </label>
+        <label class="text-white fs-6 d-block form-check-label filter-two">
+            <input data-target-display="two-display-{{id}}" data-target-display-opposite="one-display-{{id}}" type="radio" name="filter-{{id}}" class="form-check-input m-2" value="two">
+            التصنيف حسب التسميع
+        </label>
+    </div>
+    <hr class="bg-light">
+
+    <!-- first display -->
+    
+    <div id="one-display-{{id}}" class="container text-white q-memorizing-container d-flex one">
+        {% for key, value in q_memorizing.items %}
+            {% if key|length > 3 or key == 'عبس' %}
+                {% if value == 'NON' %}
+                    <div class="flex-block bg-secondary">{{key}}</div>
+                {% elif value == 'NEW' %}
+                    <div class="flex-block bg-success">{{key}}</div>
+                {% elif value == 'OLD' %}
+                    <div class="flex-block bg-warning">{{key}}</div>
+                {% else %}
+                    <div class="flex-block bg-danger">{{key}}</div>
+                {% endif %}
+            {% else %}
+                {% if value == 'NON' %}
+                    <div class="block bg-secondary">{{key}}</div>
+                {% elif value == 'NEW' %}
+                    <div class="block bg-success">{{key}}</div>
+                {% elif value == 'OLD' %}
+                    <div class="block bg-warning">{{key}}</div>
+                {% else %}
+                    <div class="block bg-danger">{{key}}</div>
+                {% endif %}
+            {% endif %}
+        {% endfor %} 
+    </div>
+
+    <!-- second display -->
+
+    <div id="two-display-{{id}}" class="container text-white q-memorizing-container d-none two">
+        {% for key, value in q_memorizing.items %}
+            {% if value == 'NEW' %}
+                {% if key|length > 3 or key == 'عبس' %}
+                    <div class="flex-block bg-success order-1">{{key}}</div>
+                {% else %}
+                    <div class="block bg-success order-1">{{key}}</div>
+                {% endif %}
+            {% elif value == 'OLD' %}
+                {% if key|length > 3 or key == 'عبس' %}
+                    <div class="flex-block bg-warning order-2">{{key}}</div>
+                {% else %}
+                    <div class="block bg-warning order-2">{{key}}</div>
+                {% endif %}
+            {% elif value == 'NON' %}
+                {% if key|length > 3 or key == 'عبس' %}
+                    <div class="flex-block bg-secondary order-3">{{key}}</div>
+                {% else %}
+                    <div class="block bg-secondary order-3">{{key}}</div>
+                {% endif %}
+            {% else %}
+                {% if key|length > 3 or key == 'عبس' %}
+                    <div class="flex-block bg-danger order-4">{{key}}</div>
+                {% else %}
+                    <div class="block bg-danger order-4">{{key}}</div>
+                {% endif %}
+            {% endif %}
+        {% endfor %} 
+    </div>
+
+
+</section>
