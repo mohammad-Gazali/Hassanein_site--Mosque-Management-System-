@@ -74,7 +74,7 @@ editPointsTypeChecks.forEach((item) => {
 const handleFetchEditPoints = async () => {
     const csrfToken = csrfMiddlewareToken.value
     
-    const res = await fetch('/points/json', {
+    const res = await fetch('/json/students', {
         method: "POST",
         mode: 'same-origin',
         headers: {

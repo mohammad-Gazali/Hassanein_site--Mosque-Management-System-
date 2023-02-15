@@ -26,6 +26,8 @@
         {% include 'partials/search_control_panel.html' with current_url="admin_coming_list" %}
     {% elif request.path == "/control/points/log" %}
         {% include 'partials/search_control_panel.html' with current_url="admin_editing_points_log" %}
+    {% elif request.path == "/control/specializations" %}
+        {% include 'partials/search_control_panel.html' with current_url="admin_specializations" %}
     {% else %}
         <h1 class="text-white">{{ request.path }}</h1>
     {% endif %}

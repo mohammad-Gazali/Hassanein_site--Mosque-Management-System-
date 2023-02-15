@@ -28,10 +28,10 @@ urlpatterns = [
     path('control/points/log', views.admin_editing_points_log, name='admin_editing_points_log'),
     path('control/specializations', views.admin_specializations, name='admin_specializations'),
     path('points', views.editing_points, name='editing_points'),
-    path('points/json', views.editing_points_json, name='editing_points_json'),
     path('points/log', views.editing_points_log, name='editing_points_log'),
     path('points/delete/add/<int:aid>', views.deleting_editing_points_add, name='editing_points_delete_add'),
     path('points/delete/remove/<int:rid>', views.deleting_editing_points_remove, name='editing_points_delete_remove'),
     path('reports/student', views.students_reports, name='reports_all_students'),
     path('money/delete', views.deleting_money, name='money_deleting'),
+    path('json/students', views.students_ajax, name='students_ajax'),
 ]

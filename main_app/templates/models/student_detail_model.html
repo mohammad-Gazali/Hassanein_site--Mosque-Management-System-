@@ -14,6 +14,7 @@
             <a href="#student-q-test-{{ student.id }}" class="btn btn-primary w-100">السبر</a>
             <a href="#student-q-candidate-test-awqaf-{{ student.id }}" class="btn btn-primary w-100">السبر الترشيحي</a>
             <a href="#student-q-test-awqaf-{{ student.id }}" class="btn btn-primary w-100">سبر القرآن في الأوقاف</a>
+            <a href="#student-specialization-details-{{ student.id }}" class="btn btn-primary w-100">الاختصاصات</a>
             <a href="#memorize-notes-{{ student.id }}" class="btn btn-primary w-100">ملاحظات التسميع</a>
         </div>
         <link rel="stylesheet" href="{% static 'css/student_detail_style.css'%}">
@@ -63,6 +64,7 @@
         {% include 'partials/q_test.html' with q_test=student.q_test id=student.id %}
         {% include 'partials/q_candidate_test_awqaf.html' with q_candidate_test=student.q_test_candidate id=student.id %}
         {% include 'partials/q_test_awqaf.html' with q_awqaf_test=student.q_awqaf_test id=student.id %}
+        {% include 'partials/specialization_details.html' with parts=student.part_set.all id=student.id %}
         {% include 'partials/memorize_notes.html' with student=student id=student.id %}
     </div>
 </div>

@@ -2,32 +2,34 @@
 
 
 {% block admin_content %}
-    <table class="table table-dark table-bordered table-striped mt-3 rounded">
-        <thead>
-            <tr>
-                <th class="text-center">اسم الأستاذ</th>
-                <th class="text-center">اسم الطالب</th>
-                <th class="text-center">نوع الحضور</th>
-                <th class="text-center">تاريخ التسجيل</th>
-                <th class="text-center">النقاط</th>
-                <th class="text-center">ملاحظة</th>
-                <th class="text-center"></th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for coming in coming_list %}
+    <div class="table-responsive mb-5 scrollbar-table">
+        <table class="table table-dark table-bordered table-striped mb-0 mt-3 rounded">
+            <thead>
                 <tr>
-                    <td class="text-center" style="white-space: nowrap;">{{ coming.master_name }}</td>
-                    <td class="text-center" style="white-space: nowrap;">{{ coming.student }}</td>
-                    <td class="text-center" style="white-space: nowrap;">{{ coming.category }}</td>
-                    <td class="text-center" style="white-space: nowrap;">{{ coming.registered_at|date:'Y/m/d - h:i A'  }}</td>
-                    <td class="text-center" style="white-space: nowrap;">{{ coming.points }}</td>
-                    <td class="text-center">{{ coming.note }}</td>
-                    <td class="text-center" style="white-space: nowrap;">
-                        <a href="{% url 'admin_delete_coming' coming.id %}" class="btn btn-danger w-100">حذف</a>
-                    </td>
+                    <th style="white-space: nowrap;" class="text-center">اسم الأستاذ</th>
+                    <th style="white-space: nowrap;" class="text-center">اسم الطالب</th>
+                    <th style="white-space: nowrap;" class="text-center">نوع الحضور</th>
+                    <th style="white-space: nowrap;" class="text-center">تاريخ التسجيل</th>
+                    <th style="white-space: nowrap;" class="text-center">النقاط</th>
+                    <th style="white-space: nowrap;" class="text-center">ملاحظة</th>
+                    <th class="text-center"></th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for coming in coming_list %}
+                    <tr>
+                        <td class="text-center" style="white-space: nowrap;">{{ coming.master_name }}</td>
+                        <td class="text-center" style="white-space: nowrap;">{{ coming.student }}</td>
+                        <td class="text-center" style="white-space: nowrap;">{{ coming.category }}</td>
+                        <td class="text-center" style="white-space: nowrap;">{{ coming.registered_at|date:'Y/m/d - h:i A'  }}</td>
+                        <td class="text-center" style="white-space: nowrap;">{{ coming.points }}</td>
+                        <td class="text-center">{{ coming.note }}</td>
+                        <td class="text-center" style="white-space: nowrap;">
+                            <a href="{% url 'admin_delete_coming' coming.id %}" class="btn btn-danger w-100">حذف</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock admin_content %}

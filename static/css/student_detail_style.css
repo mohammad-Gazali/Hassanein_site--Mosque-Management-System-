@@ -215,6 +215,8 @@
 
 /* q-candidate-test end */
 
+/* q-awqf-test start */
+
 .student-q-test-awqaf {
     position: relative;
     width: 100%;
@@ -225,6 +227,21 @@
     border-radius: 4px;
 }
 
+/* q-awqf-test end */
+
+/* specialization-details start */
+
+.specialization-details {
+    position: relative;
+    width: 100%;
+    background-color: rgba(135, 135, 161, 0.103);
+    border: 1px solid rgba(255, 255, 255, 0.098);
+    padding: 2rem 0.5rem;
+    padding-top: 20px;
+    border-radius: 4px;
+}
+
+/* specialization-details end */
 
 /* memorize notes start */
 

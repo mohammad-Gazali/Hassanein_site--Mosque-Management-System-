@@ -1,0 +1,301 @@
+{% extends 'base.html' %}
+
+
+{% block title %}
+    الاختصاصات
+{% endblock title %}
+
+{% block content %}
+    <section class="common-box container">
+        <h2 class="title text-white">
+            إضافة تسميع اختصاص
+        </h2>
+        <form id="search-student-form" action="#" class="gap-3 d-flex flex-column p-4 form-control mb-4 mt-1">
+            {% csrf_token %}
+            <h5 class="title text-white" style="background: rgb(109, 40, 193);">
+                البحث عن طالب
+            </h5>
+            <div id="displaying-students-specialization"></div>
+            <label class="form-label" for="students-reports-search-student">اسم الطالب</label>
+            <input id="students-reports-search-student" type="text" class="form-control" required>
+            <button class="btn btn-primary d-flex align-items-center justify-content-center gap-2" type="submit">
+                بحث <i class="bi bi-search"></i>
+            </button>
+        </form>
+        <form id="specializations-form" action="{% url 'specializations_main' %}" method="POST" class="form-control d-flex flex-column gap-3 py-4">
+            {% csrf_token %}
+            <div id="error-section-for-not-choosing-student"></div>
+            <input id="hidden-input-for-student-id-specialization" type="hidden" name="student-id" value="">
+            <div role="alert" id="div-for-displaying-student-in-form-body-specialization"></div>
+            <select name="specialization" id="specialization" class="form-select">
+                <option value="0" selected>
+                    اختر اختصاص
+                </option>
+                {% for specialization in specializations %}
+                    <option value="{{ specialization.id }}">
+                        {{ specialization }}
+                    </option>
+                {% endfor %}
+            </select>
+            <select name="level" id="level" class="form-select" disabled>
+                <option value="0" selected>
+                    اختر مستوى
+                </option>
+            </select>
+            <select name="part" id="part" class="form-select" disabled>
+                <option value="0" selected>
+                    اختر القسم
+                </option>
+            </select>
+            <button class="btn btn-success disabled" type="submit">
+                إضافة 
+            </button>
+        </form>
+        <script>
+
+            const specialization = document.getElementById('specialization');
+            const level = document.getElementById('level');
+            const part = document.getElementById('part');
+            const specializationForm = document.getElementById('specializations-form');
+            const submitBtn = document.querySelector('#specializations-form button');
+            const specializationStudentForm = document.getElementById('search-student-form');
+            const specializationDisplayStudents = document.getElementById('displaying-students-specialization');
+            const specializationErrorNotStudentChoosed = document.getElementById('error-section-for-not-choosing-student');
+            const specializationHiddenInput = document.getElementById('hidden-input-for-student-id-specialization');
+            const specializationDisplayingStudentsFormBody = document.getElementById('div-for-displaying-student-in-form-body-specialization');
+
+
+            specialization.onchange = async (e) => {
+
+                removeFirst(e);
+                submitBtn.classList.add("disabled");
+
+                emptyPart();
+                part.disabled = true;
+
+                const response = await fetch("{% url 'specializations_levels_ajax' %}", {
+                    method: "POST",
+                    mode: "same-origin",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": "{{ csrf_token }}",
+                    },
+                    body: JSON.stringify({
+                        sid: e.target.value
+                    })
+                });
+
+                const data = await response.json();
+
+                addLevels(data, level);
+            }
+
+
+            const levelChange = async (e) => {
+                removeFirst(e);
+
+                submitBtn.classList.add("disabled");
+
+                const response = await fetch("{% url 'specializations_parts_ajax' %}", {
+                    method: "POST",
+                    mode: "same-origin",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": "{{ csrf_token }}",
+                    },
+                    body: JSON.stringify({
+                        lid: e.target.value
+                    })
+                });
+
+                const data = await response.json();
+
+                addParts(data, part);
+            }
+
+
+
+            //* Helper Functions
+            function removeFirst(e) {
+                if (e.target.children[0].value === "0") {
+                    e.target.children[0].remove();
+                }
+            }
+
+            function addLevels(data) {
+
+                const { result } = data;
+
+                emptyLevel();
+
+                result.forEach((item) => {
+                    const element = document.createElement('option');
+                    element.value = item.id;
+                    element.innerHTML = `المستوى ${item.level_number}`
+
+                    level.appendChild(element)
+                });
+
+                level.disabled = false;
+
+                level.onchange = levelChange;
+            }
+
+            function addParts(data) {
+                const { result } = data;
+
+                emptyPart();
+
+                result.forEach((item) => {
+                    const element = document.createElement('option');
+                    element.value = item.id;
+                    element.innerHTML = `القسم ${item.part_number} &nbsp; [${item.part_start} - ${item.part_end}]`;
+
+                    part.appendChild(element);
+                })
+
+                part.disabled = false;
+
+                part.onchange = (e) => {
+
+                    removeFirst(e);
+
+                    submitBtn.classList.remove("disabled");
+
+                }
+            }
+
+
+            // empty functions
+            function emptyLevel() {
+                Array.from(level.children).forEach((item) => {
+                    item.remove();
+                })
+                
+                const firstElement = document.createElement('option');
+                firstElement.value = "0";
+                firstElement.innerHTML = "اختر مستوى";
+                firstElement.selected = true;
+
+                level.appendChild(firstElement);
+            }
+
+            function emptyPart() {
+                Array.from(part.children).forEach((item) => {
+                    item.remove();
+                })
+
+                const firstElement = document.createElement('option');
+                firstElement.value = "0";
+                firstElement.innerHTML = "اختر قسم";
+                firstElement.selected = true;
+
+                part.appendChild(firstElement);
+            }
+
+
+            // search student
+            specializationStudentForm.onsubmit = async (e) => {
+
+                e.preventDefault();
+
+                const inputValue = e.target.children[4].value
+
+                const response = await fetch('/json/students', {
+                    method: "POST",
+                    mode: 'same-origin',
+                    headers: {
+                        "Content-Type":"application/json",
+                        "X-CSRFToken": "{{ csrf_token }}"
+                    },
+                    body: JSON.stringify({
+                        "content": inputValue
+                    })
+                });
+
+                const data = await response.json();
+
+                specializationDisplayStudents.innerHTML = '';
+
+                if (data.students.length === 0) {
+
+                    const newError = document.createElement('div')
+                    const textError = document.createTextNode('لا يوجد طالب بهذا الاسم')
+                    
+                    newError.appendChild(textError)
+                    newError.className = 'alert alert-danger'
+            
+                    specializationDisplayStudents.appendChild(newError)
+            
+                } else {
+                    Array.from(data.students).forEach((student) => {
+                        const newDiv = document.createElement('div')
+                        const innerButton = document.createElement('button')
+                        
+                        const textDiv = document.createTextNode(`[${student.id}] ${student.name}`)
+                        const textButton = document.createTextNode('اختيار')
+                
+                        innerButton.appendChild(textButton)
+                        innerButton.className = 'btn btn-primary'
+                        innerButton.dataset.id = student.id
+                        innerButton.dataset.name = student.name
+            
+                        newDiv.appendChild(textDiv)
+                        newDiv.appendChild(innerButton)
+                        newDiv.className = 'alert alert-primary flex-wrap d-flex gap-3 align-items-center justify-content-between'
+                        newDiv.id = `student-in-edit-points-form-id-${student.id}`
+                        newDiv.role = 'alert'
+            
+                        specializationDisplayStudents.appendChild(newDiv)
+                    })
+
+                    Array.from(specializationDisplayStudents.children).forEach((div) => {
+                        const btn = div.children[0]
+            
+                        btn.onclick = (e) => {
+                            specializationDisplayingStudentsFormBody.className = ''
+                            specializationDisplayingStudentsFormBody.innerHTML = ''
+            
+                            const stuId = e.target.dataset.id;
+                            const stuName = e.target.dataset.name;
+            
+                            const xIcon = document.createElement('i')
+                            xIcon.className = 'bi bi-x-lg'
+                            xIcon.style.cursor = 'pointer'
+            
+                            const textContent = document.createTextNode(`[${stuId}] ${stuName}`)
+            
+                            specializationHiddenInput.value = stuId;
+            
+                            specializationDisplayingStudentsFormBody.className = 'alert alert-primary d-flex justify-content-between align-items-center'
+                            specializationDisplayingStudentsFormBody.appendChild(textContent);
+                            specializationDisplayingStudentsFormBody.appendChild(xIcon)
+            
+                            xIcon.onclick = () => {
+                                specializationHiddenInput.value = ''
+                                specializationDisplayingStudentsFormBody.className = ''
+                                specializationDisplayingStudentsFormBody.innerHTML = ''
+                            }
+                        }
+                    }) 
+                }           
+            }
+
+
+            // error no student choosed in the main form
+            specializationForm.onsubmit = (e) => {
+                e.preventDefault();
+                if (!specializationHiddenInput.value) {
+                    specializationErrorNotStudentChoosed.innerHTML = ''
+                    specializationErrorNotStudentChoosed.className = ''
+            
+                    specializationErrorNotStudentChoosed.className = 'alert alert-danger'
+                    specializationErrorNotStudentChoosed.role = 'alert'
+                    specializationErrorNotStudentChoosed.textContent = 'يجب اختيار الطالب قبل إضافة الاختصاص'
+                } else {
+                    e.target.submit();
+                }
+            }
+        </script>
+    </section>
+{% endblock content %}

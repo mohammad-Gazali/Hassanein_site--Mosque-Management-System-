@@ -114,3 +114,24 @@
     background-color: rgb(109, 40, 193, 1) !important;
     color: white !important;
 }
+
+/** scrollbar-table */
+.scrollbar-table::-webkit-scrollbar {
+    height: 10px;
+}
+
+.scrollbar-table::-webkit-scrollbar-track {
+    background-color: var(--clr3);
+}
+
+.scrollbar-table::-webkit-scrollbar-thumb {
+    background-color: rgb(4, 122, 255);
+}
+
+.scrollbar-table::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(4, 104, 218);
+}
+
+.scrollbar-table::-webkit-scrollbar-thumb:active {
+    background-color: rgb(3, 70, 147);
+}

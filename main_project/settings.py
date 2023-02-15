@@ -41,9 +41,9 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     
     
-    'main_app',
-    'accounts',
-    'specializtions',
+    'main_app.apps.MainAppConfig',
+    'accounts.apps.AccountsConfig',
+    'specializations.apps.SpecializationsConfig',
 
 
     'django_json_widget',

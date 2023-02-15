@@ -2,38 +2,40 @@
 
 
 {% block admin_content %}
-    <table class="table table-dark table-bordered table-striped mt-3 rounded text-center">
-        <thead>
-            <tr>
-                <th>اسم الأستاذ</th>
-                <th>اسم الطالب</th>
-                <th>النوع</th>
-                <th>السبب</th>
-                <th>القيمة</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for a_msg in a_msgs %}
+    <div class="table-responsive mb-5 scrollbar-table">
+        <table class="table table-dark table-bordered table-striped mb-0 mt-3 rounded text-center">
+            <thead>
                 <tr>
-                    <td>{{ a_msg.master_name }}</td>
-                    <td>{{ a_msg.student }}</td>
-                    <td>إضافة</td>
-                    <td>{{ a_msg.cause }}</td>
-                    <td>{{ a_msg.value }}</td>
-                    <td><a href="{% url 'editing_points_delete_add' a_msg.id %}" class="btn btn-danger w-100">إزالة</a></td>
+                    <th style="white-space: nowrap;">اسم الأستاذ</th>
+                    <th style="white-space: nowrap;">اسم الطالب</th>
+                    <th style="white-space: nowrap;">النوع</th>
+                    <th style="white-space: nowrap;">السبب</th>
+                    <th style="white-space: nowrap;">القيمة</th>
+                    <th></th>
                 </tr>
-            {% endfor %}
-            {% for d_msg in d_msgs %}
-                <tr>
-                    <td>{{ d_msg.master_name }}</td>
-                    <td>{{ d_msg.student }}</td>
-                    <td>حذف</td>
-                    <td>{{ d_msg.cause }}</td>
-                    <td>{{ d_msg.value }}</td>
-                    <td><a href="{% url 'editing_points_delete_remove' d_msg.id %}" class="btn btn-danger w-100">إزالة</a></td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for a_msg in a_msgs %}
+                    <tr>
+                        <td style="white-space: nowrap;">{{ a_msg.master_name }}</td>
+                        <td style="white-space: nowrap;">{{ a_msg.student }}</td>
+                        <td style="white-space: nowrap;">إضافة</td>
+                        <td style="white-space: nowrap;">{{ a_msg.cause }}</td>
+                        <td style="white-space: nowrap;">{{ a_msg.value }}</td>
+                        <td><a href="{% url 'editing_points_delete_add' a_msg.id %}" class="btn btn-danger w-100">إزالة</a></td>
+                    </tr>
+                {% endfor %}
+                {% for d_msg in d_msgs %}
+                    <tr>
+                        <td style="white-space: nowrap;">{{ d_msg.master_name }}</td>
+                        <td style="white-space: nowrap;">{{ d_msg.student }}</td>
+                        <td style="white-space: nowrap;">حذف</td>
+                        <td style="white-space: nowrap;">{{ d_msg.cause }}</td>
+                        <td style="white-space: nowrap;">{{ d_msg.value }}</td>
+                        <td><a href="{% url 'editing_points_delete_remove' d_msg.id %}" class="btn btn-danger w-100">إزالة</a></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock admin_content %}

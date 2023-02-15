@@ -8,6 +8,8 @@ from django.db.models import Prefetch
 from .models import MemorizeNotes, Student, MemorizeMessage, Coming, ControlSettings, DoublePointMessage, Master, PointsAddingCause, PointsDeletingCause, PointsAdding, PointsDeleting, MoneyDeleting, MoneyDeletingCause, ComingCategory
 from .forms import SettingForm
 from .point_map import apply_q_map, q_map
+from specializations.models import Part, SpecializationMessage, Specialization, Level
+from specializations.views import apply_edit_changes
 from datetime import datetime, date
 import pytz
 import math
@@ -27,26 +29,39 @@ def index(request):
     return render(request, 'index.html', {'ramadan': ramadan})
 
 
-
-
-
 def search_results_of_student(request):
 
     query_text= request.GET.get('q_text')
     query_id = request.GET.get('q_search_id')
+    
+    specializations = Specialization.objects.prefetch_related("level_set__part_set").all()
+    levels = Level.objects.all()
+
 
     if query_id:
         student = Student.objects.filter(pk=query_id)
-        return render(request, 'search_results.html', {'one_student': student, 'students': None, 'text': False})
+        return render(request, 'search_results.html', {
+            'one_student': student, 
+            'students': None, 
+            'text': False,
+            'specializations': specializations,
+            'levels': levels,
+            })
 
     if query_text:
         my_regex = r''
         for word in re.split(r'\s+', query_text.strip()):
             my_regex += word + r'.*'
         
-        students = Student.objects.prefetch_related("memorizenotes_set").select_related("category").filter(name__iregex=r'{}'.format(my_regex)).order_by('id')
+        students = Student.objects.prefetch_related("memorizenotes_set", "part_set__level__specialization").select_related("category").filter(name__iregex=r'{}'.format(my_regex)).order_by('id')
         
-        return render(request, 'search_results.html', {'students': students, 'one_student': None, 'text': True})
+        return render(request, 'search_results.html', {
+            'students': students, 
+            'one_student': None, 
+            'text': True,
+            'specializations': specializations,
+            'levels': levels,
+            })
 
 
 @login_required
@@ -736,19 +751,19 @@ def admin_activity_master(request):
 def admin_coming_list(request):
     q = request.GET.get("text-search-table") or None
     search_type = request.GET.get("type-search-table-admin-p") or None
-    coming_list = Coming.objects.select_related('student', 'master_name__user', 'category').all().order_by('registered_at')
+    coming_list = Coming.objects.select_related('student', 'master_name__user', 'category').all().order_by('-registered_at')
     if ((q is not None) and (search_type is not None)):
         if search_type == "by-master": 
             my_regex = r''
             for word in re.split(r'\s+', q.strip()):
                 my_regex += word + r'.*'      
-            coming_list = Coming.objects.select_related('student', 'master_name__user', 'category').filter(master_name__user__username__iregex=r'{}'.format(my_regex)).order_by('registered_at')
+            coming_list = Coming.objects.select_related('student', 'master_name__user', 'category').filter(master_name__user__username__iregex=r'{}'.format(my_regex)).order_by('-registered_at')
             return render(request, 'control_panel/admin_coming_list.html', {'coming_list': coming_list, 'val': q})
         else:
             my_regex = r''
             for word in re.split(r'\s+', q.strip()):
                 my_regex += word + r'.*'      
-            coming_list = Coming.objects.select_related('student', 'master_name__user', 'category').filter(student__name__iregex=r'{}'.format(my_regex)).order_by('registered_at')
+            coming_list = Coming.objects.select_related('student', 'master_name__user', 'category').filter(student__name__iregex=r'{}'.format(my_regex)).order_by('-registered_at')
             return render(request, 'control_panel/admin_coming_list.html', {'coming_list': coming_list, 'val': q})
     return render(request, 'control_panel/admin_coming_list.html', {'coming_list': coming_list, 'val': ''}) 
 
@@ -889,7 +904,29 @@ def admin_editing_points_log(request):
 @user_passes_test(check_admin)
 @login_required
 def admin_specializations(request):
-    return render(request, 'control_panel/admin_specializations.html')
+    if request.method == "POST":
+        edits = list(request.POST)[1:]
+    
+        apply_edit_changes(edits)
+
+    q = request.GET.get("text-search-table") or None
+    search_type = request.GET.get("type-search-table-admin-p") or None
+
+    parts = Part.objects.select_related("level__specialization").prefetch_related("students").all().order_by("id")
+    students = Student.objects.exclude(part__isnull=True).order_by("id")
+
+    if ((q is not None) and (search_type is not None)):
+        if search_type == "by-text":
+            my_regex = r''
+            for word in re.split(r'\s+', q.strip()):
+                my_regex += word + r'.*'      
+            students = Student.objects.exclude(part__isnull=True).filter(name__iregex=r'{}'.format(my_regex)).order_by('id')
+        else:
+            students = Student.objects.exclude(part__isnull=True).filter(pk=int(q)).order_by('id')
+
+    messages = SpecializationMessage.objects.select_related("student", "master_name__user", "part__level__specialization").filter(student__in=students).order_by('-created_at')
+
+    return render(request, 'control_panel/admin_specializations.html', {"parts": parts, "students": students, "messages": messages, "val": q})
 
 
 # adding and deleting points
@@ -936,28 +973,6 @@ def editing_points(request):
 
             return render(request, 'editing_points_result.html', {'content': 'تمت عملية الخصم بنجاح'})
 
-    else:
-        return HttpResponseNotAllowed("")
-
-
-@user_passes_test(check_editing_points)
-@login_required
-def editing_points_json(request):
-    if request.method == "POST":
-        query = json.loads(request.body)['content']
-        if query is not None:
-            my_regex = r''
-            for word in re.split(r'\s+', query.strip()):
-                my_regex += word + r'.*'      
-            students = Student.objects.filter(name__iregex=r'{}'.format(my_regex)).order_by('id')
-            response = []
-            for student in students:
-                response.append({
-                    "id": student.id,
-                    "name": student.name,
-                })
-
-            return JsonResponse({'students': response}, status=200)
     else:
         return HttpResponseNotAllowed("")
 
@@ -1054,8 +1069,31 @@ def deleting_money(request):
 
 
 
+# ajax views
+
+def students_ajax(request):
+    if request.method == "POST":
+        query = json.loads(request.body)['content']
+        if query is not None:
+            my_regex = r''
+            for word in re.split(r'\s+', query.strip()):
+                my_regex += word + r'.*'      
+            students = Student.objects.filter(name__iregex=r'{}'.format(my_regex)).order_by('id')
+            response = []
+            for student in students:
+                response.append({
+                    "id": student.id,
+                    "name": student.name,
+                })
+
+            return JsonResponse({'students': response}, status=200)
+    else:
+        return HttpResponseNotAllowed("")
+
+
 
 # helper functions
+
 def give_section_from_page(page_num):
     if page_num % 21 == 0 and page_num != 21:
         return str(page_num / 21 + 1)
