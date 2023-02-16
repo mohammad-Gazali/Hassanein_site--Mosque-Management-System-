@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block title %}
+    جدول الغرامات الكلي
+{% endblock title %}
+
+{% block content %}
+    <div class="mt-5 mb-4 p-4 rounded d-flex flex-column" style="background-color: var(--clr4); border: 2px solid var(--clr6);">
+        <div class="d-flex justify-content-center align-items-center flex-wrap mb-3 gap-3">
+            <a class="btn btn-secondary" href="{% url 'admin_main' %}">العودة للوحة التحكم</a>
+            <a class="btn btn-secondary" href="{% url 'money_deleting' %}">العودة لصفحة الغرامات</a>
+            <a class="btn btn-warning" href="{% url 'money_deleting_table' %}">الجداول التفصيلية</a>
+            <a class="btn btn-warning" href="{% url 'money_deleting_total_table' %}">الجدول الكلي</a>
+        </div>
+        {% include 'partials/search_control_panel.html' with current_url='money_deleting_total_table' %}
+    </div>
+    <div class="table-responsive mb-5 scrollbar-table">
+        <table class="table table-dark table-bordered table-striped mb-0 mt-3 rounded text-center">
+            <thead>
+                <tr>
+                    <th colspan="100%" class="fs-3">كلي الغرامات</th>
+                </tr>
+                <tr>
+                    <th style="white-space: nowrap;">المعرف</th>
+                    <th style="white-space: nowrap;">الاسم</th>
+                    <th style="white-space: nowrap;">الغرامات بالنقود</th>
+                    <th style="white-space: nowrap;">الغرامات بالنقاط</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for info in data %}
+                    <tr>
+                        <td style="white-space: nowrap;">{{ info.student__id }}</td>
+                        <td style="white-space: nowrap;">{{ info.student__name }}</td>
+                        {% if info.sum_money %}
+                            <td style="white-space: nowrap;">{{ info.sum_money }}</td>
+                        {% else %}
+                            <td style="white-space: nowrap;">0</td>
+                        {% endif %}
+                        {% if info.sum_points %}
+                            <td style="white-space: nowrap;">{{ info.sum_points }}</td>
+                        {% else %}
+                            <td style="white-space: nowrap;">0</td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <script src="{% static 'js/search_table_script.js' %}"></script>
+{% endblock content %}

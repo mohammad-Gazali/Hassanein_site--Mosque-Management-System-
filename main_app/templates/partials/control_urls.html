@@ -14,6 +14,7 @@
         <div><a href="{% url 'admin_specializations' %}" class="btn btn-primary">الاختصاصات</a></div>
         <div><a href="{% url 'admin:index' %}" class="btn btn-primary">لوحة التحكم العليا</a></div>
     </div>
+    <br />
     {% if request.path == "/control" %}
         {% include 'partials/search_control_panel.html' with current_url="admin_main" %}
     {% elif request.path == "/control/activities" %}

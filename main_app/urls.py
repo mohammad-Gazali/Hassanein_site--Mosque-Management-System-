@@ -33,5 +33,10 @@ urlpatterns = [
     path('points/delete/remove/<int:rid>', views.deleting_editing_points_remove, name='editing_points_delete_remove'),
     path('reports/student', views.students_reports, name='reports_all_students'),
     path('money/delete', views.deleting_money, name='money_deleting'),
+    path('money/delete/category', views.deleting_money_category, name='money_deleting_category'),
+    path('money/delete/table', views.deleting_money_table, name='money_deleting_table'),
+    path('money/delete/total-table', views.deleting_money_total_table, name='money_deleting_total_table'),
     path('json/students', views.students_ajax, name='students_ajax'),
+    path('json/switch/money-delete', views.switch_deleting_active_to_points_state, name='switch_money_deleting_ajax'),
+
 ]

@@ -4,8 +4,8 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.generic import ListView, DeleteView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import HttpResponseForbidden, HttpResponseNotAllowed, JsonResponse
-from django.db.models import Prefetch
-from .models import MemorizeNotes, Student, MemorizeMessage, Coming, ControlSettings, DoublePointMessage, Master, PointsAddingCause, PointsDeletingCause, PointsAdding, PointsDeleting, MoneyDeleting, MoneyDeletingCause, ComingCategory
+from django.db.models import Prefetch, Sum, Q
+from .models import MemorizeNotes, Student, Category, MemorizeMessage, Coming, ControlSettings, DoublePointMessage, Master, PointsAddingCause, PointsDeletingCause, PointsAdding, PointsDeleting, MoneyDeleting, MoneyDeletingCause, ComingCategory
 from .forms import SettingForm
 from .point_map import apply_q_map, q_map
 from specializations.models import Part, SpecializationMessage, Specialization, Level
@@ -912,7 +912,7 @@ def admin_specializations(request):
     q = request.GET.get("text-search-table") or None
     search_type = request.GET.get("type-search-table-admin-p") or None
 
-    parts = Part.objects.select_related("level__specialization").prefetch_related("students").all().order_by("id")
+    parts = Part.objects.select_related("level__specialization").prefetch_related("students").all().order_by("level__specialization", "level", "part_number")
     students = Student.objects.exclude(part__isnull=True).order_by("id")
 
     if ((q is not None) and (search_type is not None)):
@@ -920,9 +920,9 @@ def admin_specializations(request):
             my_regex = r''
             for word in re.split(r'\s+', q.strip()):
                 my_regex += word + r'.*'      
-            students = Student.objects.exclude(part__isnull=True).filter(name__iregex=r'{}'.format(my_regex)).order_by('id')
+            students = Student.objects.exclude(part__isnull=True).filter(name__iregex=r'{}'.format(my_regex)).order_by("level__specialization", "level", "part_number")
         else:
-            students = Student.objects.exclude(part__isnull=True).filter(pk=int(q)).order_by('id')
+            students = Student.objects.exclude(part__isnull=True).filter(pk=int(q)).order_by("level__specialization", "level", "part_number")
 
     messages = SpecializationMessage.objects.select_related("student", "master_name__user", "part__level__specialization").filter(student__in=students).order_by('-created_at')
 
@@ -1064,8 +1064,150 @@ def students_reports(request):
 @user_passes_test(check_admin)
 @login_required
 def deleting_money(request):
-    return render(request, 'deleting_money.html')
+    causes = MoneyDeletingCause.objects.all()
+    students_categories = Category.objects.all()
 
+    if request.method == "POST":
+        student_id = int(request.POST.get('student-id'))
+        cause_id = int(request.POST.get('cause'))
+        deleting_type = request.POST.get('type')
+        value_in_money = request.POST.get('value-in-money') or None
+        value_in_points = request.POST.get('value-in-points') or None
+
+        if deleting_type == "money":
+
+            MoneyDeleting.objects.create(
+                student_id=student_id,
+                cause_id=cause_id,
+                value=int(value_in_money),
+            )
+
+        else:
+
+            MoneyDeleting.objects.create(
+                student_id=student_id,
+                cause_id=cause_id,
+                value=int(value_in_points),
+                is_money_main_value=False
+            )
+
+
+    return render(request, 'deleting_money.html', {
+        "causes": causes,
+        "students_categories": students_categories
+        })
+
+
+@user_passes_test(check_admin)
+@login_required
+def deleting_money_category(request):
+    causes = MoneyDeletingCause.objects.all()
+    students_categories = Category.objects.all()
+
+    if request.method == "POST":
+        cause_id = int(request.POST.get('cause'))
+        category_id = int(request.POST.get('category'))
+        deleting_type = request.POST.get('type')
+        value_in_money = request.POST.get('value-in-money') or None
+        value_in_points = request.POST.get('value-in-points') or None
+
+        students = Student.objects.filter(category_id=category_id)
+
+        if deleting_type == "money":
+            for student in students:
+                MoneyDeleting.objects.create(
+                    student_id=student.id,
+                    cause_id=cause_id,
+                    value=int(value_in_money),
+                )
+
+        else:
+            for student in students:
+                MoneyDeleting.objects.create(
+                    student_id=student.id,
+                    cause_id=cause_id,
+                    value=int(value_in_points),
+                    is_money_main_value=False
+                )
+
+    return render(request, 'deleting_money.html', {
+        "causes": causes,
+        "students_categories": students_categories
+        })
+
+
+@user_passes_test(check_admin)
+@login_required
+def deleting_money_table(request):
+
+    q = request.GET.get("text-search-table") or None
+    search_type = request.GET.get("type-search-table-admin-p") or None
+
+    point_value = ControlSettings.objects.get(pk=1).point_value
+
+    if ((q is not None) and (search_type is not None)):
+        if search_type == "by-text":
+            my_regex = r''
+            for word in re.split(r'\s+', q.strip()):
+                my_regex += word + r'.*'      
+            deletings = MoneyDeleting.objects.select_related('student', 'cause').filter(student__name__iregex=r'{}'.format(my_regex)).order_by('-created_at')
+        else:
+            deletings = MoneyDeleting.objects.select_related('student', 'cause').filter(student__id=int(q)).order_by('-created_at')
+    else:
+        deletings = MoneyDeleting.objects.select_related('student', 'cause').all().order_by('-created_at')
+
+
+    return render(request, 'deleting_money_table.html', {
+        "deletings": deletings,
+        "point_value": point_value,
+        "val": q,
+    })
+
+
+@user_passes_test(check_admin)
+@login_required
+def deleting_money_total_table(request):
+
+    q = request.GET.get("text-search-table") or None
+    search_type = request.GET.get("type-search-table-admin-p") or None
+    
+    if ((q is not None) and (search_type is not None)):
+        if search_type == "by-text":
+            my_regex = r''
+            for word in re.split(r'\s+', q.strip()):
+                my_regex += word + r'.*'      
+            data = (
+                MoneyDeleting.objects.select_related("student", "cause").filter(active_to_points=True, student__name__iregex=r'{}'.format(my_regex))
+                .values("student")
+                .annotate(sum_money=Sum("value", filter=Q(is_money_main_value=True)))
+                .annotate(sum_points=Sum("value", filter=Q(is_money_main_value=False)))
+                .values("student__id", "student__name", "sum_money", "sum_points")
+                .order_by("student__id")
+            )
+        else:
+            data = (
+                MoneyDeleting.objects.select_related("student", "cause").filter(active_to_points=True, student__id=int(q))
+                .values("student")
+                .annotate(sum_money=Sum("value", filter=Q(is_money_main_value=True)))
+                .annotate(sum_points=Sum("value", filter=Q(is_money_main_value=False)))
+                .values("student__id", "student__name", "sum_money", "sum_points")
+                .order_by("student__id")
+            )
+
+    else:
+        data = (
+            MoneyDeleting.objects.select_related("student", "cause").filter(active_to_points=True)
+            .values("student")
+            .annotate(sum_money=Sum("value", filter=Q(is_money_main_value=True)))
+            .annotate(sum_points=Sum("value", filter=Q(is_money_main_value=False)))
+            .values("student__id", "student__name", "sum_money", "sum_points")
+            .order_by("student__id")
+        )
+
+    q = request.GET.get("text-search-table") or None
+    search_type = request.GET.get("type-search-table-admin-p") or None
+
+    return render(request, 'deleting_money_total_table.html', {"data": data, "val": q})
 
 
 
@@ -1090,6 +1232,27 @@ def students_ajax(request):
     else:
         return HttpResponseNotAllowed("")
 
+
+@user_passes_test(check_admin)
+@login_required
+def switch_deleting_active_to_points_state(request):
+    if request.method == "POST":
+        
+        data = json.loads(request.body)["delete_id"] or None
+
+        delete_id = int(data)
+
+        delete_money = MoneyDeleting.objects.get(pk=delete_id)
+
+        delete_money.active_to_points = not delete_money.active_to_points
+
+        delete_money.save()
+
+        return JsonResponse({
+            "message": delete_money.active_to_points
+            }, status=200)
+
+    return HttpResponseNotAllowed("")
 
 
 # helper functions

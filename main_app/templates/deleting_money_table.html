@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block title %}
+    الجداول الغرامات التفصيلية
+{% endblock title %}
+
+{% block content %}
+    <div class="mt-5 mb-4 p-4 rounded d-flex flex-column" style="background-color: var(--clr4); border: 2px solid var(--clr6);">
+        <div class="d-flex justify-content-center align-items-center flex-wrap mb-3 gap-3">
+            <a class="btn btn-secondary" href="{% url 'admin_main' %}">العودة للوحة التحكم</a>
+            <a class="btn btn-secondary" href="{% url 'money_deleting' %}">العودة لصفحة الغرامات</a>
+            <a class="btn btn-warning" href="{% url 'money_deleting_table' %}">الجداول التفصيلية</a>
+            <a class="btn btn-warning" href="{% url 'money_deleting_total_table' %}">الجدول الكلي</a>
+        </div>
+        <br />
+        {% include 'partials/search_control_panel.html' with current_url='money_deleting_table' %}
+    </div>
+    <div class="table-responsive mb-5 scrollbar-table">
+        <button data-case="edit" id="switch-state-button" class="btn btn-warning mt-1 me-1">
+            تعديل الحالة <i class="bi bi-gear-fill"></i>
+        </button>
+        <table class="table table-dark table-bordered table-striped mb-0 mt-3 rounded text-center">
+            <thead>
+                <tr>
+                    <th colspan="100%" class="fs-3">الغرامات المالية</th>
+                </tr>
+                <tr>
+                    <th style="white-space: nowrap;">المعرف</th>
+                    <th style="white-space: nowrap;">الاسم</th>
+                    <th style="white-space: nowrap;">القيمة بالنقود</th>
+                    <th style="white-space: nowrap;">القيمة بالنقاط</th>
+                    <th style="white-space: nowrap;">السبب</th>
+                    <th style="white-space: nowrap;">تاريخ إضافة الغرامة</th>
+                    <th style="white-space: nowrap;">الحالة</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for deleting in deletings %}
+                    {% if deleting.is_money_main_value %}
+                        <tr>
+                            <td style="white-space: nowrap;">{{ deleting.student.id }}</td>
+                            <td style="white-space: nowrap;">{{ deleting.student }}</td>
+                            <td style="white-space: nowrap;">{{ deleting.value }}</td>
+                            <td style="white-space: nowrap;">{% widthratio deleting.value point_value 1 %}</td>
+                            <td style="white-space: nowrap;">{{ deleting.cause }}</td>
+                            <td style="white-space: nowrap;">{{ deleting.created_at }}</td>
+                            {% if deleting.active_to_points %}
+                                <td>
+                                    <button disabled style="white-space: nowrap;" data-id="{{ deleting.id }}" class="btn btn-danger switching-button-deleting-points w-100">
+                                        مخصوم
+                                    </button>
+                                </td>
+                            {% else %}
+                                <td>
+                                    <button disabled style="white-space: nowrap;" data-id="{{ deleting.id }}" class="btn btn-success switching-button-deleting-points w-100">
+                                        غير مخصوم
+                                    </button>
+                                </td>
+                            {% endif %}
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+        <table class="table table-dark table-bordered table-striped mb-0 mt-5 rounded text-center">
+            <thead>
+                <tr>
+                    <th colspan="100%" class="fs-3">غرامات النقاط</th>
+                </tr>
+                <tr>
+                    <th style="white-space: nowrap;">المعرف</th>
+                    <th style="white-space: nowrap;">الاسم</th>
+                    <th style="white-space: nowrap;">القيمة بالنقود</th>
+                    <th style="white-space: nowrap;">القيمة بالنقاط</th>
+                    <th style="white-space: nowrap;">السبب</th>
+                    <th style="white-space: nowrap;">تاريخ إضافة الغرامة</th>
+                    <th style="white-space: nowrap;">الحالة</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for deleting in deletings %}
+                    {% if not deleting.is_money_main_value %}
+                        <tr>
+                            <td style="white-space: nowrap;">{{ deleting.student.id }}</td>
+                            <td style="white-space: nowrap;">{{ deleting.student }}</td>
+                            <td style="white-space: nowrap;">{% widthratio deleting.value 1 point_value %}</td>
+                            <td style="white-space: nowrap;">{{ deleting.value }}</td>
+                            <td style="white-space: nowrap;">{{ deleting.cause }}</td>
+                            <td style="white-space: nowrap;">{{ deleting.created_at }}</td>
+                            {% if deleting.active_to_points %}
+                                <td>
+                                    <button disabled style="white-space: nowrap;" data-id="{{ deleting.id }}" class="btn btn-danger switching-button-deleting-points w-100">
+                                        مخصوم
+                                    </button>
+                                </td>
+                            {% else %}
+                                <td>
+                                    <button disabled style="white-space: nowrap;" data-id="{{ deleting.id }}" class="btn btn-success switching-button-deleting-points w-100">
+                                        غير مخصوم
+                                    </button>
+                                </td>
+                            {% endif %}
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <script src="{% static 'js/search_table_script.js' %}"></script>
+    <script>
+        const switchingBtnsMoneyDeleting = document.querySelectorAll('.switching-button-deleting-points');
+        const switchStateBtn = document.getElementById('switch-state-button');
+
+
+        switchingBtnsMoneyDeleting.forEach((item) => {
+            item.onclick = async () => {
+                const delete_id = item.dataset.id;
+
+                const response = await fetch("{% url 'switch_money_deleting_ajax' %}", {
+                    method: "POST",
+                    mode: "same-origin",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": "{{ csrf_token }}"
+                    },
+                    body: JSON.stringify({
+                        delete_id
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.message) {
+                    item.textContent = "مخصوم";
+                    item.classList.add("btn-danger");
+                    item.classList.remove("btn-success");
+                } else {
+                    item.textContent = "غير مخصوم";
+                    item.classList.add("btn-success");
+                    item.classList.remove("btn-danger");
+                }
+            }
+        })
+
+
+        // switch state button disabling and acivating
+        switchStateBtn.onclick = () => {
+            if (switchStateBtn.dataset.case == "edit") {
+
+                switchingBtnsMoneyDeleting.forEach((btn) => {
+                    btn.disabled = false;
+                })
+
+                switchStateBtn.innerHTML = `إنهاء التعديل <i class="bi bi-pencil-square"></i>`;
+                switchStateBtn.classList = "btn btn-secondary mt-1 me-1";
+                switchStateBtn.dataset.case = "back";
+
+            } else {
+
+                switchingBtnsMoneyDeleting.forEach((btn) => {
+                    btn.disabled = true;
+                })
+
+
+                switchStateBtn.innerHTML = `تعديل الحالة <i class="bi bi-gear-fill"></i>`;
+                switchStateBtn.classList = "btn btn-warning mt-1 me-1";
+                switchStateBtn.dataset.case = "edit";
+
+            }
+        }
+    </script>
+{% endblock content %}

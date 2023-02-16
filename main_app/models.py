@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 from django.dispatch import receiver
 from django.conf.global_settings import AUTH_USER_MODEL
 from .default_dictionary import DEFAULT_DICT, DEFAULT_DICT_FOR_q_test, DEFAULT_DICT_FOR_q_candidate_test, DEFAULT_DICT_FOR_PERMISSIONS, check_for_cer
-from .point_map import apply_q_map, q_map
+from .point_map import q_map
 import json
 
 
@@ -356,9 +356,11 @@ class MoneyDeletingCause(models.Model):
 
 class MoneyDeleting(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE, verbose_name='الاسم')
-    value_in_points = models.IntegerField(verbose_name='القيمة مقدرة بالنقاط')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='تاريخ التسجيل')
     cause = models.ForeignKey(MoneyDeletingCause, on_delete=models.PROTECT, verbose_name='سبب الغرامة', null=True)
+    active_to_points = models.BooleanField(verbose_name='مخصومة من النقاط', default=True)
+    value = models.IntegerField(verbose_name='القيمة', null=True)
+    is_money_main_value = models.BooleanField(default=True)
 
     def __str__(self):
         return f"غرامة {self.id}"
@@ -366,11 +368,6 @@ class MoneyDeleting(models.Model):
     class Meta:
         verbose_name = 'غرامة'
         verbose_name_plural = 'الغرامات'
-
-    
-    @property
-    def value_in_money(self):
-        return self.value_in_points * ControlSettings.objects.first().point_value
 
 
 

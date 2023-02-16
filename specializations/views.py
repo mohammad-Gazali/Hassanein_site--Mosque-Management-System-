@@ -62,7 +62,7 @@ def levels_ajax(request: HttpRequest):
 
         return JsonResponse({
             "result": result
-        })
+        }, status=200)
 
 
 def parts_ajax(request: HttpRequest):
@@ -84,7 +84,7 @@ def parts_ajax(request: HttpRequest):
 
         return JsonResponse({
             "result": result
-        })
+        }, status=200)
 
 
 

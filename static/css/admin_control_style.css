@@ -28,8 +28,6 @@
     padding-bottom: 1.2rem;
     padding-top: 1.2rem;
     border-radius: 4px;
-    position: sticky;
-    top: 0;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -71,67 +69,4 @@
 
 .ramadan-table-message-color:nth-of-type(even) td {
     background-color: #2d2953 !important;
-}
-
-.search-table-control-p {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    width: 100%;
-}
-
-.search-table-control-p div {
-    display: flex;
-}
-
-.search-table-control-p div label {
-    background-color: white;
-    padding: 7px;
-    cursor: pointer;
-    position: relative;
-    background-color: white;
-    transition: .3s ease;
-}
-
-.search-table-control-p div label input {
-    position: absolute;
-    left: 0;
-    opacity: 0;
-    transition: .3s ease;
-}
-
-.search-table-control-p div label:nth-of-type(1) {
-    border-radius: 0 4px 4px 0;
-
-}
-
-.search-table-control-p div label:nth-of-type(2) {
-    border-radius: 4px 0 0 4px;
-}
-
-.activeChooseTable {
-    background-color: rgb(109, 40, 193, 1) !important;
-    color: white !important;
-}
-
-/** scrollbar-table */
-.scrollbar-table::-webkit-scrollbar {
-    height: 10px;
-}
-
-.scrollbar-table::-webkit-scrollbar-track {
-    background-color: var(--clr3);
-}
-
-.scrollbar-table::-webkit-scrollbar-thumb {
-    background-color: rgb(4, 122, 255);
-}
-
-.scrollbar-table::-webkit-scrollbar-thumb:hover {
-    background-color: rgb(4, 104, 218);
-}
-
-.scrollbar-table::-webkit-scrollbar-thumb:active {
-    background-color: rgb(3, 70, 147);
 }

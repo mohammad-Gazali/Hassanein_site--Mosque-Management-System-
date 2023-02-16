@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.db import models
-from .models import Student, Category, MemorizeMessage, MemorizeNotes, Coming, ComingCategory, DoublePointMessage, Master, PointsAddingCause, PointsDeletingCause
+from .models import Student, Category, MemorizeMessage, MemorizeNotes, Coming, ComingCategory, DoublePointMessage, Master, PointsAddingCause, PointsDeletingCause, MoneyDeleting, MoneyDeletingCause
 from django_json_widget.widgets import JSONEditorWidget
 
 
@@ -178,4 +178,9 @@ class PointsAddingCauseAdmin(admin.ModelAdmin):
 
 @admin.register(PointsDeletingCause)
 class PointsDeletingCauseAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(MoneyDeletingCause)
+class MoneyDeletingCauseAdmin(admin.ModelAdmin):
     pass

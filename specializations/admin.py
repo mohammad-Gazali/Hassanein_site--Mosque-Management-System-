@@ -20,6 +20,7 @@ class AdminPart(admin.ModelAdmin):
     list_filter = ['level__specialization']
     list_select_related = ['level__specialization']
     readonly_fields = ['students']
+    ordering = ["level__specialization", "level", "part_number"]
 
 
 @admin.register(models.SpecializationMessage)
