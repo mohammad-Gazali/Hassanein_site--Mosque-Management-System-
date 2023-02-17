@@ -36,7 +36,36 @@
     gap: 1rem;
 }
 
-#control-urls div {
+#control-basic-links-box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: center;
+    align-items: center;
+    padding: 0 10px;
+}
+
+#control-basic-links-box * {
+    width: 200px
+}
+
+@media (width < 520px) {
+
+    #control-basic-links-box {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        justify-content: center;
+        align-items: center;
+        padding: 0;
+    }
+
+    #control-basic-links-box * {
+        width: 100%
+    }
+}
+
+#control-urls div:not(#control-basic-links-box) {
     transition: 0.2s ease;
     position: relative;
     display: flex;

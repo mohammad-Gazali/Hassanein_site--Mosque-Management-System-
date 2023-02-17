@@ -7,13 +7,42 @@
 {% endblock title %}
 
 {% block content %}
+    <style>
+        .control-basic-links-box-deleting-money {
+            display: flex; 
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            padding: 0 10px;
+        }
+
+        .control-basic-links-box-deleting-money * {
+            width: 200px
+        }
+
+        @media (width < 530px) {
+
+            .control-basic-links-box-deleting-money {
+                display: flex; 
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 16px;
+                padding: 0;
+            }
+
+            .control-basic-links-box-deleting-money * {
+                width: 100%
+            }   
+        }
+    </style>
     <div class="mt-5 mb-4 p-4 rounded d-flex flex-column" style="background-color: var(--clr4); border: 2px solid var(--clr6);">
-        <div class="d-flex justify-content-center align-items-center flex-wrap mb-3 gap-3">
+        <div class="control-basic-links-box-deleting-money">
             <a class="btn btn-secondary" href="{% url 'admin_main' %}">العودة للوحة التحكم</a>
             <a class="btn btn-secondary" href="{% url 'money_deleting' %}">العودة لصفحة الغرامات</a>
             <a class="btn btn-warning" href="{% url 'money_deleting_table' %}">الجداول التفصيلية</a>
             <a class="btn btn-warning" href="{% url 'money_deleting_total_table' %}">الجدول الكلي</a>
         </div>
+        <br>
         {% include 'partials/search_control_panel.html' with current_url='money_deleting_total_table' %}
     </div>
     <div class="table-responsive mb-5 scrollbar-table">

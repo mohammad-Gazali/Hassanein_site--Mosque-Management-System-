@@ -7,8 +7,36 @@
 {% endblock title %}
 
 {% block content %}
+    <style>
+        .control-basic-links-box-deleting-money {
+            display: flex; 
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            padding: 0 10px;
+        }
+
+        .control-basic-links-box-deleting-money * {
+            width: 200px
+        }
+
+        @media (width < 530px) {
+
+            .control-basic-links-box-deleting-money {
+                display: flex; 
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 16px;
+                padding: 0;
+            }
+
+            .control-basic-links-box-deleting-money * {
+                width: 100%
+            }   
+        }
+    </style>
     <div class="mt-5 mb-4 p-4 rounded d-flex flex-column" style="background-color: var(--clr4); border: 2px solid var(--clr6);">
-        <div class="d-flex justify-content-center align-items-center flex-wrap mb-3 gap-3">
+        <div class="control-basic-links-box-deleting-money">
             <a class="btn btn-secondary" href="{% url 'admin_main' %}">العودة للوحة التحكم</a>
             <a class="btn btn-secondary" href="{% url 'money_deleting' %}">العودة لصفحة الغرامات</a>
             <a class="btn btn-warning" href="{% url 'money_deleting_table' %}">الجداول التفصيلية</a>
@@ -17,10 +45,10 @@
         <br />
         {% include 'partials/search_control_panel.html' with current_url='money_deleting_table' %}
     </div>
+    <button data-case="edit" id="switch-state-button" class="btn btn-warning mt-1 me-1">
+        تعديل الحالة <i class="bi bi-gear-fill"></i>
+    </button>
     <div class="table-responsive mb-5 scrollbar-table">
-        <button data-case="edit" id="switch-state-button" class="btn btn-warning mt-1 me-1">
-            تعديل الحالة <i class="bi bi-gear-fill"></i>
-        </button>
         <table class="table table-dark table-bordered table-striped mb-0 mt-3 rounded text-center">
             <thead>
                 <tr>
@@ -64,7 +92,9 @@
                 {% endfor %}
             </tbody>
         </table>
-        <table class="table table-dark table-bordered table-striped mb-0 mt-5 rounded text-center">
+    </div>
+    <div class="table-responsive mb-5 scrollbar-table">
+        <table class="table table-dark table-bordered table-striped mb-0 rounded text-center">
             <thead>
                 <tr>
                     <th colspan="100%" class="fs-3">غرامات النقاط</th>

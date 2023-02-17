@@ -68,18 +68,14 @@
                     <span id="per-q-memo-toggle-all-{{master.id}}" class="btn btn-primary">تحديد الكل</span>
                     <span id="per-q-memo-toggle-non-all-{{master.id}}" class="btn btn-secondary">إلغاء تحديد الكل</span>
                 </div>
-                <div class="d-flex flex-wrap justify-content-evenly gap-2 align-items-center px-5 per_qmemo_{{master.id}}">
+                <div class="d-flex flex-wrap justify-content-center gap-2 align-items-center px-2 mt-4 per_qmemo_{{master.id}}">
                     {% for part, val in master.permissions.q_memo.items %}
                         {% if val == "NON" %}
-                            <div class="form-check form-switch py-1" style="width: 120px">
-                                <input name="q_memo_{{part}}" class="form-check-input" type="checkbox" role="switch" id="permissions-edit-master_{{master.id}}-part_{{ part }}__qmemo" style="margin-left: 0.8rem">
-                                <label class="form-check-label" for="permissions-edit-master_{{master.id}}-part_{{ part }}__qmemo" style="margin-right: -1.3rem">الجزء {{part}}</label>
-                            </div>
+                            <input name="q_memo_{{part}}" class="btn-check" type="checkbox" id="permissions-edit-master_{{master.id}}-part_{{ part }}__qmemo" autocomplete="off">
+                            <label class="btn btn-outline-primary d-flex justify-content-center align-items-center" for="permissions-edit-master_{{master.id}}-part_{{ part }}__qmemo" style="width: 30px; height: 30px;">{{part}}</label>
                         {% else %}
-                            <div class="form-check form-switch py-1" style="width: 120px">
-                                <input name="q_memo_{{part}}" class="form-check-input" type="checkbox" role="switch" id="permissions-edit-master_{{master.id}}-part_{{ part }}__qmemo" checked style="margin-left: 0.8rem">
-                                <label class="form-check-label" for="permissions-edit-master_{{master.id}}-part_{{ part }}__qmemo" style="margin-right: -1.3rem">الجزء {{part}}</label>
-                            </div>
+                            <input name="q_memo_{{part}}" class="btn-check" type="checkbox" id="permissions-edit-master_{{master.id}}-part_{{ part }}__qmemo" autocomplete="off" checked>
+                            <label class="btn btn-outline-primary d-flex justify-content-center align-items-center" for="permissions-edit-master_{{master.id}}-part_{{ part }}__qmemo" style="width: 30px; height: 30px;">{{part}}</label>
                         {% endif %}
                     {% endfor %}
                 </div>
@@ -90,18 +86,14 @@
                     <span id="per-q-test-toggle-all-{{master.id}}" class="btn btn-primary">تحديد الكل</span>
                     <span id="per-q-test-toggle-non-all-{{master.id}}" class="btn btn-secondary">إلغاء تحديد الكل</span>
                 </div>
-                <div class="d-flex flex-wrap justify-content-evenly gap-2 align-items-center px-5 per_qtest_{{master.id}}">
+                <div class="d-flex flex-wrap justify-content-center gap-2 align-items-center px-2 mt-4 per_qtest_{{master.id}}">
                     {% for part, val in master.permissions.q_test.items %}
                         {% if val == "NON" %}
-                            <div class="form-check form-switch py-1" style="width: 120px">
-                                <input name="q_test_{{part}}" class="form-check-input" type="checkbox" role="switch" id="permissions-edit-master_{{master.id}}-part_{{ part }}__qtest" style="margin-left: 0.8rem">
-                                <label class="form-check-label" for="permissions-edit-master_{{master.id}}-part_{{ part }}__qtest" style="margin-right: -1.3rem">الجزء {{part}}</label>
-                            </div>
+                                <input name="q_test_{{part}}" class="btn-check" type="checkbox" id="permissions-edit-master_{{master.id}}-part_{{ part }}__qtest" autocomplete="off">
+                                <label class="btn btn-outline-primary d-flex justify-content-center align-items-center" for="permissions-edit-master_{{master.id}}-part_{{ part }}__qtest" style="width: 30px; height: 30px;">{{part}}</label>
                         {% else %}
-                            <div class="form-check form-switch py-1" style="width: 120px">
-                                <input name="q_test_{{part}}" class="form-check-input" type="checkbox" role="switch" id="permissions-edit-master_{{master.id}}-part_{{ part }}__qtest" style="margin-left: 0.8rem" checked>
-                                <label class="form-check-label" for="permissions-edit-master_{{master.id}}-part_{{ part }}__qtest" style="margin-right: -1.3rem">الجزء {{part}}</label>
-                            </div>
+                                <input name="q_test_{{part}}" class="btn-check" type="checkbox" id="permissions-edit-master_{{master.id}}-part_{{ part }}__qtest" autocomplete="off" checked>
+                                <label class="btn btn-outline-primary d-flex justify-content-center align-items-center" for="permissions-edit-master_{{master.id}}-part_{{ part }}__qtest" style="width: 30px; height: 30px;">{{part}}</label>
                         {% endif %}
                     {% endfor %}
                 </div>
@@ -112,18 +104,14 @@
                     <span id="per-q-test-candidate-toggle-all-{{master.id}}" class="btn btn-primary">تحديد الكل</span>
                     <span id="per-q-test-candidate-toggle-non-all-{{master.id}}" class="btn btn-secondary">إلغاء تحديد الكل</span>
                 </div>
-                <div class="d-flex flex-wrap justify-content-evenly gap-2 align-items-center px-5 per_qtestcandidate_{{master.id}}">
+                <div class="d-flex flex-wrap justify-content-center gap-2 align-items-center px-2 mt-4 per_qtestcandidate_{{master.id}}">
                     {% for part, val in master.permissions.q_test_candidate.items %}
                         {% if val == "NON" %}
-                            <div class="form-check form-switch py-1" style="width: 120px">
-                                <input name="q_test_candidate_{{part}}" class="form-check-input" type="checkbox" role="switch" id="permissions-edit-master_{{master.id}}-part_{{ part }}__qtestcandidate" style="margin-left: 0.8rem">
-                                <label class="form-check-label" for="permissions-edit-master_{{master.id}}-part_{{ part }}__qtestcandidate" style="margin-right: -1.3rem">الجزء {{part}}</label>
-                            </div>
+                                <input name="q_test_candidate_{{part}}" class="btn-check" type="checkbox" id="permissions-edit-master_{{master.id}}-part_{{ part }}__qtestcandidate" autocomplete="off">
+                                <label class="btn btn-outline-primary d-flex justify-content-center align-items-center" for="permissions-edit-master_{{master.id}}-part_{{ part }}__qtestcandidate" style="width: 30px; height: 30px;">{{part}}</label>
                         {% else %}
-                            <div class="form-check form-switch py-1" style="width: 120px">
-                                <input name="q_test_candidate_{{part}}" class="form-check-input" type="checkbox" role="switch" id="permissions-edit-master_{{master.id}}-part_{{ part }}__qtestcandidate" style="margin-left: 0.8rem" checked>
-                                <label class="form-check-label" for="permissions-edit-master_{{master.id}}-part_{{ part }}__qtestcandidate" style="margin-right: -1.3rem">الجزء {{part}}</label>
-                            </div>
+                                <input name="q_test_candidate_{{part}}" class="btn-check" type="checkbox" id="permissions-edit-master_{{master.id}}-part_{{ part }}__qtestcandidate" autocomplete="off" checked>
+                                <label class="btn btn-outline-primary d-flex justify-content-center align-items-center" for="permissions-edit-master_{{master.id}}-part_{{ part }}__qtestcandidate" style="width: 30px; height: 30px;">{{part}}</label>
                         {% endif %}
                     {% endfor %}
                 </div>
