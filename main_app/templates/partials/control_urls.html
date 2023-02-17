@@ -3,6 +3,7 @@
 <section id="control-urls" class="w-100">
     <div id="control-basic-links-box">
         <div><a href="{% url 'admin_main' %}" class="btn btn-primary">القسم الرئيسي</a></div>
+        <div><a href="{% url 'admin_points_information' %}" class="btn btn-primary">معلومات النقاط</a></div>
         <div><a href="{% url 'admin_site_settings' 1 %}" class="btn btn-primary">إعدادت الموقع</a></div>
         <div><a href="{% url 'admin_awqaf' %}" class="btn btn-primary">الأوقاف</a></div>
         <div><a href="{% url 'admin_master_activities' %}" class="btn btn-primary">نشاطات الأساتذة</a></div>
@@ -12,16 +13,22 @@
         <div><a href="{% url 'reports_all_students' %}" class="btn btn-primary">تقارير الطلاب</a></div>
         <div><a href="{% url 'money_deleting' %}" class="btn btn-primary">الغرامات</a></div>
         <div><a href="{% url 'admin_specializations' %}" class="btn btn-primary">الاختصاصات</a></div>
+        <div><a href="{% url 'admin_test_certificates' %}" class="btn btn-primary">شهادات السبر</a></div>
+        <div><a href="{% url 'admin_info' %}" class="btn btn-primary">التسميعات في الدورة</a></div>
         <div><a href="{% url 'admin:index' %}" class="btn btn-primary">لوحة التحكم العليا</a></div>
     </div>
     <br />
     {% if request.path == "/control" %}
         {% include 'partials/search_control_panel.html' with current_url="admin_main" %}
+    {% elif request.path == "/control/points/info" %}
+        {% include 'partials/search_control_panel.html' with current_url="admin_points_information" %}
+    {% elif request.path == "/control/certificates" %}
+        {% include 'partials/search_control_panel.html' with current_url="admin_test_certificates" %}
     {% elif request.path == "/control/activities" %}
         {% include 'partials/search_control_panel.html' with current_url="admin_master_activities" %}
     {% elif request.path == "/control/master" %}
         {% include 'partials/search_control_panel.html' with current_url="admin_master_list" %}
-    {% elif request.path == "/control/settings/1" %}
+    {% elif request.path == "/control/settings/1" or request.path == "/control/info" %}
         {% include 'partials/search_control_panel.html' with current_url="HIDDEN" %}
     {% elif request.path == "/control/coming" %}
         {% include 'partials/search_control_panel.html' with current_url="admin_coming_list" %}

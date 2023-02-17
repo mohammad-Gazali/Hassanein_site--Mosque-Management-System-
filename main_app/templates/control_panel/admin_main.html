@@ -9,15 +9,18 @@
                     <th style="white-space: nowrap;" class="text-center">المعرف</th>
                     <th style="white-space: nowrap;" class="text-center">الاسم</th>
                     <th style="white-space: nowrap;" class="text-center">اسم الأم</th>
-                    <th style="white-space: nowrap;" class="text-center">نقاط الحضور</th>
-                    <th style="white-space: nowrap;" class="text-center">عدد الصفحات</th>
-                    <th style="white-space: nowrap;" class="text-center">نقاط التسميع</th>
-                    <th style="white-space: nowrap;" class="text-center">عدد الأجزاء المسبورة</th>
-                    <th style="white-space: nowrap;" class="text-center">نقاط السبر العادي</th>
-                    <th style="white-space: nowrap;" class="text-center">عدد أجزاء السبر الترشيحي</th>
-                    <th style="white-space: nowrap;" class="text-center">نقاط السبر الترشيحي</th>
-                    <th style="white-space: nowrap;" class="text-center">نقاط مضافة</th>
-                    <th style="white-space: nowrap;" class="text-center">نقاط مخصومة</th>
+                    <th style="white-space: nowrap;" class="text-center">العمر</th>
+                    <th style="white-space: nowrap;" class="text-center">العنوان تفصيلاً</th>
+                    <th style="white-space: nowrap;" class="text-center">الهاتف الأرضي</th>
+                    <th style="white-space: nowrap;" class="text-center">الجوال</th>
+                    <th style="white-space: nowrap;" class="text-center">جوال الأب</th>
+                    <th style="white-space: nowrap;" class="text-center">جوال الأم</th>
+                    <th style="white-space: nowrap;" class="text-center">الفئة</th>
+                    <th style="white-space: nowrap;" class="text-center">تاريخ التسجيل بالدورة</th>
+                    <th style="white-space: nowrap;" class="text-center">عمل الأب</th>
+                    <th style="white-space: nowrap;" class="text-center">ملاحظات</th>
+                    <th style="white-space: nowrap;" class="text-center">الطالب الذي أحضره</th>
+                    <th style="white-space: nowrap;" class="text-center"></th>
                 </tr>
             </thead>
             <tbody>
@@ -30,15 +33,22 @@
                         </td>
                         <td class="text-center" style="white-space: nowrap;">{{ student.name }}</td>
                         <td class="text-center" style="white-space: nowrap;">{{ student.mother_name }}</td>
-                        <td class="text-center" style="white-space: nowrap;">{{ student.points_of_coming }}</td>
-                        <td class="text-center" style="white-space: nowrap;">{{ student.number_of_q_memo }}</td>
-                        <td class="text-center" style="white-space: nowrap;">{{ student.points_of_q_memo }}</td>
-                        <td class="text-center" style="white-space: nowrap;">{{ student.number_of_q_test }}</td>
-                        <td class="text-center" style="white-space: nowrap;">{{ student.points_of_q_test }}</td>
-                        <td class="text-center" style="white-space: nowrap;">{{ student.number_of_q_candidate_test }}</td>
-                        <td class="text-center" style="white-space: nowrap;">{{ student.points_of_q_candidate_test }}</td>
-                        <td class="text-center" style="white-space: nowrap;">{{ student.added_points }}</td>
-                        <td class="text-center" style="white-space: nowrap;">{{ student.deleted_points }}</td>
+                        <td class="text-center" style="white-space: nowrap;">{{ student.age }}</td>
+                        <td class="text-center" style="white-space: nowrap;">{{ student.address|default_if_none:"-" }}</td>
+                        <td class="text-center" style="white-space: nowrap;">{{ student.static_phone|default_if_none:"-" }}</td>
+                        <td class="text-center" style="white-space: nowrap;">{{ student.cell_phone|default_if_none:"-" }}</td>
+                        <td class="text-center" style="white-space: nowrap;">{{ student.father_phone|default_if_none:"-" }}</td>
+                        <td class="text-center" style="white-space: nowrap;">{{ student.mother_phone|default_if_none:"-" }}</td>
+                        <td class="text-center" style="white-space: nowrap;">{{ student.category|default_if_none:"-" }}</td>
+                        <td class="text-center" style="white-space: nowrap;">{{ student.registered_at }}</td>
+                        <td class="text-center" style="white-space: nowrap;">{{ student.father_work|default_if_none:"-" }}</td>
+                        <td class="text-center" style="white-space: nowrap;">{{ student.notes|default_if_none:"-" }}</td>
+                        <td class="text-center" style="white-space: nowrap;">{{ student.bring_him|default_if_none:"-" }}</td>
+                        <td class="text-center" style="white-space: nowrap;">
+                            <a class="btn btn-warning w-100" href="{% url 'admin:main_app_student_change' student.id %}">
+                                تعديل <i class="bi bi-pencil-square"></i>
+                            </a>
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>

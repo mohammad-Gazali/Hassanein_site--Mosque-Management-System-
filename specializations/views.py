@@ -94,14 +94,6 @@ def get_id_from_request(request: HttpRequest, key: str) -> int:
     return int(json.loads(request.body)[key])
 
 
-def check_student_with_level(level: Level, student: Student) -> bool:
-    for part in level.part_set.all():
-        if student not in part.students.all():
-            return False
-        
-    return True
-
-
 def apply_edit_changes(edit: list[str]) -> None:
     parts = []
     data = []

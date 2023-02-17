@@ -1,0 +1,50 @@
+{% extends 'control_panel/admin_control_base.html' %}
+{% load filters %}
+
+
+{% block admin_content %}
+    <div class="table-responsive mb-5 scrollbar-table">
+        <table class="table table-dark table-bordered table-striped mb-0 mt-3 rounded">
+            <thead>
+                <tr>
+                    <th style="white-space: nowrap;" class="text-center">المعرف</th>
+                    <th style="white-space: nowrap;" class="text-center">الاسم</th>
+                    <th style="white-space: nowrap;" class="text-center">نقاط الحضور</th>
+                    <th style="white-space: nowrap;" class="text-center">عدد الصفحات</th>
+                    <th style="white-space: nowrap;" class="text-center">نقاط التسميع</th>
+                    <th style="white-space: nowrap;" class="text-center">عدد الأجزاء المسبورة</th>
+                    <th style="white-space: nowrap;" class="text-center">نقاط السبر العادي</th>
+                    <th style="white-space: nowrap;" class="text-center">عدد أجزاء السبر الترشيحي</th>
+                    <th style="white-space: nowrap;" class="text-center">نقاط السبر الترشيحي</th>
+                    <th style="white-space: nowrap;" class="text-center">نقاط مضافة</th>
+                    <th style="white-space: nowrap;" class="text-center">نقاط مخصومة</th>
+                    <th style="white-space: nowrap;" class="text-center">نقاط المخصومة بسبب الغرامات</th>
+                    <th style="white-space: nowrap;" class="text-center">مجموع النقاط الكلي</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                    <tr>
+                        <td class="text-center" style="white-space: nowrap;">
+                            <a class="text-white fw-bold text-decoration-none" href="{% url 'search_results' %}?q_search_id={{student.id}}">
+                                {{ student.id }}
+                            </a>
+                        </td>
+                        <td class="text-center" style="white-space: nowrap;">{{ student.name }}</td>
+                        <td class="text-center" style="white-space: nowrap;">{{ student.points_of_coming }}</td>
+                        <td class="text-center" style="white-space: nowrap;">{{ student.number_of_q_memo }}</td>
+                        <td class="text-center" style="white-space: nowrap;">{{ student.points_of_q_memo }}</td>
+                        <td class="text-center" style="white-space: nowrap;">{{ student.number_of_q_test }}</td>
+                        <td class="text-center" style="white-space: nowrap;">{{ student.points_of_q_test }}</td>
+                        <td class="text-center" style="white-space: nowrap;">{{ student.number_of_q_candidate_test }}</td>
+                        <td class="text-center" style="white-space: nowrap;">{{ student.points_of_q_candidate_test }}</td>
+                        <td class="text-center" style="white-space: nowrap;">{{ student.added_points }}</td>
+                        <td class="text-center" style="white-space: nowrap;">{{ student.deleted_points }}</td>
+                        <td class="text-center" style="white-space: nowrap;">{{ student.deleted_points_for_money_deleting|money_deleting_remove_points:point_value }}</td>
+                        <td class="text-center" style="white-space: nowrap;">0</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock admin_content %}

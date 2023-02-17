@@ -13,27 +13,26 @@ class AdminCategory(admin.ModelAdmin):
     list_display = ['name']
 
 # Here we add an action besides to delete action, visit (https://docs.djangoproject.com/en/4.1/ref/contrib/admin/actions/) for more information
-@admin.action(description='تحديث حالة السبر')
-def update_q_test_certifcate(modeladmin, requset, queryset):
-    students =Student.objects.all()
-    for st in students:
-        if st.q_test_certificate == 'لا يوجد':
-            st.is_q_test_certificate = False
-        else:
-            st.is_q_test_certificate = True
-        st.save()
+# @admin.action(description='تحديث حالة السبر')
+# def update_q_test_certifcate(modeladmin, requset, queryset):
+#     students =Student.objects.all()
+#     for st in students:
+#         if st.q_test_certificate == 'لا يوجد':
+#             st.is_q_test_certificate = False
+#         else:
+#             st.is_q_test_certificate = True
+#         st.save()
 
 
 
 
 @admin.register(Student)
 class AdminStudent(admin.ModelAdmin):
-    list_display = ['name', 'age', 'category', 'mother_name', 'q_test_certificate', 'is_q_test_certificate']
+    list_display = ['name', 'age', 'category', 'mother_name']
     search_fields = ['name']
     list_select_related = ['category']
-    list_filter = ['category', 'is_q_test_certificate']
+    list_filter = ['category']
     exclude = ['is_q_test_certificate']
-    actions = [update_q_test_certifcate]
 
     # here changed the widget of JSONField into another widget, this widget is imported from django_json_widget.widgets
     # we should firstly install the module 'django-json-widget' by using 'pip install django-json-widget', then we should go INSTALLED_APPS in settings.py and add 'django_json_widget'
@@ -157,18 +156,6 @@ class DoublePointMessageAdmin(admin.ModelAdmin):
     def has_add_permission(self, request, obj=None):
         return False
 
-
-@admin.register(Master)
-class MasterAdmin(admin.ModelAdmin):
-    list_display = ['id', 'user']
-    def has_delete_permission(self, request, obj=None):
-        return False
-
-    def has_change_permission(self, request, obj=None):
-        return False
-
-    def has_add_permission(self, request, obj=None):
-        return False
 
 
 @admin.register(PointsAddingCause)

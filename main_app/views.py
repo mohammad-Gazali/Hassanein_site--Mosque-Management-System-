@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.generic import ListView, DeleteView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import HttpResponseForbidden, HttpResponseNotAllowed, JsonResponse
-from django.db.models import Prefetch, Sum, Q
+from django.db.models import Prefetch, Sum, Q, F, ExpressionWrapper, IntegerField
 from .models import MemorizeNotes, Student, Category, MemorizeMessage, Coming, ControlSettings, DoublePointMessage, Master, PointsAddingCause, PointsDeletingCause, PointsAdding, PointsDeleting, MoneyDeleting, MoneyDeletingCause, ComingCategory
 from .forms import SettingForm
 from .point_map import apply_q_map, q_map
@@ -191,7 +191,7 @@ def add_q_test(request):
 
         if test_type == "normal-test":
             
-            if master.permissions["q_test"][part_number_normal] == "NON":
+            if master.permissions["q_test"][str(math.ceil(int(part_number_normal) / 2))] == "NON":
                 return HttpResponseForbidden("<h1>هذا السبر ليس من صلاحياتك</h1><h1>403</h1>")
 
             normal_test = student.q_test
@@ -665,11 +665,25 @@ def check_admin(user):
 
 
 @user_passes_test(check_admin)
-@login_required 
-def main_admin(request):
+@login_required
+def admin_main(request):
+
+    q = request.GET.get("text-search-table") or None
+    search_type = request.GET.get("type-search-table-admin-p") or None
+
+    students = Student.objects.select_related("category").all().order_by('id')
+
+    return render(request, "control_panel/admin_main.html", {'students': students, 'val': q})
+
+
+@user_passes_test(check_admin)
+@login_required
+def admin_points_information(request):
     q = request.GET.get("text-search-table") or None
     search_type = request.GET.get("type-search-table-admin-p") or None
     
+    point_value = ControlSettings.objects.get(pk=1).point_value
+
     students = Student.objects.prefetch_related(
         Prefetch(
             'doublepointmessage_set',
@@ -677,9 +691,14 @@ def main_admin(request):
             to_attr='message_type_1'  #* this is the name of the attribute we will use to access specific query in points_of_q_memo property method inside Student model
         ),
         Prefetch(
-        "doublepointmessage_set",
-        queryset=DoublePointMessage.objects.filter(message_type=2),
-        to_attr='message_type_2'   #* this is the name of the attribute we will use to access specific query in points_of_q_test property method inside Student model
+            "doublepointmessage_set",
+            queryset=DoublePointMessage.objects.filter(message_type=2),
+            to_attr='message_type_2'   #* this is the name of the attribute we will use to access specific query in points_of_q_test property method inside Student model
+        ),
+        Prefetch(
+            'moneydeleting_set',
+            queryset=MoneyDeleting.objects.filter(active_to_points=True),
+            to_attr='money_deleting_info'
         ),
         'pointsdeleting_set',
         'pointsadding_set',
@@ -692,19 +711,52 @@ def main_admin(request):
             for word in re.split(r'\s+', q.strip()):
                 my_regex += word + r'.*'      
             students = Student.objects.prefetch_related(
+                Prefetch(
+                    'doublepointmessage_set',
+                    queryset=DoublePointMessage.objects.filter(message_type=1),
+                    to_attr='message_type_1'
+                ),
+                Prefetch(
+                    "doublepointmessage_set",
+                    queryset=DoublePointMessage.objects.filter(message_type=2),
+                    to_attr='message_type_2'
+                ),
+                Prefetch(
+                    'moneydeleting_set',
+                    queryset=MoneyDeleting.objects.filter(active_to_points=True),
+                    to_attr='money_deleting_info'
+                ),
                 'pointsdeleting_set',
                 'pointsadding_set',
                 'coming_set',
+                'moneydeleting_set'
                 ).filter(name__iregex=r'{}'.format(my_regex)).order_by('id')
-            return render(request, 'control_panel/admin_main.html', {'students': students, 'val': q})
+            return render(request, 'control_panel/admin_points_information.html', {'students': students, 'val': q})
         else:
             students = Student.objects.prefetch_related(
+                Prefetch(
+                    'doublepointmessage_set',
+                    queryset=DoublePointMessage.objects.filter(message_type=1),
+                    to_attr='message_type_1'
+                ),
+                Prefetch(
+                    "doublepointmessage_set",
+                    queryset=DoublePointMessage.objects.filter(message_type=2),
+                    to_attr='message_type_2'
+                ),
+                Prefetch(
+                    'moneydeleting_set',
+                    queryset=MoneyDeleting.objects.filter(active_to_points=True),
+                    to_attr='money_deleting_info'
+                ),
                 'pointsdeleting_set',
                 'pointsadding_set',
                 'coming_set',
+                'moneydeleting_set'
                 ).filter(pk=int(q))
-            return render(request, 'control_panel/admin_main.html', {'students': students, 'val': q})
-    return render(request, 'control_panel/admin_main.html', {'students': students, 'val': ''})
+            return render(request, 'control_panel/admin_points_information.html', {'students': students, 'val': q})
+    
+    return render(request, 'control_panel/admin_points_information.html', {'students': students, 'val': '', "point_value": point_value})
 
 
 
@@ -927,6 +979,54 @@ def admin_specializations(request):
     messages = SpecializationMessage.objects.select_related("student", "master_name__user", "part__level__specialization").filter(student__in=students).order_by('-created_at')
 
     return render(request, 'control_panel/admin_specializations.html', {"parts": parts, "students": students, "messages": messages, "val": q})
+
+
+@user_passes_test(check_admin)
+@login_required
+def admin_test_certificates(request):
+
+    q = request.GET.get("text-search-table") or None
+    search_type = request.GET.get("type-search-table-admin-p") or None
+    
+    # for updating certificates state for students
+    for st in Student.objects.all():
+        if st.q_test_certificate == 'لا يوجد':
+            st.is_q_test_certificate = False
+        else:
+            st.is_q_test_certificate = True
+        st.save()
+
+    students = Student.objects.filter(is_q_test_certificate=True).order_by("id")
+
+    if ((q is not None) and (search_type is not None)):
+        if search_type == "by-text":
+            my_regex = r''
+            for word in re.split(r'\s+', q.strip()):
+                my_regex += word + r'.*'
+            students = Student.objects.filter(is_q_test_certificate=True, name__iregex=r'{}'.format(my_regex)).order_by("id")
+        else:
+            students = Student.objects.filter(is_q_test_certificate=True, pk=int(q)).order_by("id")
+
+    ordered_students_by_q_test_certificates = []
+    for student in students:
+        item = {}
+        item["id"] = student.id
+        item["name"] = student.name
+        item["q_test_certificate"] = student.q_test_certificate
+        item["length"] = len(student.q_test_certificate)
+
+        ordered_students_by_q_test_certificates.append(item)
+    
+    ordered_students_by_q_test_certificates = sorted(ordered_students_by_q_test_certificates, key=lambda x: x["length"], reverse=True)
+
+    return render(request, 'control_panel/admin_test_certificates.html', {"students": ordered_students_by_q_test_certificates, "val": q})
+
+
+@user_passes_test(check_admin)
+@login_required
+def admin_info(request):
+    #TODO
+    return render(request, "control_panel/admin_info.html")
 
 
 # adding and deleting points

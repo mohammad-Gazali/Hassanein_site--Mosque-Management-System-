@@ -93,7 +93,7 @@ class Student(models.Model):
         if not result:
             return 'لا يوجد'
         else:
-            return json.dumps(result, ensure_ascii=False)
+            return result
     q_test_certificate.fget.short_description = 'شهادات السبر'
 
     @property
@@ -187,6 +187,17 @@ class Student(models.Model):
             result += process.value
         return result
     deleted_points.fget.short_description = 'نقاط مخصومة متفرقة'
+
+    @property
+    def deleted_points_for_money_deleting(self):
+        result = [0, 0]
+        for money_deleting in self.money_deleting_info:
+            if money_deleting.is_money_main_value:
+                result[1] += money_deleting.value
+            else:
+                result[0] += money_deleting.value
+
+        return result
 
     class Meta:
         verbose_name = 'الطالب'
