@@ -6,7 +6,6 @@ from django.dispatch import receiver
 from django.conf.global_settings import AUTH_USER_MODEL
 from .default_dictionary import DEFAULT_DICT, DEFAULT_DICT_FOR_q_test, DEFAULT_DICT_FOR_q_candidate_test, DEFAULT_DICT_FOR_PERMISSIONS, check_for_cer
 from .point_map import q_map
-import json
 
 
 #* Default json
@@ -65,8 +64,10 @@ class Student(models.Model):
     q_memorizing = models.JSONField(default=json_default_value, verbose_name='حفظ القرآن')
     q_test = models.JSONField(default=json_default_value_two, verbose_name='السبر في المسجد')
     q_test_candidate = models.JSONField(default=json_default_value_three, verbose_name='السبر الترشيحي')
-    q_awqaf_test = models.JSONField(default=json_default_value_three, verbose_name='سبر القرآن في الأوقاف')
     is_q_test_certificate = models.BooleanField(default=True, verbose_name='هل يوجد شهادة سبر')
+    q_awqaf_test = models.JSONField(default=json_default_value_three, verbose_name='سبر القرآن في الأوقاف')
+    q_awqaf_test_looking = models.JSONField(default=json_default_value_three, verbose_name='سبر القرآن نظراً في الأوقاف')
+    q_awqaf_test_explaining = models.JSONField(default=json_default_value_three, verbose_name='سبر القرآن تفسيراً في الأوقاف')
 
     def __str__(self):
         return self.name
@@ -198,6 +199,58 @@ class Student(models.Model):
                 result[0] += money_deleting.value
 
         return result
+
+    @property
+    def number_of_parts_awqaf_normal_tests(self):
+        list_of_awqaf_normal_test_num = []
+        for __, value in self.q_awqaf_test.items():
+            if value == "NEW":
+                list_of_awqaf_normal_test_num.append(1)
+        return sum(list_of_awqaf_normal_test_num)
+    number_of_parts_awqaf_normal_tests.fget.short_description = 'عدد الأجزاء المسبورة غيباً في الأوقاف'
+    
+    @property
+    def awqaf_points_normal_test(self):
+        return self.number_of_parts_awqaf_normal_tests * 25
+    awqaf_points_normal_test.fget.short_description = 'نقاط الأجزاء المسبورة غيباً في الأوقاف'
+
+    @property
+    def number_of_parts_awqaf_looking_tests(self):
+        list_of_awqaf_looking_test_num = []
+        for __, value in self.q_awqaf_test_looking.items():
+            if value == "NEW":
+                list_of_awqaf_looking_test_num.append(1)
+        return sum(list_of_awqaf_looking_test_num)
+    number_of_parts_awqaf_looking_tests.fget.short_description = 'عدد الأجزاء المسبورة نظراً في الأوقاف'
+    
+    @property
+    def awqaf_points_looking_test(self):
+        return self.number_of_parts_awqaf_looking_tests * 13
+    awqaf_points_looking_test.fget.short_description = 'نقاط الأجزاء المسبورة نظراً في الأوقاف'
+
+    @property
+    def number_of_parts_awqaf_explaining_tests(self):
+        list_of_awqaf_explaining_test_num = []
+        for __, value in self.q_awqaf_test_explaining.items():
+            if value == "NEW":
+                list_of_awqaf_explaining_test_num.append(1)
+        return sum(list_of_awqaf_explaining_test_num)
+    number_of_parts_awqaf_explaining_tests.fget.short_description = 'عدد الأجزاء المسبورة تفسيراً في الأوقاف'
+
+    @property
+    def awqaf_points_explaining_test(self):
+        return self.number_of_parts_awqaf_explaining_tests * 100
+    awqaf_points_explaining_test.fget.short_description = 'نقاط الأجزاء المسبورة تفسيراً في الأوقاف'
+
+    @property
+    def all_points_sum(self):
+        all_added_points = self.points_of_coming + self.points_of_q_memo + self.points_of_q_test + self.points_of_q_candidate_test + self.awqaf_points_normal_test + self.awqaf_points_looking_test + self.awqaf_points_explaining_test + self.added_points
+        all_deleted_points = self.deleted_points + self.deleted_points_for_money_deleting[0]
+        money_for_deleting = self.deleted_points_for_money_deleting[1]
+        sum_of_added_and_deleted = all_added_points - all_deleted_points
+
+        return [sum_of_added_and_deleted, money_for_deleting]
+    all_points_sum.fget.short_description = 'مجموع النقاط الكلي'
 
     class Meta:
         verbose_name = 'الطالب'
@@ -381,7 +434,24 @@ class MoneyDeleting(models.Model):
         verbose_name_plural = 'الغرامات'
 
 
+class AwqafTestNoQ(models.Model):
+    name = models.CharField(max_length=511, verbose_name="الاسم")
+    points = models.IntegerField(verbose_name="النقاط")
 
+    
+    def __str__(self) -> str:
+        return self.name
+    
+
+    class Meta:
+        verbose_name = "سبر أوقاف بغير القرآن"
+        verbose_name_plural = "سبر الأوقاف بغير القرآن"
+
+
+class AwqafNoQStudentRelation(models.Model):
+    test = models.ForeignKey(AwqafTestNoQ, on_delete=models.CASCADE, verbose_name="سبر الأوقاف")
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, verbose_name="الطالب")
+    is_old = models.BooleanField(default=False, verbose_name="هل السبر قديم")
 
 
 

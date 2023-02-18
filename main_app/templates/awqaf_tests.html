@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 
 {% block title %}
@@ -6,7 +7,111 @@
 {% endblock title %}
 
 {% block content %}
-    <section class="common-box-without-bg container">
-        Awqaf
+    <section class="common-box container">
+        <h2 class="title text-white">
+            سبر الأوقاف
+        </h2>
+        <style>
+            @media (width < 555px) {
+                #control-section-awqaf * {
+                    width: 100% !important;
+                    max-width: 100% !important;
+                }
+            }
+        </style>
+        <div id="control-section-awqaf" class="mb-3 p-3 w-100 d-flex flex-column gap-3 rounded" style="background-color: var(--clr3)">
+            <a href="{% url 'admin_awqaf_table' %}" class="btn btn-success w-100 mx-auto" style="max-width: 456px">
+                جدول سبر الأوقاف <i class="bi bi-table"></i>
+            </a>
+            <a href="{% url 'admin_main' %}" class="btn btn-secondary w-100 mx-auto" style="max-width: 456px">
+                العودة إلى لوحة التحكم <i class="bi bi-speedometer"></i>
+            </a>
+            <div class="d-flex gap-3 w-100 justify-content-center align-items-center flex-wrap">
+                <input type="radio" class="btn-check" name="type-of-awqaf-test" id="type-of-awqaf-test-q" value="one-student" autocomplete="off" checked>
+                <label class="btn btn-outline-primary w-100" style="max-width: 220px" for="type-of-awqaf-test-q" value="q">سبر القرآن في الأوقاف</label>
+                <input type="radio" class="btn-check" name="type-of-awqaf-test" id="type-of-awqaf-test-no-q" value="category" autocomplete="off">
+                <label class="btn btn-outline-primary w-100" style="max-width: 220px" for="type-of-awqaf-test-no-q" value="no-q">سبر بغير القرآن في الأوقاف</label>
+            </div>
+        </div>
+        <div id="first-section-for-display-with-type-of-awqaf-test" class="w-100">
+            <form id="awqaf-student-form" action="#" class="gap-3 d-flex flex-column p-4 form-control mb-4 mt-1">
+                {% csrf_token %}
+                <h5 class="title text-white" style="background: rgb(109, 40, 193);">
+                    البحث عن طالب
+                </h5>
+                <div id="awqaf-displaying-students"></div>
+                <label class="form-label" for="awqaf-search-student">اسم الطالب</label>
+                <input id="awqaf-search-student" type="text" class="form-control" required>
+                <button class="btn btn-primary d-flex align-items-center justify-content-center gap-2" type="submit">
+                    بحث <i class="bi bi-search"></i>
+                </button>
+            </form>
+            <form id="awqaf-main-form" class="form-control py-4" action="{% url 'admin_awqaf' %}" method="POST">
+                {% csrf_token %}
+                <div id="awqaf-error-not-student-choosed"></div>
+                <div id="awqaf-error-invalid-number-for-sections-input"></div>
+                <div role="alert" id="awqaf-displaying-students-form-body"></div>
+                <input name="student-id" id="awqaf-hidden-input" value="" type="hidden">
+                <label class="form-label" for="type-test-awqaf">نوع سبر القرآن</label>
+                <select class="form-select" name="type" id="type-test-awqaf">
+                    <option value="normal">غيباً</option>
+                    <option value="looking">نظراً</option>
+                    <option value="explaining">تفسير</option>
+                </select>
+                <div class="mt-5 mb-2 flex-wrap d-flex justify-content-center gap-3">
+                    <span data-help data-start="1" data-end="5" class="btn btn-primary flex-fill">1 <i class="bi bi-arrow-left"></i> 5</span>
+                    <span data-help data-start="1" data-end="10" class="btn btn-primary flex-fill">1 <i class="bi bi-arrow-left"></i> 10</span>
+                    <span data-help data-start="1" data-end="15" class="btn btn-primary flex-fill">1 <i class="bi bi-arrow-left"></i> 15</span>
+                    <span data-help data-start="1" data-end="20" class="btn btn-primary flex-fill">1 <i class="bi bi-arrow-left"></i> 20</span>
+                    <span data-help data-start="1" data-end="25" class="btn btn-primary flex-fill">1 <i class="bi bi-arrow-left"></i> 25</span>
+                    <span data-help data-start="1" data-end="30" class="btn btn-primary flex-fill">1 <i class="bi bi-arrow-left"></i> 30</span>
+                </div>
+                <div class="mb-2 flex-wrap d-flex justify-content-center gap-3">
+                    <span data-help data-start="1" data-end="5" class="btn btn-primary flex-fill">أول خمسة</span>
+                    <span data-help data-start="6" data-end="10" class="btn btn-primary flex-fill">ثاني خمسة</span>
+                    <span data-help data-start="11" data-end="15" class="btn btn-primary flex-fill">ثالث خمسة</span>
+                    <span data-help data-start="16" data-end="20" class="btn btn-primary flex-fill">رابع خمسة</span>
+                    <span data-help data-start="21" data-end="25" class="btn btn-primary flex-fill">خامس خمسة</span>
+                    <span data-help data-start="26" data-end="30" class="btn btn-primary flex-fill">آخر خمسة</span>
+                </div>
+                <label class="form-label mt-3" for="awqaf-q-sections">الأجزاء <small class="text-secondary">(ملاحظة: يمكنك كتابة عدة أجزاء بفصلها بمسافة space)</small></label>
+                <input pattern="[\d\s]+" name="sections" class="form-control" id="awqaf-q-sections" type="text" required>
+                <button class="btn btn-success mt-4" type="submit">
+                    إضافة <i class="bi bi-plus-lg"></i>
+                </button>
+            </form>
+        </div>
+        <div id="second-section-for-display-with-type-of-awqaf-test" class="d-none w-100">
+            <form id="awqaf-student-form-2" action="#" class="gap-3 d-flex flex-column p-4 form-control mb-4 mt-1">
+                {% csrf_token %}
+                <h5 class="title text-white" style="background: rgb(109, 40, 193);">
+                    البحث عن طالب
+                </h5>
+                <div id="awqaf-displaying-students-2"></div>
+                <label class="form-label" for="awqaf-search-student-2">اسم الطالب</label>
+                <input id="awqaf-search-student-2" type="text" class="form-control" required>
+                <button class="btn btn-primary d-flex align-items-center justify-content-center gap-2" type="submit">
+                    بحث <i class="bi bi-search"></i>
+                </button>
+            </form>
+            <form id="awqaf-main-form-2" class="form-control py-4" action="{% url 'admin_awqaf_no_q' %}" method="POST">
+                {% csrf_token %}
+                <div id="awqaf-error-not-student-choosed-2"></div>
+                <div role="alert" id="awqaf-displaying-students-form-body-2"></div>
+                <input name="student-id" id="awqaf-hidden-input-2" value="" type="hidden">
+                <label class="form-label" for="type-test-awqaf-2">نوع السبر</label>
+                <select class="form-select" name="type" id="type-test-awqaf-2">
+                    {% for test_type in test_types %}
+                        <option value="{{ test_type.id }}">
+                            {{ test_type }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <button class="btn btn-success mt-4" type="submit">
+                    إضافة <i class="bi bi-plus-lg"></i>
+                </button>
+            </form>
+        </div>
     </section>
+    <script src="{% static 'js/awqaf_script.js' %}"></script>
 {% endblock content %}

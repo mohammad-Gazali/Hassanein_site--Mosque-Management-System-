@@ -27,14 +27,7 @@ submitChangesSpecializationsBtn.onclick = () => {
 
 
 backSpecializationsBtn.onclick = () => {
-    mainTbodyAdminSpecializations.classList.remove("d-none");
-    editSpecializationsBtn.classList.remove("d-none");
-    
-    formTbodyAdminSpecializations.classList.add("d-none");
-    submitChangesSpecializationsBtn.classList.add("d-none");
-    backSpecializationsBtn.classList.add("d-none");
-
-    backSpecializationsBtn.classList.add("d-none");
+    location.reload();
 }
 
 

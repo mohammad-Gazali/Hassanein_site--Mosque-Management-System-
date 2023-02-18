@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.db import models
-from .models import Student, Category, MemorizeMessage, MemorizeNotes, Coming, ComingCategory, DoublePointMessage, Master, PointsAddingCause, PointsDeletingCause, MoneyDeleting, MoneyDeletingCause
+from .models import Student, Category, MemorizeMessage, MemorizeNotes, Coming, ComingCategory, DoublePointMessage, PointsAddingCause, PointsDeletingCause, MoneyDeletingCause, AwqafTestNoQ
 from django_json_widget.widgets import JSONEditorWidget
 
 
@@ -54,7 +54,7 @@ class AdminStudent(admin.ModelAdmin):
 
         # here when the object doesn't exisit (add object case) 
         else:
-            kwargs['exclude'] = ('q_memorizing', 'q_test', 'q_test_candidate', 'q_awqaf_test', 'is_q_test_certificate')
+            kwargs['exclude'] = ('q_memorizing', 'q_test', 'q_test_candidate', 'q_awqaf_test', 'q_awqaf_test_looking', 'q_awqaf_test_explaining', 'is_q_test_certificate')
         return super().get_form(request, obj, **kwargs)
 
 
@@ -171,3 +171,8 @@ class PointsDeletingCauseAdmin(admin.ModelAdmin):
 @admin.register(MoneyDeletingCause)
 class MoneyDeletingCauseAdmin(admin.ModelAdmin):
     pass
+
+
+@admin.register(AwqafTestNoQ)
+class AwqafTestNoQAdmin(admin.ModelAdmin):
+    list_display = ["name", "points"]

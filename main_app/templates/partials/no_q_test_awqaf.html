@@ -1,0 +1,26 @@
+{% load filters %}
+
+<section id="student-no-q-test-awqaf-{{ id }}" class="student-q-test-awqaf">
+    <h6 class="text-white title">
+        سبر الطالب ما عدا القرآن وزارة الأوقاف
+    </h6>
+    <div class="container d-flex flex-column gap-2">
+        {% for test in all_tests %}
+            {% with mylist=test.id|mylist:id %}
+                {% if test.id in previous_relations|list_of_tests_ids_from_relations and mylist|is_new_relation:all_relations %}
+                    <div class="other-block bg-success text-white w-100">
+                        {{ test }}
+                    </div>
+                {% elif test.id in previous_relations|list_of_tests_ids_from_relations %}
+                    <div class="other-block bg-warning text-white w-100">
+                        {{ test }}
+                    </div>
+                {% else %}
+                    <div class="other-block bg-secondary text-white w-100">
+                        {{ test }}
+                    </div>
+                {% endif %}
+            {% endwith %}
+        {% endfor %}
+    </div>
+</section>

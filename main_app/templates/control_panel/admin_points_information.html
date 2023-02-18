@@ -3,22 +3,31 @@
 
 
 {% block admin_content %}
+    <button data-hide="no-hide" id="hiding-button" class="btn btn-secondary mt-3">
+        إخفاء التفاصيل <div style="transform: scaleX(-1); display: inline-block;"><i class="bi bi-reply-fill"></i></div>
+    </button>
     <div class="table-responsive mb-5 scrollbar-table">
         <table class="table table-dark table-bordered table-striped mb-0 mt-3 rounded">
             <thead>
                 <tr>
                     <th style="white-space: nowrap;" class="text-center">المعرف</th>
                     <th style="white-space: nowrap;" class="text-center">الاسم</th>
-                    <th style="white-space: nowrap;" class="text-center">نقاط الحضور</th>
-                    <th style="white-space: nowrap;" class="text-center">عدد الصفحات</th>
-                    <th style="white-space: nowrap;" class="text-center">نقاط التسميع</th>
-                    <th style="white-space: nowrap;" class="text-center">عدد الأجزاء المسبورة</th>
-                    <th style="white-space: nowrap;" class="text-center">نقاط السبر العادي</th>
-                    <th style="white-space: nowrap;" class="text-center">عدد أجزاء السبر الترشيحي</th>
-                    <th style="white-space: nowrap;" class="text-center">نقاط السبر الترشيحي</th>
-                    <th style="white-space: nowrap;" class="text-center">نقاط مضافة</th>
-                    <th style="white-space: nowrap;" class="text-center">نقاط مخصومة</th>
-                    <th style="white-space: nowrap;" class="text-center">نقاط المخصومة بسبب الغرامات</th>
+                    <th class="hide-for-detail" style="white-space: nowrap;" class="text-center">نقاط الحضور</th>
+                    <th class="hide-for-detail" style="white-space: nowrap;" class="text-center">عدد الصفحات</th>
+                    <th class="hide-for-detail" style="white-space: nowrap;" class="text-center">نقاط التسميع</th>
+                    <th class="hide-for-detail" style="white-space: nowrap;" class="text-center">عدد الأجزاء المسبورة</th>
+                    <th class="hide-for-detail" style="white-space: nowrap;" class="text-center">نقاط السبر العادي</th>
+                    <th class="hide-for-detail" style="white-space: nowrap;" class="text-center">عدد أجزاء السبر الترشيحي</th>
+                    <th class="hide-for-detail" style="white-space: nowrap;" class="text-center">نقاط السبر الترشيحي</th>
+                    <th class="hide-for-detail" style="white-space: nowrap;" class="text-center">عدد الأجزاء المسبورة غيباً في الأوقاف</th>
+                    <th class="hide-for-detail" style="white-space: nowrap;" class="text-center">نقاط الأجزاء المسبورة غيباً في الأوقاف</th>
+                    <th class="hide-for-detail" style="white-space: nowrap;" class="text-center">عدد الأجزاء المسبورة نظراً في الأوقاف</th>
+                    <th class="hide-for-detail" style="white-space: nowrap;" class="text-center">نقاط الأجزاء المسبورة نظراً في الأوقاف</th>
+                    <th class="hide-for-detail" style="white-space: nowrap;" class="text-center">عدد الأجزاء المسبورة تفسيراً في الأوقاف</th>
+                    <th class="hide-for-detail" style="white-space: nowrap;" class="text-center">نقاط الأجزاء المسبورة تفسيراً في الأوقاف</th>
+                    <th class="hide-for-detail" style="white-space: nowrap;" class="text-center">نقاط مضافة</th>
+                    <th class="hide-for-detail" style="white-space: nowrap;" class="text-center">نقاط مخصومة</th>
+                    <th class="hide-for-detail" style="white-space: nowrap;" class="text-center">نقاط المخصومة بسبب الغرامات</th>
                     <th style="white-space: nowrap;" class="text-center">مجموع النقاط الكلي</th>
                 </tr>
             </thead>
@@ -31,20 +40,58 @@
                             </a>
                         </td>
                         <td class="text-center" style="white-space: nowrap;">{{ student.name }}</td>
-                        <td class="text-center" style="white-space: nowrap;">{{ student.points_of_coming }}</td>
-                        <td class="text-center" style="white-space: nowrap;">{{ student.number_of_q_memo }}</td>
-                        <td class="text-center" style="white-space: nowrap;">{{ student.points_of_q_memo }}</td>
-                        <td class="text-center" style="white-space: nowrap;">{{ student.number_of_q_test }}</td>
-                        <td class="text-center" style="white-space: nowrap;">{{ student.points_of_q_test }}</td>
-                        <td class="text-center" style="white-space: nowrap;">{{ student.number_of_q_candidate_test }}</td>
-                        <td class="text-center" style="white-space: nowrap;">{{ student.points_of_q_candidate_test }}</td>
-                        <td class="text-center" style="white-space: nowrap;">{{ student.added_points }}</td>
-                        <td class="text-center" style="white-space: nowrap;">{{ student.deleted_points }}</td>
-                        <td class="text-center" style="white-space: nowrap;">{{ student.deleted_points_for_money_deleting|money_deleting_remove_points:point_value }}</td>
-                        <td class="text-center" style="white-space: nowrap;">0</td>
+                        <td class="text-center hide-for-detail" style="white-space: nowrap;">{{ student.points_of_coming }}</td>
+                        <td class="text-center hide-for-detail" style="white-space: nowrap;">{{ student.number_of_q_memo }}</td>
+                        <td class="text-center hide-for-detail" style="white-space: nowrap;">{{ student.points_of_q_memo }}</td>
+                        <td class="text-center hide-for-detail" style="white-space: nowrap;">{{ student.number_of_q_test }}</td>
+                        <td class="text-center hide-for-detail" style="white-space: nowrap;">{{ student.points_of_q_test }}</td>
+                        <td class="text-center hide-for-detail" style="white-space: nowrap;">{{ student.number_of_q_candidate_test }}</td>
+                        <td class="text-center hide-for-detail" style="white-space: nowrap;">{{ student.points_of_q_candidate_test }}</td>
+                        <td class="text-center hide-for-detail" style="white-space: nowrap;">{{ student.number_of_parts_awqaf_normal_tests }}</td>
+                        <td class="text-center hide-for-detail" style="white-space: nowrap;">{{ student.awqaf_points_normal_test }}</td>
+                        <td class="text-center hide-for-detail" style="white-space: nowrap;">{{ student.number_of_parts_awqaf_looking_tests }}</td>
+                        <td class="text-center hide-for-detail" style="white-space: nowrap;">{{ student.awqaf_points_looking_test }}</td>
+                        <td class="text-center hide-for-detail" style="white-space: nowrap;">{{ student.number_of_parts_awqaf_explaining_tests }}</td>
+                        <td class="text-center hide-for-detail" style="white-space: nowrap;">{{ student.awqaf_points_explaining_test }}</td>
+                        <td class="text-center hide-for-detail" style="white-space: nowrap;">{{ student.added_points }}</td>
+                        <td class="text-center hide-for-detail" style="white-space: nowrap;">{{ student.deleted_points }}</td>
+                        <td class="text-center hide-for-detail" style="white-space: nowrap;">{{ student.deleted_points_for_money_deleting|money_deleting_remove_points:point_value }}</td>
+                        <td class="text-center" style="white-space: nowrap; direction: ltr">{{ student.all_points_sum|all_points_handling:point_value }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
+    <script>
+        const hidingBtn = document.getElementById('hiding-button');
+        const hidingSections = document.querySelectorAll('.hide-for-detail');
+
+        hidingBtn.onclick = () => {
+            if (hidingBtn.dataset.hide == "no-hide") {
+
+                console.log(hidingSections)
+
+                hidingSections.forEach((section) => {
+                    section.classList.add("d-none");
+                })
+
+                hidingBtn.classList.remove("btn-secondary");
+                hidingBtn.classList.add("btn-primary");
+                hidingBtn.dataset.hide = "hide";
+                hidingBtn.innerHTML = `عرض التفاصيل <i class="bi bi-three-dots"></i>`;
+
+            } else {
+
+                hidingSections.forEach((section) => {
+                    section.classList.remove("d-none");
+                })
+
+                hidingBtn.innerHTML = `إخفاء التفاصيل <div style="transform: scaleX(-1); display: inline-block;"><i class="bi bi-reply-fill"></i></div>`;
+                hidingBtn.classList.remove("btn-primary");
+                hidingBtn.classList.add("btn-secondary");
+                hidingBtn.dataset.hide = "no-hide";
+
+            }
+        }
+    </script>
 {% endblock admin_content %}

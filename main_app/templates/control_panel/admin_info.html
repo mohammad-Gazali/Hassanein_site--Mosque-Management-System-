@@ -2,5 +2,48 @@
 
 
 {% block admin_content %}
-    Info
+    <section class="my-5 w-100 rounded px-2 py-5" style="border: 4px solid var(--bs-primary); background: #E1E1E1;">
+        <div class="d-flex flex-wrap justify-content-center align-items-center gap-5 w-100">
+            <span class="text-center shadow p-3 rounded" style="background: white; width: 250px; height: 250px;">
+                <p class="fs-5 text-primary fw-bold pb-3" style="border-bottom: 4px solid var(--bs-warning)">
+                    عدد الصفحات المسمعة في المسجد
+                </p>
+                <p class="fw-bold text-success" style="font-size: 66px">
+                    {{ number_of_pages }}
+                </p>
+            </span>    
+            <span class="text-center shadow p-3 rounded" style="background: white; width: 250px; height: 250px;">
+                <p class="fs-5 text-primary fw-bold pb-3" style="border-bottom: 4px solid var(--bs-warning)">
+                    عدد الأجزاء المسبورة في المسجد
+                </p>
+                <p class="fw-bold text-success" style="font-size: 66px">
+                    {{ number_of_parts }}
+                </p>
+            </span>    
+            <span class="text-center shadow p-3 rounded" style="background: white; width: 250px; height: 250px;">
+                <p class="fs-5 text-primary fw-bold pb-3" style="border-bottom: 4px solid var(--bs-warning)">
+                    عدد الأجزاء المسبورة غيباً في الأوقاف
+                </p>
+                <p class="fw-bold text-success" style="font-size: 66px">
+                    {{ number_of_parts_awqaf_normal }}
+                </p>
+            </span>    
+            <span class="text-center shadow p-3 rounded" style="background: white; width: 250px; height: 250px;">
+                <p class="fs-5 text-primary fw-bold pb-3" style="border-bottom: 4px solid var(--bs-warning)">
+                    عدد الأجزاء المسبورة نظراً في الأوقاف
+                </p>
+                <p class="fw-bold text-success" style="font-size: 66px">
+                    {{ number_of_parts_awqaf_looking }}
+                </p>
+            </span>    
+            <span class="text-center shadow p-3 rounded" style="background: white; width: 250px; height: 250px;">
+                <p class="fs-5 text-primary fw-bold pb-3" style="border-bottom: 4px solid var(--bs-warning)">
+                    عدد الأجزاء المسبورة تفسيراً في الأوقاف
+                </p>
+                <p class="fw-bold text-success" style="font-size: 66px">
+                    {{ number_of_parts_awqaf_explaining }}
+                </p>
+            </span>    
+        </div>
+    </section>
 {% endblock admin_content %}

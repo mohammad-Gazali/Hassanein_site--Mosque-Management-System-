@@ -4,8 +4,8 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.generic import ListView, DeleteView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import HttpResponseForbidden, HttpResponseNotAllowed, JsonResponse
-from django.db.models import Prefetch, Sum, Q, F, ExpressionWrapper, IntegerField
-from .models import MemorizeNotes, Student, Category, MemorizeMessage, Coming, ControlSettings, DoublePointMessage, Master, PointsAddingCause, PointsDeletingCause, PointsAdding, PointsDeleting, MoneyDeleting, MoneyDeletingCause, ComingCategory
+from django.db.models import Prefetch, Sum, Q
+from .models import MemorizeNotes, Student, Category, MemorizeMessage, Coming, ControlSettings, DoublePointMessage, Master, PointsAddingCause, PointsDeletingCause, PointsAdding, PointsDeleting, MoneyDeleting, MoneyDeletingCause, ComingCategory, AwqafTestNoQ, AwqafNoQStudentRelation
 from .forms import SettingForm
 from .point_map import apply_q_map, q_map
 from specializations.models import Part, SpecializationMessage, Specialization, Level
@@ -36,6 +36,8 @@ def search_results_of_student(request):
     
     specializations = Specialization.objects.prefetch_related("level_set__part_set").all()
     levels = Level.objects.all()
+    all_tests = AwqafTestNoQ.objects.all()
+    all_relations = AwqafNoQStudentRelation.objects.all().values("test_id", "student_id", "is_old")
 
 
     if query_id:
@@ -46,6 +48,8 @@ def search_results_of_student(request):
             'text': False,
             'specializations': specializations,
             'levels': levels,
+            'all_tests': all_tests,
+            'all_relations': all_relations
             })
 
     if query_text:
@@ -53,7 +57,7 @@ def search_results_of_student(request):
         for word in re.split(r'\s+', query_text.strip()):
             my_regex += word + r'.*'
         
-        students = Student.objects.prefetch_related("memorizenotes_set", "part_set__level__specialization").select_related("category").filter(name__iregex=r'{}'.format(my_regex)).order_by('id')
+        students = Student.objects.prefetch_related("memorizenotes_set", "part_set__level__specialization", "awqafnoqstudentrelation_set").select_related("category").filter(name__iregex=r'{}'.format(my_regex)).order_by('id')
         
         return render(request, 'search_results.html', {
             'students': students, 
@@ -61,6 +65,8 @@ def search_results_of_student(request):
             'text': True,
             'specializations': specializations,
             'levels': levels,
+            'all_tests': all_tests,
+            'all_relations': all_relations
             })
 
 
@@ -673,6 +679,15 @@ def admin_main(request):
 
     students = Student.objects.select_related("category").all().order_by('id')
 
+    if ((q is not None) and (search_type is not None)):
+        if search_type == "by-text": 
+            my_regex = r''
+            for word in re.split(r'\s+', q.strip()):
+                my_regex += word + r'.*'  
+            students = Student.objects.select_related("category").filter(name__iregex=r'{}'.format(my_regex)).order_by('id')
+        else:
+            students = Student.objects.select_related("category").filter(pk=int(q)).order_by('id')
+
     return render(request, "control_panel/admin_main.html", {'students': students, 'val': q})
 
 
@@ -731,7 +746,6 @@ def admin_points_information(request):
                 'coming_set',
                 'moneydeleting_set'
                 ).filter(name__iregex=r'{}'.format(my_regex)).order_by('id')
-            return render(request, 'control_panel/admin_points_information.html', {'students': students, 'val': q})
         else:
             students = Student.objects.prefetch_related(
                 Prefetch(
@@ -754,9 +768,8 @@ def admin_points_information(request):
                 'coming_set',
                 'moneydeleting_set'
                 ).filter(pk=int(q))
-            return render(request, 'control_panel/admin_points_information.html', {'students': students, 'val': q})
     
-    return render(request, 'control_panel/admin_points_information.html', {'students': students, 'val': '', "point_value": point_value})
+    return render(request, 'control_panel/admin_points_information.html', {'students': students, 'val': q, "point_value": point_value})
 
 
 
@@ -772,8 +785,143 @@ class AdminSettingsSiteView(UserPassesTestMixin, LoginRequiredMixin, UpdateView)
 
 @user_passes_test(check_admin)
 @login_required
-def awqaf_admin(request):
-    return render(request, 'awqaf_tests.html')
+def admin_awqaf(request):
+    test_types = AwqafTestNoQ.objects.all()
+    if request.method == "POST":
+        student_id = int(request.POST.get("student-id"))
+        test_type = request.POST.get("type")
+        sections = request.POST.get("sections")
+
+        filterd_sections = list(set(re.split(r"\s+", sections.strip())))
+
+        list_of_sections = list(map(lambda x: "الجزء " + x, filterd_sections))
+
+        student = Student.objects.get(pk=student_id)
+
+
+        if test_type == "normal":
+            new_sections = {s: "NEW" for s in list_of_sections}
+            for section, value in student.q_awqaf_test.items():
+                if value == "OLD":
+                    new_sections[section] = "OLD"
+                elif section in new_sections:
+                    pass
+                else:
+                    new_sections[section] = value
+
+            student.q_awqaf_test = new_sections
+            student.save()
+        
+        elif test_type == "looking":
+            new_sections = {s: "NEW" for s in list_of_sections}
+            for section, value in student.q_awqaf_test_looking.items():
+                if value == "OLD":
+                    new_sections[section] = "OLD"
+                elif section in new_sections:
+                    pass
+                else:
+                    new_sections[section] = value
+
+            student.q_awqaf_test_looking = new_sections
+            student.save()
+
+        else:
+            new_sections = {s: "NEW" for s in list_of_sections}
+            for section, value in student.q_awqaf_test_explaining.items():
+                if value == "OLD":
+                    new_sections[section] = "OLD"
+                elif section in new_sections:
+                    pass
+                else:
+                    new_sections[section] = value
+            
+            student.q_awqaf_test_explaining = new_sections
+            student.save()
+            
+    return render(request, 'awqaf_tests.html', {"test_types": test_types})
+
+
+@user_passes_test(check_admin)
+@login_required
+def admin_awqaf_no_q(request):
+    test_types = AwqafTestNoQ.objects.all()
+    if request.method == "POST":
+        student_id = int(request.POST.get("student-id"))
+        test_id = int(request.POST.get("type"))
+
+        if not AwqafNoQStudentRelation.objects.filter(student_id=student_id, test_id=test_id):
+            AwqafNoQStudentRelation.objects.create(
+                student_id=student_id, 
+                test_id=test_id
+            )
+
+        else:
+            return render(request, "error_page.html", {"error": "هذا السبر قد تم تسجيله مسبقاً"})
+
+            
+    return render(request, 'awqaf_tests.html', {"test_types": test_types})
+
+
+@user_passes_test(check_admin)
+@login_required
+def admin_awqaf_table(request):
+
+    q = request.GET.get("text-search-table") or None
+    search_type = request.GET.get("type-search-table-admin-p") or None
+
+    all_relations = AwqafNoQStudentRelation.objects.all().values("test_id", "student_id", "is_old")
+    all_tests = AwqafTestNoQ.objects.all()
+    students = (Student.objects
+                .prefetch_related("awqafnoqstudentrelation_set")
+                .exclude(awqafnoqstudentrelation__isnull=True)
+                .order_by("id")
+                )
+    
+    if request.method == "POST":
+
+        relations = AwqafNoQStudentRelation.objects.select_related("student", "test").filter(is_old=False, student__in=students)
+
+        form_items = list(request.POST)[1:]
+
+        list_ids = [{"test_id": int(i.split("-")[1]), "student_id": int(i.split("-")[3])} for i in form_items]
+
+        filter_query = Q()
+
+        for item in list_ids:
+            filter_query = filter_query | Q(**item)
+
+        relations_from_form = AwqafNoQStudentRelation.objects.select_related("student", "test").filter(filter_query)
+
+        for relation in relations:
+            if relation not in relations_from_form:
+                relation.delete()
+            else:
+                list_ids.remove({"test_id": relation.test_id, "student_id": relation.student_id})
+        
+        AwqafNoQStudentRelation.objects.bulk_create([
+            AwqafNoQStudentRelation(test_id=item["test_id"], student_id=item["student_id"]) for item in list_ids
+        ])
+
+    if ((q is not None) and (search_type is not None)):
+            if search_type == "by-text": 
+                my_regex = r''
+                for word in re.split(r'\s+', q.strip()):
+                    my_regex += word + r'.*'  
+                students = (Student.objects
+                            .prefetch_related("awqafnoqstudentrelation_set")
+                            .exclude(awqafnoqstudentrelation__isnull=True)
+                            .filter(name__iregex=r'{}'.format(my_regex))
+                            .order_by('id')
+                            )
+            else:
+                students = Student.objects.exclude(awqafnoqstudentrelation__isnull=True).filter(pk=int(q))
+
+    return render(request, "awqaf_tests_table.html", {
+        "all_tests": all_tests,
+        "students": students,
+        "val": q, 
+        "all_relations": all_relations
+        })
 
 
 @user_passes_test(check_admin)
@@ -1025,8 +1173,21 @@ def admin_test_certificates(request):
 @user_passes_test(check_admin)
 @login_required
 def admin_info(request):
-    #TODO
-    return render(request, "control_panel/admin_info.html")
+    students = Student.objects.all()
+    
+    number_of_pages = sum([s.number_of_q_memo for s in students])
+    number_of_parts = sum([s.number_of_q_test for s in students])
+    number_of_parts_awqaf_normal = sum([s.number_of_parts_awqaf_normal_tests for s in students])
+    number_of_parts_awqaf_looking = sum([s.number_of_parts_awqaf_looking_tests for s in students])
+    number_of_parts_awqaf_explaining = sum([s.number_of_parts_awqaf_explaining_tests for s in students])
+
+    return render(request, "control_panel/admin_info.html", {
+        "number_of_pages": int(number_of_pages),
+        "number_of_parts": int(number_of_parts),
+        "number_of_parts_awqaf_normal": number_of_parts_awqaf_normal,
+        "number_of_parts_awqaf_looking": number_of_parts_awqaf_looking,
+        "number_of_parts_awqaf_explaining": number_of_parts_awqaf_explaining,
+    })
 
 
 # adding and deleting points
