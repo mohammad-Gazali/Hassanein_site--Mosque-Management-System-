@@ -10,19 +10,29 @@
 {% block admin_content %}
     <div class="mt-3 d-flex gap-3 rounded p-3" style="background-color: #0018456b">
         <div id="basic-buttons-specializations" class="d-flex gap-3">
-            <button id="edit-specializations-btn" class="btn btn-warning">
+            <button id="edit-specializations-btn" class="btn btn-warning" style="white-space: nowrap">
                 تعديل <i class="bi bi-gear-fill"></i>
             </button>
-            <button id="submit-changes-specializations-btn" class="btn btn-success d-none">
+            <button id="submit-changes-specializations-btn" class="btn btn-success d-none" style="white-space: nowrap">
                 حفظ التغييرات <i class="bi bi-check-lg"></i>
             </button>
-            <button id="back-specializations-btn" class="btn btn-secondary d-none">
+            <button id="back-specializations-btn" class="btn btn-secondary d-none" style="white-space: nowrap">
                 تراجع <i class="bi bi-x-lg"></i>
             </button>
         </div>
-        <button id="display-type-specializations-btn" class="btn btn-dark me-auto" data-type="main">
+        <button id="display-type-specializations-btn" class="btn btn-dark me-auto" data-type="main" style="white-space: nowrap">
             عرض السجل لتسجيل الاختصاص <i class="bi bi-journal-bookmark-fill"></i>
         </button>
+    </div>
+    <div id="buttons-filters-bar" class="w-100 d-flex justify-content-center align-items-center flex-wrap gap-2 mt-3 p-3 rounded" style="background-color: #0018456b">
+        <button class="btn btn-success" data-sp="-1" style="width: 200px">
+            الكل
+        </button>
+        {% for sp in specializations %}
+            <button data-sp="{{ sp.id }}" class="btn btn-success" style="width: 200px">
+                {{ sp }}
+            </button>
+        {% endfor %}
     </div>
     <div class="table-responsive mb-5 scrollbar-table">
         <table id="main-table-specializations" class="table table-dark table-bordered table-striped mt-3 mb-0 rounded text-center">
@@ -31,7 +41,7 @@
                     <th>المعرف</th>
                     <th>الاسم</th>
                     {% for part in parts %}
-                        <th>
+                        <th data-sp-item="{{ part.level.specialization.id }}">
                             {{ part }}
                         </th>
                     {% endfor %}
@@ -44,9 +54,9 @@
                         <td style="white-space: nowrap">{{ student }}</td>
                         {% for part in parts %}
                             {% if student in part.students.all %}
-                                <td>تم</td>
+                                <td data-sp-item="{{ part.level.specialization.id }}">تم</td>
                             {% else %}
-                                <td></td>
+                                <td data-sp-item="{{ part.level.specialization.id }}"></td>
                             {% endif %}
                         {% endfor %}
                     </tr>
@@ -61,11 +71,11 @@
                             <td style="white-space: nowrap">{{ student }}</td>
                             {% for part in parts %}
                                 {% if student in part.students.all %}
-                                    <td>
+                                    <td data-sp-item="{{ part.level.specialization.id }}">
                                         <input style="cursor: pointer;" class="form-check-input" type="checkbox" name="part_{{ part.id }}_student_{{ student.id }}" checked>
                                     </td>
                                 {% else %}
-                                    <td>
+                                    <td data-sp-item="{{ part.level.specialization.id }}">
                                         <input style="cursor: pointer;" class="form-check-input" type="checkbox" name="part_{{ part.id }}_student_{{ student.id }}">
                                     </td>
                                 {% endif %}

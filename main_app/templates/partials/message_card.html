@@ -2,15 +2,15 @@
 {% load humanize %}
 
 <div class="message-card">
-    <div class="my-3 w-100">
-        <div class="text-white">
-            الطالب: {{ message.student }} 
+    <div class="mt-3 w-100">
+        <div class="text-white text-center fs-3">
+            {{ message.student }} 
         </div>
         {% if message.doublepointmessage %}
             <h3 class="position-absolute" style="top: -2px; left: -1px"><span class="badge text-dark bg-light">رمضان</span></h3>
         {% endif %}
     </div>
-    <hr class="w-100 bg-white mt-4 mb-5">
+    <hr class="w-100 bg-white mb-5" style="border-color: white">
     <div class="position-relative q_memo_content text-white py-4 my-4">
         {% if message.message_type == 1 %}
             <h5 class="title position-absolute" style="top: -40px ;width: 100px">التسميع</h5>
@@ -37,8 +37,7 @@
             {% endfor %}   
         {% endif %}
     </div>
-    <hr class="w-100 bg-white my-4">
-    <span class="text-white d-flex justify-content-center align-items-center w-50">
+    <span class="text-white d-flex justify-content-center align-items-center w-50 mb-3">
         <a href="{% url 'master_activity_delete' message.id %}" class="btn btn-danger w-100">
             تراجع
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-triangle-fill" viewBox="0 0 16 16">
@@ -46,8 +45,7 @@
             </svg>
         </a>
     </span>
-    <hr class="w-100 bg-white mt-4">
-    <div class="text-white me-auto mt-3">
+    <div class="text-white me-auto mx-auto mt-3">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
             <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/>
             <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>

@@ -1,12 +1,3 @@
-:root {
-    --clr1: #0466C8;
-    --clr2: #28386d;
-    --clr3: #001233;
-    --clr4: #001845;
-    --clr5: #33415C;
-    --clr6: #979DAC;
-}
-
 #coming-list {
     max-width: 800px;
     margin-top: 6rem;

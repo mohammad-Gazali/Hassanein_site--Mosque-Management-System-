@@ -1112,6 +1112,7 @@ def admin_specializations(request):
     q = request.GET.get("text-search-table") or None
     search_type = request.GET.get("type-search-table-admin-p") or None
 
+    specializations = Specialization.objects.all()
     parts = Part.objects.select_related("level__specialization").prefetch_related("students").all().order_by("level__specialization", "level", "part_number")
     students = Student.objects.exclude(part__isnull=True).order_by("id")
 
@@ -1120,13 +1121,19 @@ def admin_specializations(request):
             my_regex = r''
             for word in re.split(r'\s+', q.strip()):
                 my_regex += word + r'.*'      
-            students = Student.objects.exclude(part__isnull=True).filter(name__iregex=r'{}'.format(my_regex)).order_by("level__specialization", "level", "part_number")
+            students = Student.objects.exclude(part__isnull=True).filter(name__iregex=r'{}'.format(my_regex)).order_by("id")
         else:
-            students = Student.objects.exclude(part__isnull=True).filter(pk=int(q)).order_by("level__specialization", "level", "part_number")
+            students = Student.objects.exclude(part__isnull=True).filter(pk=int(q)).order_by("id")
 
     messages = SpecializationMessage.objects.select_related("student", "master_name__user", "part__level__specialization").filter(student__in=students).order_by('-created_at')
 
-    return render(request, 'control_panel/admin_specializations.html', {"parts": parts, "students": students, "messages": messages, "val": q})
+    return render(request, 'control_panel/admin_specializations.html', {
+        "specializations": specializations,
+        "parts": parts,
+        "students": students,
+        "messages": messages,
+        "val": q
+        })
 
 
 @user_passes_test(check_admin)
@@ -1274,6 +1281,22 @@ def deleting_editing_points_remove(request, rid):
             edit.delete()
         return redirect('editing_points_log')
     return render(request, 'editing_points_delete_remove.html', {'id': rid})
+
+
+@user_passes_test(check_admin)
+@login_required
+def deleting_editing_points_add_admin(request, aid):
+        edit = PointsAdding.objects.get(pk=aid)
+        edit.delete()
+        return redirect('admin_editing_points_log')
+    
+
+@user_passes_test(check_admin)
+@login_required
+def deleting_editing_points_remove_admin(request, rid):
+        edit = PointsDeleting.objects.get(pk=rid)
+        edit.delete()
+        return redirect('admin_editing_points_log')
 
 
 @user_passes_test(check_admin)
