@@ -121,8 +121,8 @@ class ComingCategoryAdmin(admin.ModelAdmin):
 
 @admin.register(models.Coming)
 class ComingAdmin(admin.ModelAdmin):
-    list_display = ["student", "master_name", "category", "registered_at", "note"]
-    list_filter = ["registered_at", "category", "note"]
+    list_display = ["student", "master_name", "category", "registered_at"]
+    list_filter = ["registered_at", "category"]
     list_select_related = ["student", "master_name__user", "category"]
 
     def has_delete_permission(self, _, __=None):
@@ -153,11 +153,6 @@ class DoublePointMessageAdmin(admin.ModelAdmin):
 
 @admin.register(models.PointsAddingCause)
 class PointsAddingCauseAdmin(admin.ModelAdmin):
-    pass
-
-
-@admin.register(models.PointsDeletingCause)
-class PointsDeletingCauseAdmin(admin.ModelAdmin):
     pass
 
 

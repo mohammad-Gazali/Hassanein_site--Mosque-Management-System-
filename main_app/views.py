@@ -15,9 +15,7 @@ from main_app.models import (
     DoublePointMessage,
     Master,
     PointsAddingCause,
-    PointsDeletingCause,
     PointsAdding,
-    PointsDeleting,
     MoneyDeleting,
     MoneyDeletingCause,
     ComingCategory,
@@ -26,8 +24,8 @@ from main_app.models import (
 )
 from main_app.forms import SettingForm
 from main_app.point_map import apply_q_map
-from main_app.check_functions import check_admin, check_coming, check_editing_points
-from main_app.helper_functions import give_section_from_page, give_num_pages
+from main_app.check_functions import check_admin, check_coming, check_adding_points
+from main_app.helpers import give_section_from_page, give_num_pages
 from specializations.models import Part, SpecializationMessage, Specialization, Level
 from specializations.views import apply_edit_changes
 from datetime import datetime, date
@@ -89,7 +87,7 @@ def search_results_of_student(request: HttpRequest) -> HttpResponse:
                 "awqafnoqstudentrelation_set",
             )
             .select_related("category")
-            .filter(name__iregex=r"{}".format(my_regex))
+            .filter(name__iregex="{}".format(my_regex))
             .order_by("id")
         )
 
@@ -705,9 +703,7 @@ class MessageDelete(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
                     student.save()
 
             else:
-                student.q_test[q_memo["section"]][q_memo["part"]][
-                    q_memo["quarter"]
-                ] = "NON"
+                student.q_test[q_memo["section"]][q_memo["part"]][q_memo["quarter"]] = "NON"
                 student.save()
 
         return reverse("master_activity")
@@ -813,14 +809,12 @@ def add_coming(request: HttpRequest) -> HttpResponse:
         student_id = int(request.POST.get("student-id"))
         points = int(request.POST.get("points"))
         category_id = int(request.POST.get("coming-category"))
-        note = request.POST.get("note-for-coming") or None
 
         Coming.objects.create(
             master_name=master,
             student_id=student_id,
             category_id=category_id,
             points=points,
-            note=note if note is not None else "لا يوجد",
         )
 
         return redirect(request.META.get("HTTP_REFERER"))
@@ -1364,14 +1358,9 @@ def master_edit_permissions(request: HttpRequest, mid: int) -> HttpResponse:
 
 @user_passes_test(check_admin)
 @login_required
-def admin_editing_points_log(request: HttpRequest) -> HttpResponse:
+def admin_adding_points_log(request: HttpRequest) -> HttpResponse:
     q = request.GET.get("text-search-table") or None
     search_type = request.GET.get("type-search-table-admin-p") or None
-    delete_messages = (
-        PointsDeleting.objects.select_related("student", "master_name__user", "cause")
-        .all()
-        .order_by("-created_at")
-    )
     add_messages = (
         PointsAdding.objects.select_related("student", "master_name__user", "cause")
         .all()
@@ -1382,13 +1371,6 @@ def admin_editing_points_log(request: HttpRequest) -> HttpResponse:
             my_regex = r""
             for word in re.split(r"\s+", q.strip()):
                 my_regex += word + r".*"
-            delete_messages = (
-                PointsDeleting.objects.select_related(
-                    "student", "master_name__user", "cause"
-                )
-                .filter(master_name__user__username__iregex=r"{}".format(my_regex))
-                .order_by("-created_at")
-            )
             add_messages = (
                 PointsAdding.objects.select_related(
                     "student", "master_name__user", "cause"
@@ -1398,20 +1380,13 @@ def admin_editing_points_log(request: HttpRequest) -> HttpResponse:
             )
             return render(
                 request,
-                "control_panel/admin_editing_points_log.html",
-                {"d_msgs": delete_messages, "a_msgs": add_messages, "val": q},
+                "control_panel/admin_adding_points_log.html",
+                {"a_msgs": add_messages, "val": q},
             )
         else:
-            my_regex = r""
+            my_regex = ""
             for word in re.split(r"\s+", q.strip()):
                 my_regex += word + r".*"
-            delete_messages = (
-                PointsDeleting.objects.select_related(
-                    "student", "master_name__user", "cause"
-                )
-                .filter(student__name__iregex=r"{}".format(my_regex))
-                .order_by("-created_at")
-            )
             add_messages = (
                 PointsAdding.objects.select_related(
                     "student", "master_name__user", "cause"
@@ -1421,14 +1396,14 @@ def admin_editing_points_log(request: HttpRequest) -> HttpResponse:
             )
             return render(
                 request,
-                "control_panel/admin_editing_points_log.html",
-                {"d_msgs": delete_messages, "a_msgs": add_messages, "val": q},
+                "control_panel/admin_adding_points_log.html",
+                {"a_msgs": add_messages, "val": q},
             )
 
     return render(
         request,
-        "control_panel/admin_editing_points_log.html",
-        {"d_msgs": delete_messages, "a_msgs": add_messages},
+        "control_panel/admin_adding_points_log.html",
+        {"a_msgs": add_messages},
     )
 
 
@@ -1572,17 +1547,16 @@ def admin_info(request: HttpRequest) -> HttpResponse:
 
 
 
-# adding and deleting points
-@user_passes_test(check_editing_points)
+# adding points
+@user_passes_test(check_adding_points)
 @login_required
-def editing_points(request: HttpRequest) -> HttpResponse:
+def adding_points(request: HttpRequest) -> HttpResponse:
     if request.method == "GET":
         adding_causes = PointsAddingCause.objects.all()
-        deleting_causes = PointsDeletingCause.objects.all()
         return render(
             request,
-            "editing_points.html",
-            {"adding_causes": adding_causes, "deleting_causes": deleting_causes},
+            "adding_points.html",
+            {"adding_causes": adding_causes},
         )
 
     elif request.method == "POST":
@@ -1590,37 +1564,24 @@ def editing_points(request: HttpRequest) -> HttpResponse:
         sid = int(request.POST.get("student-id"))
         value = int(request.POST.get("value"))
         cid = int(request.POST.get("cause-id"))
-        editing_type = request.POST.get("type")
+        
+        PointsAdding.objects.create(
+            master_name=master, cause_id=cid, student_id=sid, value=value
+        )
 
-        if editing_type == "add":
-            PointsAdding.objects.create(
-                master_name=master, cause_id=cid, student_id=sid, value=value
-            )
-
-            return render(
-                request,
-                "editing_points_result.html",
-                {"content": "تمت عملية الإضافة بنجاح"},
-            )
-
-        else:
-            PointsDeleting.objects.create(
-                master_name=master, cause_id=cid, student_id=sid, value=value
-            )
-
-            return render(
-                request,
-                "editing_points_result.html",
-                {"content": "تمت عملية الخصم بنجاح"},
-            )
+        return render(
+            request,
+            "adding_points_result.html",
+            {"content": "تمت عملية الإضافة بنجاح"},
+        )
 
     else:
         return HttpResponseNotAllowed("")
 
 
-@user_passes_test(check_editing_points)
+@user_passes_test(check_adding_points)
 @login_required
-def editing_points_log(request: HttpRequest) -> HttpResponse:
+def adding_points_log(request: HttpRequest) -> HttpResponse:
     master = Master.objects.get(user=request.user)
 
     points_adding_msgs = (
@@ -1628,62 +1589,35 @@ def editing_points_log(request: HttpRequest) -> HttpResponse:
         .filter(master_name=master)
         .order_by("-created_at")
     )
-    points_deleting_msgs = (
-        PointsDeleting.objects.select_related("student", "cause")
-        .filter(master_name=master)
-        .order_by("-created_at")
-    )
 
     return render(
         request,
-        "editing_points_log.html",
+        "adding_points_log.html",
         {
             "adding_msgs": points_adding_msgs,
-            "deleting_msgs": points_deleting_msgs,
         },
     )
 
 
-@user_passes_test(check_editing_points)
+@user_passes_test(check_adding_points)
 @login_required
-def deleting_editing_points_add(request: HttpRequest, aid: int) -> HttpResponse:
+def deleting_adding_points(request: HttpRequest, aid: int) -> HttpResponse:
     if request.method == "POST":
         master = Master.objects.get(user=request.user)
-        edit_id = int(request.POST.get("id"))
-        edit = PointsAdding.objects.get(pk=edit_id)
-        if request.user.is_superuser or edit.master_name == master:
-            edit.delete()
-        return redirect("editing_points_log")
-    return render(request, "editing_points_delete_add.html", {"id": aid})
-
-
-@user_passes_test(check_editing_points)
-@login_required
-def deleting_editing_points_remove(request: HttpRequest, rid: int) -> HttpResponse:
-    if request.method == "POST":
-        master = Master.objects.get(user=request.user)
-        edit_id = int(request.POST.get("id"))
-        edit = PointsDeleting.objects.get(pk=edit_id)
-        if request.user.is_superuser or edit.master_name == master:
-            edit.delete()
-        return redirect("editing_points_log")
-    return render(request, "editing_points_delete_remove.html", {"id": rid})
+        adding_id = int(request.POST.get("id"))
+        adding = PointsAdding.objects.get(pk=adding_id)
+        if request.user.is_superuser or adding.master_name == master:
+            adding.delete()
+        return redirect("adding_points_log")
+    return render(request, "adding_points_delete.html", {"id": aid})
 
 
 @user_passes_test(check_admin)
 @login_required
-def deleting_editing_points_add_admin(_, aid: int):
-    edit = PointsAdding.objects.get(pk=aid)
-    edit.delete()
-    return redirect("admin_editing_points_log")
-
-
-@user_passes_test(check_admin)
-@login_required
-def deleting_editing_points_remove_admin(_, rid: int):
-    edit = PointsDeleting.objects.get(pk=rid)
-    edit.delete()
-    return redirect("admin_editing_points_log")
+def deleting_adding_points_admin(_, aid: int):
+    adding = PointsAdding.objects.get(pk=aid)
+    adding.delete()
+    return redirect("admin_adding_points_log")
 
 
 @user_passes_test(check_admin)

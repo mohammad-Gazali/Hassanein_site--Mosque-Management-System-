@@ -7,8 +7,6 @@
                 <img class="position-absolute logo-image" width="50" src="{% static 'white-logo-icon.svg' %}" alt="logo">
             </a>
         </span>
-        {% if user.is_authenticated %}
-        {% endif %}
         <button id="toggler-icon" class="navbar-toggler p-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <i class="bi bi-list" aria-hidden="true" style="color: white; font-size: 1.5rem"></i>
         </button>
@@ -33,7 +31,7 @@
                     {% endif %}
                     {% if 'نقاط' in groups or user.is_superuser %}
                         <li class="nav-item">
-                            <a href="{% url 'editing_points' %}" class="nav-link me-auto">إضافة وخصم نقاط</a>
+                            <a href="{% url 'adding_points' %}" class="nav-link me-auto">إضافة نقاط</a>
                         </li>
                     {% endif %}
                     {% if 'اختصاصات' in groups or user.is_superuser %}

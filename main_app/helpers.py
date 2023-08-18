@@ -1,4 +1,3 @@
-from main_app.models import MemorizeMessage
 from main_app.point_map import q_map
 import math
 
@@ -8,7 +7,11 @@ def give_section_from_page(page_num: int) -> str:
     return str(math.ceil(page_num / 21))
 
 
-def give_num_pages(info: MemorizeMessage):
+def give_num_pages(info):
+    """
+    - param `info` has type of `MemorizeMessage`
+    - `MemorizeMessage` exists in `./models.py`
+    """
     data = info.second_info
     result = 0
 
@@ -30,3 +33,13 @@ def give_num_pages(info: MemorizeMessage):
             result += 10
             
     return result
+
+
+class DaysEnum:
+    SUN = "SUN"
+    MON = "MON"
+    TUE = "TUE"
+    WED = "WED"
+    THR = "THR"
+    FRI = "FRI"
+    SAT = "SAT"

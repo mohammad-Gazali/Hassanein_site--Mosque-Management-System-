@@ -1,0 +1,28 @@
+<div class="model" id="model-determining-adding">
+    <div class="model-header">
+        <div class="title-model">تحديد إضافة الحضور</div>
+        <button data-close-button class="close-btn">&times;</button>
+    </div>
+    <div class="model-body pb-3">
+        <div class="main-create-note container">
+            <h3 class="title text-white">الحضور</h3>
+            <form action="{% url 'add_coming' %}" id="determing-adding-coming-form" class="form-control" method="POST">
+                {% csrf_token %}
+                <input id="student-id-hidden-input" type="hidden" name="student-id">
+                <label class="form-label mt-3" for="coming-points">النقاط</label>
+                <input id="coming-points" class="form-control" min="1" type="number" name="points" required>
+                <label class="form-label mt-3" for="coming-category">نوع الحضور</label>
+                <select class="form-select" name="coming-category" id="coming-category">
+                    {% for category in coming_categories %}
+                        <option value="{{ category.id }}">{{ category }}</option>
+                    {% endfor %}
+                </select>
+                <button class="btn btn-success w-100 mt-3">
+                    حفظ
+                </button>
+            </form>
+            
+            
+        </div>
+    </div>
+</div>

@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+
+{% block title %}
+    سجل الإضافة
+{% endblock title %}
+
+{% block content %}
+    <div class="container common-box gap-5">
+        <h3 class="title text-white">الإضافات</h3>
+        {% for a_msg in adding_msgs %}
+            {% include 'partials/adding_points_card.html' with content=a_msg %}
+        {% endfor %}
+    </div>
+{% endblock content %}

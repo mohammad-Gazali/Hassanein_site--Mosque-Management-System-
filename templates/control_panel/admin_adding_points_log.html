@@ -24,18 +24,7 @@
                         <td style="white-space: nowrap;">إضافة</td>
                         <td style="white-space: nowrap;">{{ a_msg.cause }}</td>
                         <td style="white-space: nowrap;">{{ a_msg.value }}</td>
-                        <td><a href="{% url 'editing_points_delete_add_admin' a_msg.id %}" class="btn btn-danger w-100">إزالة</a></td>
-                    </tr>
-                {% endfor %}
-                {% for d_msg in d_msgs %}
-                    <tr>
-                        <td style="white-space: nowrap;">{{ d_msg.master_name }}</td>
-                        <td style="white-space: nowrap;">{{ d_msg.student }}</td>
-                        <td style="white-space: nowrap;">{{ d_msg.created_at }}</td>
-                        <td style="white-space: nowrap;">حذف</td>
-                        <td style="white-space: nowrap;">{{ d_msg.cause }}</td>
-                        <td style="white-space: nowrap;">{{ d_msg.value }}</td>
-                        <td><a href="{% url 'editing_points_delete_remove_admin' d_msg.id %}" class="btn btn-danger w-100">إزالة</a></td>
+                        <td><a href="{% url 'adding_points_delete_admin' a_msg.id %}" class="btn btn-danger w-100">إزالة</a></td>
                     </tr>
                 {% endfor %}
             </tbody>

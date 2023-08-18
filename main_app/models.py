@@ -276,7 +276,6 @@ class MemorizeMessage(models.Model):
 
 class ComingCategory(models.Model):
     name = models.CharField(max_length=255, verbose_name="الفئة")
-    
 
     def __str__(self):
         return self.name
@@ -292,7 +291,6 @@ class Coming(models.Model):
     registered_at = models.DateTimeField(auto_now_add=True, verbose_name="تاريخ التسجيل")
     category = models.ForeignKey(ComingCategory, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="نوع الحضور",)
     points = models.IntegerField(verbose_name="نقاط الحضور", default=0)
-    note = models.TextField(verbose_name="ملاحظة", null=True, blank=True)
 
     def __str__(self):
         return f"تسجيل حضور {self.id}"
@@ -334,17 +332,6 @@ class PointsAddingCause(models.Model):
         verbose_name_plural = "أسباب إضافة"
 
 
-class PointsDeletingCause(models.Model):
-    name = models.CharField(max_length=255, verbose_name="الاسم")
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        verbose_name = "سبب خصم"
-        verbose_name_plural = "أسباب خصم"
-
-
 class PointsAdding(models.Model):
     master_name = models.ForeignKey(Master, verbose_name="اسم الأستاذ", on_delete=models.CASCADE, null=True)
     value = models.IntegerField(verbose_name="القيمة")
@@ -358,21 +345,6 @@ class PointsAdding(models.Model):
     class Meta:
         verbose_name = "إضافة نقاط"
         verbose_name_plural = "إضافات النقاط"
-
-
-class PointsDeleting(models.Model):
-    master_name = models.ForeignKey(Master, verbose_name="اسم الأستاذ", on_delete=models.CASCADE, null=True)
-    value = models.IntegerField(verbose_name="القيمة")
-    student = models.ForeignKey(Student, on_delete=models.CASCADE, verbose_name="الطالب")
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="تاريخ الخصم")
-    cause = models.ForeignKey(PointsDeletingCause, verbose_name="السبب", on_delete=models.PROTECT, null=True, blank=True)
-
-    def __str__(self):
-        return f"خصم نقاط {self.id}"
-
-    class Meta:
-        verbose_name = "خصم نقاط"
-        verbose_name_plural = "خصومات النقاط"
 
 
 class MoneyDeletingCause(models.Model):

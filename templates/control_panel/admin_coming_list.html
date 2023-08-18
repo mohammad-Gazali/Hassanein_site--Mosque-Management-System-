@@ -11,7 +11,6 @@
                     <th style="white-space: nowrap;" class="text-center">نوع الحضور</th>
                     <th style="white-space: nowrap;" class="text-center">تاريخ التسجيل</th>
                     <th style="white-space: nowrap;" class="text-center">النقاط</th>
-                    <th style="white-space: nowrap;" class="text-center">ملاحظة</th>
                     <th class="text-center"></th>
                 </tr>
             </thead>
@@ -23,7 +22,6 @@
                         <td class="text-center" style="white-space: nowrap;">{{ coming.category }}</td>
                         <td class="text-center" style="white-space: nowrap;">{{ coming.registered_at|date:'Y/m/d - h:i A'  }}</td>
                         <td class="text-center" style="white-space: nowrap;">{{ coming.points }}</td>
-                        <td class="text-center">{{ coming.note }}</td>
                         <td class="text-center" style="white-space: nowrap;">
                             <a href="{% url 'admin_delete_coming' coming.id %}" class="btn btn-danger w-100">حذف</a>
                         </td>

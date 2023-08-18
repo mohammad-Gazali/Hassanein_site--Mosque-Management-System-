@@ -1,3 +1,6 @@
+from main_app.helpers import DaysEnum
+
+
 # start q_memorizing
 
 DEFAULT_DICT = {}
@@ -101,4 +104,3 @@ def json_default_value_three():
 
 def json_default_value_four():
     return DEFAULT_DICT_FOR_PERMISSIONS
-
