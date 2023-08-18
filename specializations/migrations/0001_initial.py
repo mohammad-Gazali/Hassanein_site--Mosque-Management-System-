@@ -9,51 +9,99 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('main_app', '0028_moneydeleting'),
+        ("main_app", "0028_moneydeleting"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Level',
+            name="Level",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('level_number', models.IntegerField(default=1, verbose_name='رقم المستوى')),
-                ('content', models.CharField(max_length=1023, verbose_name='المحتوى')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "level_number",
+                    models.IntegerField(default=1, verbose_name="رقم المستوى"),
+                ),
+                ("content", models.CharField(max_length=1023, verbose_name="المحتوى")),
             ],
             options={
-                'verbose_name': 'مستوى',
-                'verbose_name_plural': 'المستويات',
+                "verbose_name": "مستوى",
+                "verbose_name_plural": "المستويات",
             },
         ),
         migrations.CreateModel(
-            name='Specialization',
+            name="Specialization",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=511, verbose_name='الاسم')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=511, verbose_name="الاسم")),
             ],
             options={
-                'verbose_name': 'اختصاص',
-                'verbose_name_plural': 'الاختصاصات',
+                "verbose_name": "اختصاص",
+                "verbose_name_plural": "الاختصاصات",
             },
         ),
         migrations.CreateModel(
-            name='Part',
+            name="Part",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('part_start', models.IntegerField(verbose_name='بداية القسم')),
-                ('part_end', models.IntegerField(verbose_name='نهاية القسم')),
-                ('part_number', models.IntegerField(default=1, verbose_name='ترتيب القسم')),
-                ('level', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='specializations.level', verbose_name='المستوى')),
-                ('students', models.ManyToManyField(blank=True, to='main_app.student', verbose_name='الطلاب الذين أنهوا القسم')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("part_start", models.IntegerField(verbose_name="بداية القسم")),
+                ("part_end", models.IntegerField(verbose_name="نهاية القسم")),
+                (
+                    "part_number",
+                    models.IntegerField(default=1, verbose_name="ترتيب القسم"),
+                ),
+                (
+                    "level",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="specializations.level",
+                        verbose_name="المستوى",
+                    ),
+                ),
+                (
+                    "students",
+                    models.ManyToManyField(
+                        blank=True,
+                        to="main_app.student",
+                        verbose_name="الطلاب الذين أنهوا القسم",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'قسم',
-                'verbose_name_plural': 'أقسام',
+                "verbose_name": "قسم",
+                "verbose_name_plural": "أقسام",
             },
         ),
         migrations.AddField(
-            model_name='level',
-            name='specialization',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='specializations.specialization', verbose_name='الاختصاص'),
+            model_name="level",
+            name="specialization",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to="specializations.specialization",
+                verbose_name="الاختصاص",
+            ),
         ),
     ]

@@ -7,28 +7,35 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main_app', '0019_rename_point_doublepointmessage_points'),
+        ("main_app", "0019_rename_point_doublepointmessage_points"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='doublepointmessage',
-            name='memorize_message',
-            field=models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='main_app.memorizemessage'),
+            model_name="doublepointmessage",
+            name="memorize_message",
+            field=models.OneToOneField(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="main_app.memorizemessage",
+            ),
         ),
         migrations.AlterField(
-            model_name='doublepointmessage',
-            name='content',
-            field=models.JSONField(default=dict, verbose_name='التسميع الذي تم مضاعفته'),
+            model_name="doublepointmessage",
+            name="content",
+            field=models.JSONField(
+                default=dict, verbose_name="التسميع الذي تم مضاعفته"
+            ),
         ),
         migrations.AlterField(
-            model_name='doublepointmessage',
-            name='points',
-            field=models.IntegerField(verbose_name='النقاط'),
+            model_name="doublepointmessage",
+            name="points",
+            field=models.IntegerField(verbose_name="النقاط"),
         ),
         migrations.AlterField(
-            model_name='doublepointmessage',
-            name='sended_at',
-            field=models.DateTimeField(auto_now_add=True, verbose_name='تاريخ الإرسال'),
+            model_name="doublepointmessage",
+            name="sended_at",
+            field=models.DateTimeField(auto_now_add=True, verbose_name="تاريخ الإرسال"),
         ),
     ]

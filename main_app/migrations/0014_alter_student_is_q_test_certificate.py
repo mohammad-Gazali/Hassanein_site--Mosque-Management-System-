@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main_app', '0013_alter_coming_registered_at'),
+        ("main_app", "0013_alter_coming_registered_at"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='student',
-            name='is_q_test_certificate',
-            field=models.BooleanField(default=True, verbose_name='هل يوجد شهادة سبر'),
+            model_name="student",
+            name="is_q_test_certificate",
+            field=models.BooleanField(default=True, verbose_name="هل يوجد شهادة سبر"),
         ),
     ]

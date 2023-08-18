@@ -3,4 +3,6 @@ venv
 project's_notes.txt
 superusers.txt
 .env
+staticfiles
 __pycache__
+list.txt

@@ -6,23 +6,27 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main_app', '0005_remove_memorizenotes_updated_at'),
+        ("main_app", "0005_remove_memorizenotes_updated_at"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='memorizemessage',
-            name='message_type',
-            field=models.IntegerField(choices=[(1, 'تسميع'), (2, 'سبر'), (3, 'سبر ترشيحي')], default=1, verbose_name='نوع الرسالة'),
+            model_name="memorizemessage",
+            name="message_type",
+            field=models.IntegerField(
+                choices=[(1, "تسميع"), (2, "سبر"), (3, "سبر ترشيحي")],
+                default=1,
+                verbose_name="نوع الرسالة",
+            ),
         ),
         migrations.AlterField(
-            model_name='memorizemessage',
-            name='q_memo',
-            field=models.JSONField(default=dict, verbose_name='الحفظ'),
+            model_name="memorizemessage",
+            name="q_memo",
+            field=models.JSONField(default=dict, verbose_name="الحفظ"),
         ),
         migrations.AlterField(
-            model_name='memorizemessage',
-            name='q_memo_before_edit',
-            field=models.JSONField(default=dict, verbose_name='الحفظ قبل التعديل'),
+            model_name="memorizemessage",
+            name="q_memo_before_edit",
+            field=models.JSONField(default=dict, verbose_name="الحفظ قبل التعديل"),
         ),
     ]

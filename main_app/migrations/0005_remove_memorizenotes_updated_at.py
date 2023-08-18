@@ -6,12 +6,12 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main_app', '0004_memorizemessage_student_string_and_more'),
+        ("main_app", "0004_memorizemessage_student_string_and_more"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='memorizenotes',
-            name='updated_at',
+            model_name="memorizenotes",
+            name="updated_at",
         ),
     ]

@@ -6,13 +6,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main_app', '0022_doublepointmessage_message_type'),
+        ("main_app", "0022_doublepointmessage_message_type"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='doublepointmessage',
-            name='message_type',
-            field=models.IntegerField(choices=[(1, 'تسميع'), (2, 'سبر')], default=1, verbose_name='نوع التسميع'),
+            model_name="doublepointmessage",
+            name="message_type",
+            field=models.IntegerField(
+                choices=[(1, "تسميع"), (2, "سبر")],
+                default=1,
+                verbose_name="نوع التسميع",
+            ),
         ),
     ]

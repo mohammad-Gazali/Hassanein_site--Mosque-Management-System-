@@ -7,22 +7,37 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main_app', '0017_alter_controlsettings_double_points_and_more'),
+        ("main_app", "0017_alter_controlsettings_double_points_and_more"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='DoublePointMessage',
+            name="DoublePointMessage",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('sended_at', models.DateTimeField(auto_now_add=True)),
-                ('point', models.IntegerField()),
-                ('content', models.JSONField(default=dict)),
-                ('student', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='main_app.student', verbose_name='الطالب')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("sended_at", models.DateTimeField(auto_now_add=True)),
+                ("point", models.IntegerField()),
+                ("content", models.JSONField(default=dict)),
+                (
+                    "student",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="main_app.student",
+                        verbose_name="الطالب",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'رسالة مضاعفة',
-                'verbose_name_plural': 'رسائل مضاعفة',
+                "verbose_name": "رسالة مضاعفة",
+                "verbose_name_plural": "رسائل مضاعفة",
             },
         ),
     ]

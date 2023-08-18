@@ -6,13 +6,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main_app', '0002_alter_memorizenotes_content'),
+        ("main_app", "0002_alter_memorizenotes_content"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='memorizenotes',
-            name='student_string',
-            field=models.CharField(max_length=511, null=True, verbose_name='اسم الطالب'),
+            model_name="memorizenotes",
+            name="student_string",
+            field=models.CharField(
+                max_length=511, null=True, verbose_name="اسم الطالب"
+            ),
         ),
     ]

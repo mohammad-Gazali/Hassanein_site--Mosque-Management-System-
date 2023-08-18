@@ -6,18 +6,18 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main_app', '0006_memorizemessage_message_type_and_more'),
+        ("main_app", "0006_memorizemessage_message_type_and_more"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='memorizemessage',
-            old_name='q_memo',
-            new_name='first_info',
+            model_name="memorizemessage",
+            old_name="q_memo",
+            new_name="first_info",
         ),
         migrations.RenameField(
-            model_name='memorizemessage',
-            old_name='q_memo_before_edit',
-            new_name='second_info',
+            model_name="memorizemessage",
+            old_name="q_memo_before_edit",
+            new_name="second_info",
         ),
     ]

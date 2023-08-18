@@ -7,13 +7,16 @@ import main_app.models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main_app', '0014_alter_student_is_q_test_certificate'),
+        ("main_app", "0014_alter_student_is_q_test_certificate"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='student',
-            name='q_awqaf_test',
-            field=models.JSONField(default=main_app.models.json_default_value_three, verbose_name='سبر القرآن في الأوقاف'),
+            model_name="student",
+            name="q_awqaf_test",
+            field=models.JSONField(
+                default=main_app.models.json_default_value_three,
+                verbose_name="سبر القرآن في الأوقاف",
+            ),
         ),
     ]

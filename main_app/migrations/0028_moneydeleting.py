@@ -7,22 +7,53 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main_app', '0027_moneydeletingcause_delete_moneydeleting'),
+        ("main_app", "0027_moneydeletingcause_delete_moneydeleting"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='MoneyDeleting',
+            name="MoneyDeleting",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('value_in_points', models.IntegerField(verbose_name='القيمة مقدرة بالنقاط')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='تاريخ التسجيل')),
-                ('cause', models.ForeignKey(null=True, on_delete=django.db.models.deletion.PROTECT, to='main_app.moneydeletingcause', verbose_name='سبب الغرامة')),
-                ('student', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='main_app.student', verbose_name='الاسم')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "value_in_points",
+                    models.IntegerField(verbose_name="القيمة مقدرة بالنقاط"),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="تاريخ التسجيل"
+                    ),
+                ),
+                (
+                    "cause",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="main_app.moneydeletingcause",
+                        verbose_name="سبب الغرامة",
+                    ),
+                ),
+                (
+                    "student",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="main_app.student",
+                        verbose_name="الاسم",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'غرامة',
-                'verbose_name_plural': 'الغرامات',
+                "verbose_name": "غرامة",
+                "verbose_name_plural": "الغرامات",
             },
         ),
     ]

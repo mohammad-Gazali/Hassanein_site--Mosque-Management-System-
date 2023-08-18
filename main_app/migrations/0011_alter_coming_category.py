@@ -7,13 +7,17 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main_app', '0010_comingcategory_coming_category'),
+        ("main_app", "0010_comingcategory_coming_category"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='coming',
-            name='category',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='main_app.comingcategory', verbose_name='نوع الحضور'),
+            model_name="coming",
+            name="category",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                to="main_app.comingcategory",
+                verbose_name="نوع الحضور",
+            ),
         ),
     ]

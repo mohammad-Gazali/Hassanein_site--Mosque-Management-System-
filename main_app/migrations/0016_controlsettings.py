@@ -6,16 +6,24 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main_app', '0015_student_q_awqaf_test'),
+        ("main_app", "0015_student_q_awqaf_test"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='ControlSettings',
+            name="ControlSettings",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('double_points', models.BooleanField(default=False)),
-                ('point_value', models.IntegerField()),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("double_points", models.BooleanField(default=False)),
+                ("point_value", models.IntegerField()),
             ],
         ),
     ]

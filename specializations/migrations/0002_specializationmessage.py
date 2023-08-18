@@ -7,23 +7,57 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main_app', '0028_moneydeleting'),
-        ('specializations', '0001_initial'),
+        ("main_app", "0028_moneydeleting"),
+        ("specializations", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='SpecializationMessage',
+            name="SpecializationMessage",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='تاريخ الإضافة')),
-                ('master_name', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='main_app.master', verbose_name='الأستاذ')),
-                ('part', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='specializations.part', verbose_name='القسم')),
-                ('student', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='main_app.student', verbose_name='الطالب')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="تاريخ الإضافة"
+                    ),
+                ),
+                (
+                    "master_name",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="main_app.master",
+                        verbose_name="الأستاذ",
+                    ),
+                ),
+                (
+                    "part",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="specializations.part",
+                        verbose_name="القسم",
+                    ),
+                ),
+                (
+                    "student",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="main_app.student",
+                        verbose_name="الطالب",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'رسالة اختصاص',
-                'verbose_name_plural': 'رسائل اختصاص',
+                "verbose_name": "رسالة اختصاص",
+                "verbose_name_plural": "رسائل اختصاص",
             },
         ),
     ]

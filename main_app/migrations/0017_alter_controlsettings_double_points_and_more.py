@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main_app', '0016_controlsettings'),
+        ("main_app", "0016_controlsettings"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='controlsettings',
-            name='double_points',
-            field=models.BooleanField(default=False, verbose_name='مضاعفة النقاط'),
+            model_name="controlsettings",
+            name="double_points",
+            field=models.BooleanField(default=False, verbose_name="مضاعفة النقاط"),
         ),
         migrations.AlterField(
-            model_name='controlsettings',
-            name='point_value',
-            field=models.IntegerField(verbose_name='قيمة النقطة'),
+            model_name="controlsettings",
+            name="point_value",
+            field=models.IntegerField(verbose_name="قيمة النقطة"),
         ),
     ]

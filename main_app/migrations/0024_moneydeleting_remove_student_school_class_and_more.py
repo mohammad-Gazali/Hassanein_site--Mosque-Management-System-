@@ -10,71 +10,154 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('main_app', '0023_alter_doublepointmessage_message_type'),
+        ("main_app", "0023_alter_doublepointmessage_message_type"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='MoneyDeleting',
+            name="MoneyDeleting",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
             ],
         ),
         migrations.RemoveField(
-            model_name='student',
-            name='school_class',
+            model_name="student",
+            name="school_class",
         ),
         migrations.AlterField(
-            model_name='coming',
-            name='category',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='main_app.comingcategory', verbose_name='نوع الحضور'),
+            model_name="coming",
+            name="category",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="main_app.comingcategory",
+                verbose_name="نوع الحضور",
+            ),
         ),
         migrations.AlterField(
-            model_name='doublepointmessage',
-            name='student',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='main_app.student', verbose_name='الطالب'),
+            model_name="doublepointmessage",
+            name="student",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to="main_app.student",
+                verbose_name="الطالب",
+            ),
         ),
         migrations.AlterField(
-            model_name='student',
-            name='category',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='main_app.category', verbose_name='الفئة'),
+            model_name="student",
+            name="category",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="main_app.category",
+                verbose_name="الفئة",
+            ),
         ),
         migrations.CreateModel(
-            name='PointsDeletings',
+            name="PointsDeletings",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('value', models.IntegerField(verbose_name='القيمة')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='تاريخ الخصم')),
-                ('student', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='main_app.student', verbose_name='الطالب')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("value", models.IntegerField(verbose_name="القيمة")),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="تاريخ الخصم"),
+                ),
+                (
+                    "student",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="main_app.student",
+                        verbose_name="الطالب",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'خصم نقاط',
-                'verbose_name_plural': 'خصومات النقاط',
+                "verbose_name": "خصم نقاط",
+                "verbose_name_plural": "خصومات النقاط",
             },
         ),
         migrations.CreateModel(
-            name='PointsAdding',
+            name="PointsAdding",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('value', models.IntegerField(verbose_name='القيمة')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='تاريخ الإضافة')),
-                ('student', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='main_app.student', verbose_name='الطالب')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("value", models.IntegerField(verbose_name="القيمة")),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="تاريخ الإضافة"
+                    ),
+                ),
+                (
+                    "student",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="main_app.student",
+                        verbose_name="الطالب",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'إضافة نقاط',
-                'verbose_name_plural': 'إضافات النقاط',
+                "verbose_name": "إضافة نقاط",
+                "verbose_name_plural": "إضافات النقاط",
             },
         ),
         migrations.CreateModel(
-            name='Master',
+            name="Master",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('permissions', models.JSONField(default=main_app.models.json_default_value_four, verbose_name='الصلاحيات')),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='اسم المستخدم')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "permissions",
+                    models.JSONField(
+                        default=main_app.models.json_default_value_four,
+                        verbose_name="الصلاحيات",
+                    ),
+                ),
+                (
+                    "user",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="اسم المستخدم",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'أستاذ',
-                'verbose_name_plural': 'أساتذة',
+                "verbose_name": "أستاذ",
+                "verbose_name_plural": "أساتذة",
             },
         ),
     ]

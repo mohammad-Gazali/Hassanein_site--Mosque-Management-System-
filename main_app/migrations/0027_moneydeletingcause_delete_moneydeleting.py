@@ -6,22 +6,33 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main_app', '0026_pointsaddingcause_pointsdeleting_pointsdeletingcause_and_more'),
+        (
+            "main_app",
+            "0026_pointsaddingcause_pointsdeleting_pointsdeletingcause_and_more",
+        ),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='MoneyDeletingCause',
+            name="MoneyDeletingCause",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=511, verbose_name='الاسم')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=511, verbose_name="الاسم")),
             ],
             options={
-                'verbose_name': 'سبب غرامة',
-                'verbose_name_plural': 'أسباب الغرامات',
+                "verbose_name": "سبب غرامة",
+                "verbose_name_plural": "أسباب الغرامات",
             },
         ),
         migrations.DeleteModel(
-            name='MoneyDeleting',
+            name="MoneyDeleting",
         ),
     ]

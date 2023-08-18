@@ -6,18 +6,22 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main_app', '0003_memorizenotes_student_string'),
+        ("main_app", "0003_memorizenotes_student_string"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='memorizemessage',
-            name='student_string',
-            field=models.CharField(blank=True, max_length=511, null=True, verbose_name='اسم الطالب'),
+            model_name="memorizemessage",
+            name="student_string",
+            field=models.CharField(
+                blank=True, max_length=511, null=True, verbose_name="اسم الطالب"
+            ),
         ),
         migrations.AlterField(
-            model_name='memorizenotes',
-            name='student_string',
-            field=models.CharField(blank=True, max_length=511, null=True, verbose_name='اسم الطالب'),
+            model_name="memorizenotes",
+            name="student_string",
+            field=models.CharField(
+                blank=True, max_length=511, null=True, verbose_name="اسم الطالب"
+            ),
         ),
     ]

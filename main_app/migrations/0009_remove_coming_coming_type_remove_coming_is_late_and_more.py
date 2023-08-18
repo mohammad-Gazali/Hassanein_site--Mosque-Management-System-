@@ -6,21 +6,21 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main_app', '0008_coming'),
+        ("main_app", "0008_coming"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='coming',
-            name='coming_type',
+            model_name="coming",
+            name="coming_type",
         ),
         migrations.RemoveField(
-            model_name='coming',
-            name='is_late',
+            model_name="coming",
+            name="is_late",
         ),
         migrations.AddField(
-            model_name='coming',
-            name='points',
-            field=models.IntegerField(default=0, verbose_name='نقاط الحضور'),
+            model_name="coming",
+            name="points",
+            field=models.IntegerField(default=0, verbose_name="نقاط الحضور"),
         ),
     ]

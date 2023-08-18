@@ -7,13 +7,19 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main_app', '0020_doublepointmessage_memorize_message_and_more'),
+        ("main_app", "0020_doublepointmessage_memorize_message_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='doublepointmessage',
-            name='memorize_message',
-            field=models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='main_app.memorizemessage', verbose_name='رسالة التسميع'),
+            model_name="doublepointmessage",
+            name="memorize_message",
+            field=models.OneToOneField(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="main_app.memorizemessage",
+                verbose_name="رسالة التسميع",
+            ),
         ),
     ]

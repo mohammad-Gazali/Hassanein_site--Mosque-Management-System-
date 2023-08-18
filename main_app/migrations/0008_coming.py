@@ -7,23 +7,51 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main_app', '0007_rename_q_memo_memorizemessage_first_info_and_more'),
+        ("main_app", "0007_rename_q_memo_memorizemessage_first_info_and_more"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Coming',
+            name="Coming",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('master_name', models.CharField(max_length=255, verbose_name='اسم المسجل')),
-                ('registered_at', models.DateField(auto_now_add=True, verbose_name='تاريخ التسجيل')),
-                ('coming_type', models.IntegerField(choices=[(1, 'مبكر'), (2, 'ملتزم'), (3, 'متواجد')], default=3, verbose_name='نوع الحضور')),
-                ('is_late', models.BooleanField(default=False, verbose_name='متأخر')),
-                ('student', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='main_app.student', verbose_name='اسم الطالب')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "master_name",
+                    models.CharField(max_length=255, verbose_name="اسم المسجل"),
+                ),
+                (
+                    "registered_at",
+                    models.DateField(auto_now_add=True, verbose_name="تاريخ التسجيل"),
+                ),
+                (
+                    "coming_type",
+                    models.IntegerField(
+                        choices=[(1, "مبكر"), (2, "ملتزم"), (3, "متواجد")],
+                        default=3,
+                        verbose_name="نوع الحضور",
+                    ),
+                ),
+                ("is_late", models.BooleanField(default=False, verbose_name="متأخر")),
+                (
+                    "student",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="main_app.student",
+                        verbose_name="اسم الطالب",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'تسجيل حضور',
-                'verbose_name_plural': 'تسجيلات الحضور',
+                "verbose_name": "تسجيل حضور",
+                "verbose_name_plural": "تسجيلات الحضور",
             },
         ),
     ]

@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main_app', '0029_moneydeleting_active_to_points'),
+        ("main_app", "0029_moneydeleting_active_to_points"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='moneydeleting',
-            name='active_to_points',
-            field=models.BooleanField(default=True, verbose_name='مخصومة من النقاط'),
+            model_name="moneydeleting",
+            name="active_to_points",
+            field=models.BooleanField(default=True, verbose_name="مخصومة من النقاط"),
         ),
     ]
