@@ -69,7 +69,7 @@ class Student(models.Model):
     @property
     def q_test_certificate(self):
         result = {}
-        test_cer = default_json.check_for_cer(self.q_test)
+        test_cer = check_for_cer(self.q_test)
         for i in test_cer:
             if test_cer[i] == "NEW":
                 result[i] = "تم"
@@ -146,14 +146,6 @@ class Student(models.Model):
     added_points.fget.short_description = "نقاط مضافة متفرقة"
 
     @property
-    def deleted_points(self):
-        result = 0
-        for process in self.pointsdeleting_set.all():
-            result += process.value
-        return result
-    deleted_points.fget.short_description = "نقاط مخصومة متفرقة"
-
-    @property
     def deleted_points_for_money_deleting(self):
         result = [0, 0]
         for money_deleting in self.money_deleting_info:
@@ -175,7 +167,7 @@ class Student(models.Model):
 
     @property
     def awqaf_points_normal_test(self):
-        return self.number_of_parts_awqaf_normal_tests * 25
+        return self.number_of_parts_awqaf_normal_tests * 50
 
     awqaf_points_normal_test.fget.short_description = "نقاط الأجزاء المسبورة غيباً في الأوقاف"    
 
@@ -221,7 +213,7 @@ class Student(models.Model):
             + self.awqaf_points_explaining_test
             + self.added_points
         )
-        all_deleted_points = self.deleted_points + self.deleted_points_for_money_deleting[0]        
+        all_deleted_points = self.deleted_points_for_money_deleting[0]        
         money_for_deleting = self.deleted_points_for_money_deleting[1]
         sum_of_added_and_deleted = all_added_points - all_deleted_points
         return [sum_of_added_and_deleted, money_for_deleting]

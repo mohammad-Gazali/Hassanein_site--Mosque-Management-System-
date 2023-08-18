@@ -9,7 +9,6 @@
                     <th style="white-space: nowrap;">اسم الأستاذ</th>
                     <th style="white-space: nowrap;">اسم الطالب</th>
                     <th style="white-space: nowrap;">تاريخ الإرسال</th>
-                    <th style="white-space: nowrap;">النوع</th>
                     <th style="white-space: nowrap;">السبب</th>
                     <th style="white-space: nowrap;">القيمة</th>
                     <th></th>
@@ -21,7 +20,6 @@
                         <td style="white-space: nowrap;">{{ a_msg.master_name }}</td>
                         <td style="white-space: nowrap;">{{ a_msg.student }}</td>
                         <td style="white-space: nowrap;">{{ a_msg.created_at }}</td>
-                        <td style="white-space: nowrap;">إضافة</td>
                         <td style="white-space: nowrap;">{{ a_msg.cause }}</td>
                         <td style="white-space: nowrap;">{{ a_msg.value }}</td>
                         <td><a href="{% url 'adding_points_delete_admin' a_msg.id %}" class="btn btn-danger w-100">إزالة</a></td>

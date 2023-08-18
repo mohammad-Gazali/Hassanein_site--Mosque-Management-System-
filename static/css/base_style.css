@@ -1,16 +1,4 @@
-@font-face {
-    font-family: 'Tajawal';
-    font-style: normal;
-    font-weight: 400;
-    src: url("../fonts/Tajawal-regular.woff2") format('woff2');
-}
-
-@font-face {
-    font-family: 'Tajawal';
-    font-style: normal;
-    font-weight: 700;
-    src: url('../fonts/Tajawal-bold.woff2') format('woff2');
-}
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
 
 :root {
     --clr1: #0466C8;
@@ -33,11 +21,17 @@ body {
 }
 
 #page-wraper {
-    padding-bottom: 4rem;
+    padding-bottom: 5rem;
 }
 
 nav {
     background-color: var(--clr4);
+}
+
+@media (max-width: 991px) {
+    nav ul {
+        margin-top: 1rem;
+    }
 }
 
 #main-nav li a {
@@ -65,11 +59,17 @@ nav {
 }
 
 footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
     background-color: var(--clr3);
-    height: 4rem;
+    height: 5rem;
     width: 100%;
     position: absolute;
     bottom: 0;
+    text-align: center;
+    padding: 0 1rem;
 }  
 
 .title {
@@ -302,7 +302,7 @@ a:focus-visible .logo-image {
     width: 60px
 }
 
-@media (width < 992px) {
+@media (max-width: 992px) {
     .logo-image {
         width: 50px;
         top: -12px; 
@@ -319,9 +319,15 @@ a:focus-visible .logo-image {
     width: 100%;
 }
 
-@media (width < 770px) {
+@media (max-width: 770px) {
     .search-table-control-p * {
         width: 100% !important;
+    }
+}
+
+@media (max-width: 500px) {
+    footer {
+        font-size: 14px;
     }
 }
 

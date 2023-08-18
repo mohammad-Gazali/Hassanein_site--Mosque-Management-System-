@@ -908,7 +908,6 @@ def admin_points_information(request: HttpRequest) -> HttpResponse:
                 queryset=MoneyDeleting.objects.filter(active_to_points=True),
                 to_attr="money_deleting_info",
             ),
-            "pointsdeleting_set",
             "pointsadding_set",
             "coming_set",
         )
@@ -1569,11 +1568,7 @@ def adding_points(request: HttpRequest) -> HttpResponse:
             master_name=master, cause_id=cid, student_id=sid, value=value
         )
 
-        return render(
-            request,
-            "adding_points_result.html",
-            {"content": "تمت عملية الإضافة بنجاح"},
-        )
+        return redirect(request.META.get("HTTP_REFERER"))
 
     else:
         return HttpResponseNotAllowed("")

@@ -17,7 +17,7 @@ labelsOfSearch.forEach(element => {
             textSearchTable.removeAttribute("min")
         } else {
             textSearchTable.type = "number"
-            textSearchTable.min = 0
+            textSearchTable.min = 1
         }
     }
 });

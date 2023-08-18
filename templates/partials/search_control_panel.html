@@ -2,7 +2,7 @@
     class="search-table-control-p {% if current_url == "HIDDEN" %}d-none{% endif %}" 
     {% if current_url == "HIDDEN" %}action="#"{% else %}action="{% url current_url %}"{% endif %}
     >
-    {% if current_url == "admin_master_activities" or current_url == "admin_coming_list" or current_url == "admin_editing_points_log" %}
+    {% if current_url == "admin_master_activities" or current_url == "admin_coming_list" or current_url == "admin_adding_points_log" %}
         <input name="text-search-table" class="form-control" type="text" style="width: 40%" placeholder="أدخل الاسم" {% if val %}value="{{ val }}"{% endif %}>
         <div class="d-flex">
             <label data-place="أدخل الاسم" class="activeChooseTable">
