@@ -30,11 +30,6 @@
             {% else %}
                 <div class="flex-block bg-light text-dark">{{ message.first_info.content }}</div>
             {% endif %} 
-        {% else %}
-            <h5 class="title position-absolute" style="top: -60px ;width: 100px">السبر الترشيحي</h5>
-            {% for key in message.first_info %}
-                <div class="flex-block bg-light text-dark">{{key}}</div>
-            {% endfor %}   
         {% endif %}
     </div>
     <span class="text-white d-flex justify-content-center align-items-center w-50 mb-3">

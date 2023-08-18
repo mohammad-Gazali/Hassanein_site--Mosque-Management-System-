@@ -12,7 +12,6 @@
             <a href="#instructions-{{ student.id }}" class="btn btn-primary w-100">طريقة عرض التسميعات والسبر</a>
             <a href="#student-q-memorizing-{{ student.id }}" class="btn btn-primary w-100">التسميعات</a>
             <a href="#student-q-test-{{ student.id }}" class="btn btn-primary w-100">السبر</a>
-            <a href="#student-q-candidate-test-awqaf-{{ student.id }}" class="btn btn-primary w-100">السبر الترشيحي</a>
             <a href="#student-q-test-awqaf-{{ student.id }}" class="btn btn-primary w-100">سبر القرآن في الأوقاف</a>
             <a href="#student-no-q-test-awqaf-{{ student.id }}" class="btn btn-primary w-100">سبر ما عدا القرآن في الأوقاف</a>
             <a href="#student-specialization-details-{{ student.id }}" class="btn btn-primary w-100">الاختصاصات</a>
@@ -63,7 +62,6 @@
         </section>
         {% include 'partials/q_memorizing.html' with q_memorizing=student.q_memorizing id=student.id %}
         {% include 'partials/q_test.html' with q_test=student.q_test id=student.id %}
-        {% include 'partials/q_candidate_test_awqaf.html' with q_candidate_test=student.q_test_candidate id=student.id %}
         {% include 'partials/q_test_awqaf.html' with q_awqaf_test=student.q_awqaf_test q_awqaf_test_looking=student.q_awqaf_test_looking q_awqaf_test_explaining=student.q_awqaf_test_explaining id=student.id %}
         {% include 'partials/no_q_test_awqaf.html' with all_tests=all_tests previous_relations=student.awqafnoqstudentrelation_set.all all_relations=all_relations id=student.id %}
         {% include 'partials/specialization_details.html' with parts=student.part_set.all id=student.id %}

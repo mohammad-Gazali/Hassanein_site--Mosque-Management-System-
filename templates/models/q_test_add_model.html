@@ -11,17 +11,7 @@
             <form action="{% url 'add_q_test' %}" method="POST">
                 {% csrf_token %}
                 <input type="hidden" name="student-id" value="{{ student.id }}">
-                <div id="filter-test-type-radio-{{ student.id }}" class="d-flex flex-column gap-3 mb-3 rounded p-3 text-white" style="background-color: #50109b; border: 2px solid white"> 
-                    <div>
-                        <input type="radio" name="q-test-type-filter" id="id-q-test-type-filter-one-{{ student.id }}" value="normal-test" checked>
-                        <label for="id-q-test-type-filter-one-{{ student.id }}">سبر عادي</label>
-                    </div>
-                    <div>
-                        <input type="radio" name="q-test-type-filter" id="id-q-test-type-filter-two-{{ student.id }}" value="candidate-test">
-                        <label for="id-q-test-type-filter-two-{{ student.id }}">سبر ترشيحي</label>
-                    </div>
-                </div>
-                <section id="first-section-form-q-test-{{ student.id }}">
+                <section id="filter-form-q-test-{{ student.id }}">
                     <h4 class="text-white title w-100 mt-5">سبر عادي</h4>
                     <div id="filter-add-q-test-radio" class="d-flex flex-column gap-3 mb-3 rounded p-3 text-white" style="background-color: #001845; border: 1px solid rgba(255, 255, 255, 0.8)"> 
                         <div>
@@ -61,10 +51,6 @@
                         </div>
                     </div>
                 </section>
-                <section id="second-section-form-q-test-{{ student.id }}" class="d-none">
-                    <h4 class="text-white title w-100 mt-5">سبر ترشيحي</h4>
-                    <input name="q-section-candidate-number" placeholder="أدخل رقم الجزء" class="form-control" type="number" min="1" max="30">
-                </section>
                 <button class="btn btn-success mt-3 w-100" type="submit">إضافة</button>
             </form>
         </div>
@@ -72,45 +58,23 @@
 </div>
 
 <script>
-    let filterTypeOneId{{student.id}} = document.getElementById("id-q-test-type-filter-one-{{ student.id }}")
-    let filterTypeTwoId{{student.id}} = document.getElementById("id-q-test-type-filter-two-{{ student.id }}")
-    let firstSectionFormTest{{student.id}} = document.getElementById("first-section-form-q-test-{{ student.id }}")
-    let secondSectionFormTest{{student.id}} = document.getElementById("second-section-form-q-test-{{ student.id }}")
+    const filterFormTest{{student.id}} = document.getElementById("filter-form-q-test-{{ student.id }}");
+    const firstTypeOfNormalQTest{{student.id}} = document.getElementById("name-add-q-test-filter-one-{{ student.id }}");
+    const secondTypeOfNormalQTest{{student.id}} = document.getElementById("name-add-q-test-filter-two-{{ student.id }}");
+    const thirdTypeOfNormalQTest{{student.id}} = document.getElementById("name-add-q-test-filter-three-{{ student.id }}");
 
-    filterTypeOneId{{student.id}}.onclick = function(){
-        secondSectionFormTest{{student.id}}.classList.add("d-none")
-        firstSectionFormTest{{student.id}}.classList.remove("d-none")
-        secondSectionFormTest{{student.id}}.children[1].required = false
-        firstSectionFormTest{{student.id}}.children[2].required = true
-        firstSectionFormTest{{student.id}}.closest(".main-add-q-test").classList.remove("extra-padding")
-    }
-    
-    filterTypeTwoId{{student.id}}.onclick = function(){
-        firstSectionFormTest{{student.id}}.classList.add("d-none")
-        secondSectionFormTest{{student.id}}.classList.remove("d-none")
-        secondSectionFormTest{{student.id}}.children[1].required = true
-        firstSectionFormTest{{student.id}}.children[2].required = false
-        firstSectionFormTest{{student.id}}.closest(".main-add-q-test").classList.add("extra-padding")
-    }
+    firstTypeOfNormalQTest{{student.id}}.onclick = () => {
+        filterFormTest{{student.id}}.children[3].classList.remove("d-none")
+        filterFormTest{{student.id}}.children[4].classList.add("d-none")
+    };
 
+    secondTypeOfNormalQTest{{student.id}}.onclick = () => {
+        filterFormTest{{student.id}}.children[3].classList.add("d-none")
+        filterFormTest{{student.id}}.children[4].classList.remove("d-none")
+    };
 
-    let firstTypeOfNormalQTest{{student.id}} = document.getElementById("name-add-q-test-filter-one-{{ student.id }}")
-    let secondTypeOfNormalQTest{{student.id}} = document.getElementById("name-add-q-test-filter-two-{{ student.id }}")
-    let thirdTypeOfNormalQTest{{student.id}} = document.getElementById("name-add-q-test-filter-three-{{ student.id }}")
-
-    firstTypeOfNormalQTest{{student.id}}.onclick = function(){
-        firstSectionFormTest{{student.id}}.children[3].classList.remove("d-none")
-        firstSectionFormTest{{student.id}}.children[4].classList.add("d-none")
-    }
-
-    secondTypeOfNormalQTest{{student.id}}.onclick = function(){
-        firstSectionFormTest{{student.id}}.children[3].classList.add("d-none")
-        firstSectionFormTest{{student.id}}.children[4].classList.remove("d-none")
-    }
-
-    thirdTypeOfNormalQTest{{student.id}}.onclick = function(){
-        firstSectionFormTest{{student.id}}.children[3].classList.add("d-none")
-        firstSectionFormTest{{student.id}}.children[4].classList.add("d-none")
-    }
-
+    thirdTypeOfNormalQTest{{student.id}}.onclick = () => {
+        filterFormTest{{student.id}}.children[3].classList.add("d-none")
+        filterFormTest{{student.id}}.children[4].classList.add("d-none")
+    };
 </script>

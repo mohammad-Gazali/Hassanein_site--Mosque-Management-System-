@@ -73,7 +73,6 @@ class AdminStudent(admin.ModelAdmin):
             kwargs["exclude"] = (
                 "q_memorizing",
                 "q_test",
-                "q_test_candidate",
                 "q_awqaf_test",
                 "q_awqaf_test_looking",
                 "q_awqaf_test_explaining",

@@ -5,7 +5,7 @@ from django.views.generic import ListView, DeleteView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import HttpResponseForbidden, HttpResponseNotAllowed, JsonResponse
 from django.db.models import Prefetch, Sum, Q
-from .models import (
+from main_app.models import (
     MemorizeNotes,
     Student,
     Category,
@@ -24,8 +24,8 @@ from .models import (
     AwqafTestNoQ,
     AwqafNoQStudentRelation,
 )
-from .forms import SettingForm
-from .point_map import apply_q_map, q_map
+from main_app.forms import SettingForm
+from main_app.point_map import apply_q_map, q_map
 from specializations.models import Part, SpecializationMessage, Specialization, Level
 from specializations.views import apply_edit_changes
 from datetime import datetime, date
@@ -250,9 +250,6 @@ def add_q_test(request):
 
         # part_number_normal = رقم الحزب في السبر العادي
         part_number_normal = request.POST.get("q-part-number")
-
-        # section_number_candidate = رقم الجزء في السبر الترشيحي
-        section_number_candidate = request.POST.get("q-section-candidate-number")
 
         # quarter_q_part_number = رقم ربع الحزب
         quarter_q_part_number = request.POST.get("quarter-q-part-number")
@@ -645,43 +642,6 @@ def add_q_test(request):
                     {"error": "يوجد خطأ في الإرسال", "sid": sid},
                 )
 
-        elif test_type == "candidate-test":
-            if (
-                master.permissions["q_test_candidate"][str(section_number_candidate)]
-                == "NON"
-            ):
-                return HttpResponseForbidden(
-                    "<h1>هذا السبر ليس من صلاحياتك</h1><h1>403</h1>"
-                )
-            candidate_test = student.q_test_candidate
-
-            if (
-                candidate_test[f"الجزء {section_number_candidate}"] == "NEW"
-                or candidate_test[f"الجزء {section_number_candidate}"] == "OLD"
-            ):
-                return render(
-                    request,
-                    "error_page.html",
-                    {
-                        "error": "يوجد تكرار في السبر الترشيحي, الرجاء مراجعة تفاصيل الطالب",
-                        "sid": sid,
-                    },
-                )
-
-            q_test_candidate_before_edit = {}
-            q_test_candidate_before_edit[f"الجزء {section_number_candidate}"] = "NON"
-            student.q_test_candidate[f"الجزء {section_number_candidate}"] = "NEW"
-            student.save()
-
-            MemorizeMessage.objects.create(
-                master_name=master,
-                student_id=student.id,
-                student_string=student,
-                first_info={f"الجزء {section_number_candidate}": "NEW"},
-                second_info=q_test_candidate_before_edit,
-                message_type=3,
-            )
-
         else:
             return render(
                 request, "error_page.html", {"error": "يوجد خطأ في الإرسال", "sid": sid}
@@ -748,12 +708,6 @@ class MessageDelete(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
                     q_memo["quarter"]
                 ] = "NON"
                 student.save()
-
-        elif self.get_object().message_type == 3:
-            q_memo = self.get_object().second_info
-            student = self.get_object().student
-            student.q_test_candidate.update(q_memo)
-            student.save()
 
         return reverse("master_activity")
 
@@ -1359,12 +1313,6 @@ class DeleteMessageAdminPanel(UserPassesTestMixin, LoginRequiredMixin, DeleteVie
                 ] = "NON"
                 student.save()
 
-        elif self.get_object().message_type == 3:
-            q_memo = self.get_object().second_info
-            student = self.get_object().student
-            student.q_test_candidate.update(q_memo)
-            student.save()
-
         return reverse("admin_master_activities")
 
 
@@ -1401,7 +1349,7 @@ def master_list_admin(request):
 def master_edit_permissions(request, mid):
     if request.method == "POST":
         master = Master.objects.get(pk=mid)
-        update_dictionary = {"q_memo": {}, "q_test": {}, "q_test_candidate": {}}
+        update_dictionary = {"q_memo": {}, "q_test": {}}
         if len(list(request.POST)) > 1:
             checked_permissions = list(request.POST)[1:]
 
@@ -1420,8 +1368,6 @@ def master_edit_permissions(request, mid):
                 update_dictionary["q_memo"][str(i)] = "NON"
             if str(i) not in update_dictionary["q_test"]:
                 update_dictionary["q_test"][str(i)] = "NON"
-            if str(i) not in update_dictionary["q_test_candidate"]:
-                update_dictionary["q_test_candidate"][str(i)] = "NON"
 
         master.permissions.update(update_dictionary)
         master.save()

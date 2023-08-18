@@ -168,44 +168,6 @@
 
 /* q-test end */
 
-/* q-candidate-test start */
-
-.student-q-candidate-test-awqaf {
-    position: relative;
-    width: 100%;
-    background-color: rgba(135, 135, 161, 0.103);
-    border: 1px solid rgba(255, 255, 255, 0.098);
-    padding: 2rem 0.5rem;
-    padding-top: 20px;
-    border-radius: 4px;
-}
-
-.q-candidate-test-container {
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 14px;
-}
-
-.q-test-awqaf-container {
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 14px;
-}
-
-.other-block {
-    width: 68px;
-    text-align: center;
-    border-radius: 5px;
-    padding: 3px;
-    border: 1px solid black;
-}
-
-/* q-candidate-test end */
-
 /* q-awqf-test start */
 
 .student-q-test-awqaf {

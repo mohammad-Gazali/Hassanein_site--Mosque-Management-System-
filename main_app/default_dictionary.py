@@ -100,19 +100,18 @@ def check_for_cer(dictionary):
 
 # end q_tests
 
-# start q_candidate_test
+# start q_awqaf_test
 
-DEFAULT_DICT_FOR_q_candidate_test = {}
+DEFAULT_DICT_FOR_q_awqaf_test = {}
 
 for i in range(1, 31):
-    DEFAULT_DICT_FOR_q_candidate_test["الجزء " + str(i)] = "NON"
+    DEFAULT_DICT_FOR_q_awqaf_test["الجزء " + str(i)] = "NON"
 
-# end q_candidate_test
+# end q_awqaf_test
 
 
-DEFAULT_DICT_FOR_PERMISSIONS = {"q_memo": {}, "q_test": {}, "q_test_candidate": {}}
+DEFAULT_DICT_FOR_PERMISSIONS = {"q_memo": {}, "q_test": {}}
 
 for i in range(1, 31):
     DEFAULT_DICT_FOR_PERMISSIONS["q_memo"][i] = "NON"
     DEFAULT_DICT_FOR_PERMISSIONS["q_test"][i] = "NON"
-    DEFAULT_DICT_FOR_PERMISSIONS["q_test_candidate"][i] = "NON"

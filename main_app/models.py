@@ -4,14 +4,14 @@ from django.db.models.signals import post_save
 from django.contrib.auth import get_user_model
 from django.dispatch import receiver
 from django.conf.global_settings import AUTH_USER_MODEL
-from .default_dictionary import (
+from main_app.default_dictionary import (
     DEFAULT_DICT,
     DEFAULT_DICT_FOR_q_test,
-    DEFAULT_DICT_FOR_q_candidate_test,
+    DEFAULT_DICT_FOR_q_awqaf_test,
     DEFAULT_DICT_FOR_PERMISSIONS,
     check_for_cer,
 )
-from .point_map import q_map
+from main_app.point_map import q_map
 
 
 # * Default json
@@ -24,7 +24,7 @@ def json_default_value_two():
 
 
 def json_default_value_three():
-    return DEFAULT_DICT_FOR_q_candidate_test
+    return DEFAULT_DICT_FOR_q_awqaf_test
 
 
 def json_default_value_four():
@@ -96,9 +96,6 @@ class Student(models.Model):
     )
     q_test = models.JSONField(
         default=json_default_value_two, verbose_name="السبر في المسجد"
-    )
-    q_test_candidate = models.JSONField(
-        default=json_default_value_three, verbose_name="السبر الترشيحي"
     )
     is_q_test_certificate = models.BooleanField(
         default=True, verbose_name="هل يوجد شهادة سبر"
@@ -177,18 +174,7 @@ class Student(models.Model):
         for double in self.message_type_2:
             list_of_point.append(double.points)
         return sum(list_of_point)
-
     points_of_q_test.fget.short_description = "كلي نقاط السبر العادي"
-
-    @property
-    def points_of_q_candidate_test(self):
-        list_of_point = []
-        for __, value in self.q_test_candidate.items():
-            if value == "NEW":
-                list_of_point.append(25)
-        return sum(list_of_point)
-
-    points_of_q_candidate_test.fget.short_description = "كلي نقاط السبر الترشيحي"
 
     @property
     def number_of_q_memo(self):
@@ -215,16 +201,6 @@ class Student(models.Model):
         return sum(list_of_chapters_num)
 
     number_of_q_test.fget.short_description = "عدد الأجزاء المسبورة"
-
-    @property
-    def number_of_q_candidate_test(self):
-        list_of_candidate_num = []
-        for __, value in self.q_test_candidate.items():
-            if value == "NEW":
-                list_of_candidate_num.append(1)
-        return sum(list_of_candidate_num)
-
-    number_of_q_candidate_test.fget.short_description = "عدد الأجزاء الترشيحية المسبورة"
 
     @property
     def added_points(self):
@@ -321,7 +297,6 @@ class Student(models.Model):
             self.points_of_coming
             + self.points_of_q_memo
             + self.points_of_q_test
-            + self.points_of_q_candidate_test
             + self.awqaf_points_normal_test
             + self.awqaf_points_looking_test
             + self.awqaf_points_explaining_test
@@ -366,7 +341,6 @@ class MemorizeNotes(models.Model):
 class MessageTypeChoice(models.IntegerChoices):
     MEMO = 1, "تسميع"
     TEST = 2, "سبر"
-    CAND = 3, "سبر ترشيحي"
 
 
 class DoubleMessageTypeChoice(models.IntegerChoices):

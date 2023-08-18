@@ -40,22 +40,6 @@
                     {% endfor %}
                 </div>
             </div>
-            <div class="box">
-                <h3 class="title text-white">سبر ترشيحي</h3>
-                <div class="d-flex flex-wrap justify-content-center gap-2">
-                    {% for part, val in master.permissions.q_test_candidate.items %}
-                        {% if val == "NON" %}
-                        <span class="bg-secondary text-white block border border-0">
-                            {{ part }}
-                        </span>
-                        {% else %}
-                        <span class="bg-success text-white block border border-0">
-                            {{ part }}
-                        </span>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-            </div>
             <button id="master-permissions-button-{{ master.id }}" class="btn btn-warning">
                 تعديل الصلاحيات <i class="bi bi-gear-fill"></i>
             </button>
@@ -98,24 +82,6 @@
                     {% endfor %}
                 </div>
             </div>
-            <div class="box">
-                <h3 class="title text-white">سبر ترشيحي</h3>
-                <div class="my-2">
-                    <span id="per-q-test-candidate-toggle-all-{{master.id}}" class="btn btn-primary">تحديد الكل</span>
-                    <span id="per-q-test-candidate-toggle-non-all-{{master.id}}" class="btn btn-secondary">إلغاء تحديد الكل</span>
-                </div>
-                <div class="d-flex flex-wrap justify-content-center gap-2 align-items-center px-2 mt-4 per_qtestcandidate_{{master.id}}">
-                    {% for part, val in master.permissions.q_test_candidate.items %}
-                        {% if val == "NON" %}
-                                <input name="q_test_candidate_{{part}}" class="btn-check" type="checkbox" id="permissions-edit-master_{{master.id}}-part_{{ part }}__qtestcandidate" autocomplete="off">
-                                <label class="btn btn-outline-primary d-flex justify-content-center align-items-center" for="permissions-edit-master_{{master.id}}-part_{{ part }}__qtestcandidate" style="width: 30px; height: 30px;">{{part}}</label>
-                        {% else %}
-                                <input name="q_test_candidate_{{part}}" class="btn-check" type="checkbox" id="permissions-edit-master_{{master.id}}-part_{{ part }}__qtestcandidate" autocomplete="off" checked>
-                                <label class="btn btn-outline-primary d-flex justify-content-center align-items-center" for="permissions-edit-master_{{master.id}}-part_{{ part }}__qtestcandidate" style="width: 30px; height: 30px;">{{part}}</label>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-            </div>
             <div class="d-flex flex-column gap-2">
                 <button class="btn btn-success" type="submit">
                     حفظ التغييرات <i class="bi bi-check-lg"></i>
@@ -147,13 +113,10 @@
             // toggle all checkbox
             let btnAll_1_{{ master.id }} = document.getElementById("per-q-memo-toggle-all-{{master.id}}")
             let btnAll_2_{{ master.id }} = document.getElementById("per-q-test-toggle-all-{{master.id}}")
-            let btnAll_3_{{ master.id }} = document.getElementById("per-q-test-candidate-toggle-all-{{master.id}}")
             let btnNonAll_1_{{ master.id }} = document.getElementById("per-q-memo-toggle-non-all-{{master.id}}")
             let btnNonAll_2_{{ master.id }} = document.getElementById("per-q-test-toggle-non-all-{{master.id}}")
-            let btnNonAll_3_{{ master.id }} = document.getElementById("per-q-test-candidate-toggle-non-all-{{master.id}}")
             let allQMemoCheck_{{ master.id }} = document.querySelectorAll(".per_qmemo_{{master.id}} input")
             let allQTestCheck_{{ master.id }} = document.querySelectorAll(".per_qtest_{{master.id}} input")
-            let allQTestCandidateCheck_{{ master.id }} = document.querySelectorAll(".per_qtestcandidate_{{master.id}} input")
 
 
             btnAll_1_{{ master.id }}.onclick = () => {
@@ -176,18 +139,6 @@
 
             btnNonAll_2_{{ master.id }}.onclick = () => {
                 Array.from(allQTestCheck_{{ master.id }}).forEach((item) => {
-                    item.checked = false;
-                })
-            }
-
-            btnAll_3_{{ master.id }}.onclick = () => {
-                Array.from(allQTestCandidateCheck_{{ master.id }}).forEach((item) => {
-                    item.checked = true;
-                })
-            }
-
-            btnNonAll_3_{{ master.id }}.onclick = () => {
-                Array.from(allQTestCandidateCheck_{{ master.id }}).forEach((item) => {
                     item.checked = false;
                 })
             }
