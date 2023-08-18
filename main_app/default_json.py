@@ -6,7 +6,7 @@ from main_app.helpers import DaysEnum
 DEFAULT_DICT = {}
 
 for i in range(1, 582):
-    DEFAULT_DICT[i] = "NON"
+    DEFAULT_DICT[str(i)] = "NON"
 
 DEFAULT_DICT["النبأ"] = "NON"
 DEFAULT_DICT["النازعات"] = "NON"
@@ -85,8 +85,8 @@ for i in range(1, 31):
 DEFAULT_DICT_FOR_PERMISSIONS = {"q_memo": {}, "q_test": {}}
 
 for i in range(1, 31):
-    DEFAULT_DICT_FOR_PERMISSIONS["q_memo"][i] = "NON"
-    DEFAULT_DICT_FOR_PERMISSIONS["q_test"][i] = "NON"
+    DEFAULT_DICT_FOR_PERMISSIONS["q_memo"][str(i)] = "NON"
+    DEFAULT_DICT_FOR_PERMISSIONS["q_test"][str(i)] = "NON"
 
 
 # default json values

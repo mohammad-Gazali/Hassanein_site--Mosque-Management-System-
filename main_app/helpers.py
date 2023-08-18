@@ -33,13 +33,3 @@ def give_num_pages(info):
             result += 10
             
     return result
-
-
-class DaysEnum:
-    SUN = "SUN"
-    MON = "MON"
-    TUE = "TUE"
-    WED = "WED"
-    THR = "THR"
-    FRI = "FRI"
-    SAT = "SAT"

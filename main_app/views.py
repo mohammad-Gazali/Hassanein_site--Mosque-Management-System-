@@ -195,12 +195,12 @@ def add_q_memorize(request: HttpRequest, sid: int) -> HttpResponse:
         q_memo_after_edit = {i: "NEW" for i in q_memo_before_edit}
 
         master_pers = []
-        for i in master.permissions["q_memo"]:
-            if master.permissions["q_memo"][i] != "NON":
+        for i, val in master.permissions["q_memo"].items():
+            if val != "NON":
                 master_pers.append(i)
 
         for item in q_memo_after_edit:
-            if len(item) < 3 and item != "عبس":
+            if len(item) <= 3 and item != "عبس":
                 if give_section_from_page(int(item)) not in master_pers:
                     return HttpResponseForbidden(
                         "<h1>ليس هذا التسميع من صلاحياتك</h1><h1>403<h1/>"
