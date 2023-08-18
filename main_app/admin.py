@@ -1,18 +1,6 @@
 from django.contrib import admin
-from django.db import models
-from .models import (
-    Student,
-    Category,
-    MemorizeMessage,
-    MemorizeNotes,
-    Coming,
-    ComingCategory,
-    DoublePointMessage,
-    PointsAddingCause,
-    PointsDeletingCause,
-    MoneyDeletingCause,
-    AwqafTestNoQ,
-)
+from django.db.models import JSONField
+from main_app import models
 from django_json_widget.widgets import JSONEditorWidget
 
 
@@ -20,24 +8,11 @@ admin.site.site_title = "لوحة إدارة مسجد الحسنين"
 admin.site.site_header = "إدارة مسجد الحسنين"
 
 
-@admin.register(Category)
+@admin.register(models.Category)
 class AdminCategory(admin.ModelAdmin):
     list_display = ["name"]
 
-
-# Here we add an action besides to delete action, visit (https://docs.djangoproject.com/en/4.1/ref/contrib/admin/actions/) for more information
-# @admin.action(description='تحديث حالة السبر')
-# def update_q_test_certifcate(modeladmin, requset, queryset):
-#     students =Student.objects.all()
-#     for st in students:
-#         if st.q_test_certificate == 'لا يوجد':
-#             st.is_q_test_certificate = False
-#         else:
-#             st.is_q_test_certificate = True
-#         st.save()
-
-
-@admin.register(Student)
+@admin.register(models.Student)
 class AdminStudent(admin.ModelAdmin):
     list_display = ["name", "age", "category", "mother_name"]
     search_fields = ["name"]
@@ -48,7 +23,7 @@ class AdminStudent(admin.ModelAdmin):
     # here changed the widget of JSONField into another widget, this widget is imported from django_json_widget.widgets
     # we should firstly install the module 'django-json-widget' by using 'pip install django-json-widget', then we should go INSTALLED_APPS in settings.py and add 'django_json_widget'
     formfield_overrides = {
-        models.JSONField: {
+        JSONField: {
             "widget": JSONEditorWidget(
                 mode="code",
                 options={
@@ -80,17 +55,8 @@ class AdminStudent(admin.ModelAdmin):
             )
         return super().get_form(request, obj, **kwargs)
 
-    # this is another method for doing what did in get_form() method
-    # def add_view(self,request,extra_content=None):
-    #     self.exclude = ('q_memorizing',)
-    #     return super().add_view(request)
 
-    # def change_view(self,request,object_id,extra_content=None):
-    #     self.exclude = ()
-    #     return super().change_view(request,object_id)
-
-
-@admin.register(MemorizeMessage)
+@admin.register(models.MemorizeMessage)
 class AdminMemorizeMessage(admin.ModelAdmin):
     list_display = ["id", "master_name", "student", "message_type", "sended_at"]
     list_select_related = ["master_name__user", "student"]
@@ -106,17 +72,17 @@ class AdminMemorizeMessage(admin.ModelAdmin):
     exclude = ["student_string", "second_info"]
 
     # this method prevent admin from deleting objects in this model
-    def has_delete_permission(self, request, obj=None):
+    def has_delete_permission(self, _, __=None):
         return False
 
-    def has_change_permission(self, request, obj=None) -> bool:
+    def has_change_permission(self, _, __=None) -> bool:
         return False
 
-    def has_add_permission(self, request, obj=None) -> bool:
+    def has_add_permission(self, _, __=None) -> bool:
         return False
 
     ormfield_overrides = {
-        models.JSONField: {
+        JSONField: {
             "widget": JSONEditorWidget(
                 mode="code",
                 options={
@@ -128,12 +94,8 @@ class AdminMemorizeMessage(admin.ModelAdmin):
         }
     }
 
-    # def time_seconds(self, obj):
-    #     return obj.sended_at.strftime("%I:%M:%S || %Y-%m-%d")
-    # time_seconds.short_description = 'تاريخ الإرسال'
 
-
-@admin.register(MemorizeNotes)
+@admin.register(models.MemorizeNotes)
 class AdminMemorizeNote(admin.ModelAdmin):
     list_display = ["master_name", "student", "sended_at"]
     list_select_related = ["master_name__user", "student"]
@@ -142,68 +104,68 @@ class AdminMemorizeNote(admin.ModelAdmin):
     search_fields = ["student_string"]
     exclude = ["student_string"]
 
-    def has_delete_permission(self, request, obj=None):
+    def has_delete_permission(self, _, __=None):
         return False
 
-    def has_change_permission(self, request, obj=None) -> bool:
+    def has_change_permission(self, _, __=None) -> bool:
         return False
 
-    def has_add_permission(self, request, obj=None) -> bool:
+    def has_add_permission(self, _, __=None) -> bool:
         return False
 
 
-@admin.register(ComingCategory)
+@admin.register(models.ComingCategory)
 class ComingCategoryAdmin(admin.ModelAdmin):
     list_display = ["name"]
 
 
-@admin.register(Coming)
+@admin.register(models.Coming)
 class ComingAdmin(admin.ModelAdmin):
     list_display = ["student", "master_name", "category", "registered_at", "note"]
     list_filter = ["registered_at", "category", "note"]
     list_select_related = ["student", "master_name__user", "category"]
 
-    def has_delete_permission(self, request, obj=None):
+    def has_delete_permission(self, _, __=None):
         return False
 
-    def has_change_permission(self, request, obj=None):
+    def has_change_permission(self, _, __=None):
         return False
 
-    def has_add_permission(self, request, obj=None):
+    def has_add_permission(self, _, __=None):
         return False
 
 
-@admin.register(DoublePointMessage)
+@admin.register(models.DoublePointMessage)
 class DoublePointMessageAdmin(admin.ModelAdmin):
     list_display = ["student", "points", "sended_at"]
     list_select_related = ["student"]
     readonly_fields = ["student", "points", "content"]
 
-    def has_delete_permission(self, request, obj=None):
+    def has_delete_permission(self, _, __=None):
         return False
 
-    def has_change_permission(self, request, obj=None):
+    def has_change_permission(self, _, __=None):
         return False
 
-    def has_add_permission(self, request, obj=None):
+    def has_add_permission(self, _, __=None):
         return False
 
 
-@admin.register(PointsAddingCause)
+@admin.register(models.PointsAddingCause)
 class PointsAddingCauseAdmin(admin.ModelAdmin):
     pass
 
 
-@admin.register(PointsDeletingCause)
+@admin.register(models.PointsDeletingCause)
 class PointsDeletingCauseAdmin(admin.ModelAdmin):
     pass
 
 
-@admin.register(MoneyDeletingCause)
+@admin.register(models.MoneyDeletingCause)
 class MoneyDeletingCauseAdmin(admin.ModelAdmin):
     pass
 
 
-@admin.register(AwqafTestNoQ)
+@admin.register(models.AwqafTestNoQ)
 class AwqafTestNoQAdmin(admin.ModelAdmin):
     list_display = ["name", "points"]

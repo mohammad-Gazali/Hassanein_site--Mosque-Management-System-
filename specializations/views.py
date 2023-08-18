@@ -1,14 +1,11 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import HttpRequest, JsonResponse
-from .models import Specialization, Level, Part, SpecializationMessage
+from specializations.models import Specialization, Level, Part, SpecializationMessage
+from specializations.check_functions import check_specializations
 from main_app.models import Student, Master
 import json
 
-
-def check_specializations(user):
-    groups = map(lambda x: x.name, user.groups.all())
-    return user.is_superuser or ("اختصاصات" in groups)
 
 
 @user_passes_test(check_specializations)
@@ -49,9 +46,8 @@ def main_specialization(request: HttpRequest):
     )
 
 
+
 # ajax views
-
-
 def levels_ajax(request: HttpRequest):
     if request.method == "POST":
 
@@ -90,8 +86,6 @@ def parts_ajax(request: HttpRequest):
 
 
 # helper functions
-
-
 def get_id_from_request(request: HttpRequest, key: str) -> int:
     return int(json.loads(request.body)[key])
 

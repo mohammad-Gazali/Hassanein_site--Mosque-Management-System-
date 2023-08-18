@@ -7,7 +7,6 @@ class CustomMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-
         # checking the existance of ControlSettings instance with pk=1
         if not ControlSettings.objects.filter(pk=1):
             ControlSettings.objects.create(point_value=10)

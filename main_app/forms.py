@@ -1,5 +1,5 @@
 from django import forms
-from .models import ControlSettings
+from main_app.models import ControlSettings
 
 
 class SettingForm(forms.ModelForm):

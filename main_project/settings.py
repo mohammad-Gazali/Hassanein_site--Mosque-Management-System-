@@ -8,12 +8,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+# TODO: add env var
 SECRET_KEY = "django-insecure-n=6ie*$m8j#rx#n5ncrvn9-524i!)l060%yjnw9mvs$bmnh^q4"
 
 # SECURITY WARNING: don't run with debug turned on in production!
+# TODO: add env var
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "localhost",
+    # TODO: add env var
+]
 
 
 # Application definition
@@ -81,6 +87,7 @@ WSGI_APPLICATION = "main_project.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+# TODO: add env var
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",

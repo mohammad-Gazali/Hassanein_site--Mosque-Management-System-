@@ -1,34 +1,28 @@
 from django.db import models
-from datetime import date
 from django.db.models.signals import post_save
 from django.contrib.auth import get_user_model
 from django.dispatch import receiver
 from django.conf.global_settings import AUTH_USER_MODEL
-from main_app.default_dictionary import (
-    DEFAULT_DICT,
-    DEFAULT_DICT_FOR_q_test,
-    DEFAULT_DICT_FOR_q_awqaf_test,
-    DEFAULT_DICT_FOR_PERMISSIONS,
-    check_for_cer,
-)
+from main_app import default_dictionary
 from main_app.point_map import q_map
+from datetime import date
 
 
 # * Default json
 def json_default_value():
-    return DEFAULT_DICT
+    return default_dictionary.DEFAULT_DICT
 
 
 def json_default_value_two():
-    return DEFAULT_DICT_FOR_q_test
+    return default_dictionary.DEFAULT_DICT_FOR_q_test
 
 
 def json_default_value_three():
-    return DEFAULT_DICT_FOR_q_awqaf_test
+    return default_dictionary.DEFAULT_DICT_FOR_q_awqaf_test
 
 
 def json_default_value_four():
-    return DEFAULT_DICT_FOR_PERMISSIONS
+    return default_dictionary.DEFAULT_DICT_FOR_PERMISSIONS
 
 
 # * Models
@@ -129,7 +123,7 @@ class Student(models.Model):
     @property
     def q_test_certificate(self):
         result = {}
-        test_cer = check_for_cer(self.q_test)
+        test_cer = default_dictionary.check_for_cer(self.q_test)
         for i in test_cer:
             if test_cer[i] == "NEW":
                 result[i] = "تم"

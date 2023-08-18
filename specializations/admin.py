@@ -1,5 +1,5 @@
 from django.contrib import admin
-from . import models
+from specializations import models
 
 
 @admin.register(models.Specialization)

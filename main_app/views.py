@@ -3,7 +3,7 @@ from django.urls import reverse_lazy, reverse
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.generic import ListView, DeleteView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.http import HttpResponseForbidden, HttpResponseNotAllowed, JsonResponse
+from django.http import HttpRequest, HttpResponse, HttpResponseForbidden, HttpResponseNotAllowed, JsonResponse
 from django.db.models import Prefetch, Sum, Q
 from main_app.models import (
     MemorizeNotes,
@@ -25,7 +25,9 @@ from main_app.models import (
     AwqafNoQStudentRelation,
 )
 from main_app.forms import SettingForm
-from main_app.point_map import apply_q_map, q_map
+from main_app.point_map import apply_q_map
+from main_app.check_functions import check_admin, check_coming, check_editing_points
+from main_app.helper_functions import give_section_from_page, give_num_pages
 from specializations.models import Part, SpecializationMessage, Specialization, Level
 from specializations.views import apply_edit_changes
 from datetime import datetime, date
@@ -35,8 +37,8 @@ import json
 import re
 
 
-def index(request):
-    control_settings = ControlSettings.objects.get(pk=1)
+def index(request: HttpRequest) -> HttpResponse:
+    control_settings = ControlSettings.objects.first()
 
     ramadan = False
 
@@ -46,8 +48,7 @@ def index(request):
     return render(request, "index.html", {"ramadan": ramadan})
 
 
-def search_results_of_student(request):
-
+def search_results_of_student(request: HttpRequest) -> HttpResponse:
     query_text = request.GET.get("q_text")
     query_id = request.GET.get("q_search_id")
 
@@ -77,7 +78,7 @@ def search_results_of_student(request):
         )
 
     if query_text:
-        my_regex = r""
+        my_regex = ""
         for word in re.split(r"\s+", query_text.strip()):
             my_regex += word + r".*"
 
@@ -108,12 +109,12 @@ def search_results_of_student(request):
 
 
 @login_required
-def before_logout(request):
+def before_logout(request: HttpRequest) -> HttpResponse:
     return render(request, "before_logout.html")
 
 
 @login_required
-def add_q_memorize(request, sid):
+def add_q_memorize(request: HttpRequest, sid: int) -> HttpResponse:
     if request.method == "POST":
         master = Master.objects.get(user=request.user)
         student = Student.objects.get(pk=sid)
@@ -241,7 +242,7 @@ def add_q_memorize(request, sid):
 
 
 @login_required
-def add_q_test(request):
+def add_q_test(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
         master = Master.objects.get(user=request.user)
         sid = request.POST.get("student-id")
@@ -713,7 +714,7 @@ class MessageDelete(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 
 @login_required
-def create_memorizing_note(request):
+def create_memorizing_note(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
         form = list(request.POST.items())
         master = Master.objects.get(user=request.user)
@@ -736,8 +737,7 @@ def create_memorizing_note(request):
 
 
 @login_required
-def del_note(request, nid):
-
+def del_note(request: HttpRequest, nid: int) -> HttpResponse:
     memoize_note = MemorizeNotes.objects.get(pk=nid)
     memoize_note.delete()
 
@@ -748,24 +748,17 @@ def del_note(request, nid):
         return redirect("home")
 
 
+
 # Coming class functions/classes
-
-
-def check_coming(user):
-    groups = map(lambda x: x.name, user.groups.all())
-    return user.is_superuser or ("حضور" in groups)
-
-
 @user_passes_test(check_coming)
 @login_required
-def search_coming(request):
+def search_coming(request: HttpRequest) -> HttpResponse:
     return render(request, "coming/search_coming.html")
 
 
 @user_passes_test(check_coming)
 @login_required
-def search_results_of_student_coming(request):
-
+def search_results_of_student_coming(request: HttpRequest) -> HttpResponse:
     query_text = request.GET.get("q_text")
     query_id = request.GET.get("q_search_id")
 
@@ -814,7 +807,7 @@ def search_results_of_student_coming(request):
 
 @user_passes_test(check_coming)
 @login_required
-def add_coming(request):
+def add_coming(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
         master = Master.objects.get(user=request.user)
         student_id = int(request.POST.get("student-id"))
@@ -866,16 +859,9 @@ class ComingDelete(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 
 # admin control functions/classes
-
-
-def check_admin(user):
-    return user.is_superuser
-
-
 @user_passes_test(check_admin)
 @login_required
-def admin_main(request):
-
+def admin_main(request: HttpRequest) -> HttpResponse:
     q = request.GET.get("text-search-table") or None
     search_type = request.GET.get("type-search-table-admin-p") or None
 
@@ -905,7 +891,7 @@ def admin_main(request):
 
 @user_passes_test(check_admin)
 @login_required
-def admin_points_information(request):
+def admin_points_information(request: HttpRequest) -> HttpResponse:
     q = request.GET.get("text-search-table") or None
     search_type = request.GET.get("type-search-table-admin-p") or None
 
@@ -1008,7 +994,7 @@ class AdminSettingsSiteView(UserPassesTestMixin, LoginRequiredMixin, UpdateView)
 
 @user_passes_test(check_admin)
 @login_required
-def admin_awqaf(request):
+def admin_awqaf(request: HttpRequest) -> HttpResponse:
     test_types = AwqafTestNoQ.objects.all()
     if request.method == "POST":
         student_id = int(request.POST.get("student-id"))
@@ -1065,7 +1051,7 @@ def admin_awqaf(request):
 
 @user_passes_test(check_admin)
 @login_required
-def admin_awqaf_no_q(request):
+def admin_awqaf_no_q(request: HttpRequest) -> HttpResponse:
     test_types = AwqafTestNoQ.objects.all()
     if request.method == "POST":
         student_id = int(request.POST.get("student-id"))
@@ -1088,8 +1074,7 @@ def admin_awqaf_no_q(request):
 
 @user_passes_test(check_admin)
 @login_required
-def admin_awqaf_table(request):
-
+def admin_awqaf_table(request: HttpRequest) -> HttpResponse:
     q = request.GET.get("text-search-table") or None
     search_type = request.GET.get("type-search-table-admin-p") or None
 
@@ -1172,7 +1157,7 @@ def admin_awqaf_table(request):
 
 @user_passes_test(check_admin)
 @login_required
-def admin_activity_master(request):
+def admin_activity_master(request: HttpRequest) -> HttpResponse:
     q = request.GET.get("text-search-table") or None
     search_type = request.GET.get("type-search-table-admin-p") or None
     messages = (
@@ -1224,7 +1209,7 @@ def admin_activity_master(request):
 
 @user_passes_test(check_admin)
 @login_required
-def admin_coming_list(request):
+def admin_coming_list(request: HttpRequest) -> HttpResponse:
     q = request.GET.get("text-search-table") or None
     search_type = request.GET.get("type-search-table-admin-p") or None
     coming_list = (
@@ -1327,7 +1312,7 @@ class DeleteComingAdminPanel(UserPassesTestMixin, LoginRequiredMixin, DeleteView
 
 @user_passes_test(check_admin)
 @login_required
-def master_list_admin(request):
+def master_list_admin(request: HttpRequest) -> HttpResponse:
     q = request.GET.get("text-search-table") or None
     masters = Master.objects.select_related("user").all().order_by("id")
     if q is not None:
@@ -1346,7 +1331,7 @@ def master_list_admin(request):
 
 @user_passes_test(check_admin)
 @login_required
-def master_edit_permissions(request, mid):
+def master_edit_permissions(request: HttpRequest, mid: int) -> HttpResponse:
     if request.method == "POST":
         master = Master.objects.get(pk=mid)
         update_dictionary = {"q_memo": {}, "q_test": {}}
@@ -1379,7 +1364,7 @@ def master_edit_permissions(request, mid):
 
 @user_passes_test(check_admin)
 @login_required
-def admin_editing_points_log(request):
+def admin_editing_points_log(request: HttpRequest) -> HttpResponse:
     q = request.GET.get("text-search-table") or None
     search_type = request.GET.get("type-search-table-admin-p") or None
     delete_messages = (
@@ -1449,7 +1434,7 @@ def admin_editing_points_log(request):
 
 @user_passes_test(check_admin)
 @login_required
-def admin_specializations(request):
+def admin_specializations(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
         edits = list(request.POST)[1:]
 
@@ -1507,7 +1492,7 @@ def admin_specializations(request):
 
 @user_passes_test(check_admin)
 @login_required
-def admin_test_certificates(request):
+def admin_test_certificates(request: HttpRequest) -> HttpResponse:
 
     q = request.GET.get("text-search-table") or None
     search_type = request.GET.get("type-search-table-admin-p") or None
@@ -1558,7 +1543,7 @@ def admin_test_certificates(request):
 
 @user_passes_test(check_admin)
 @login_required
-def admin_info(request):
+def admin_info(request: HttpRequest) -> HttpResponse:
     students = Student.objects.all()
 
     number_of_pages = sum([s.number_of_q_memo for s in students])
@@ -1586,15 +1571,11 @@ def admin_info(request):
     )
 
 
+
 # adding and deleting points
-def check_editing_points(user):
-    groups = map(lambda x: x.name, user.groups.all())
-    return user.is_superuser or ("نقاط" in groups)
-
-
 @user_passes_test(check_editing_points)
 @login_required
-def editing_points(request):
+def editing_points(request: HttpRequest) -> HttpResponse:
     if request.method == "GET":
         adding_causes = PointsAddingCause.objects.all()
         deleting_causes = PointsDeletingCause.objects.all()
@@ -1639,8 +1620,7 @@ def editing_points(request):
 
 @user_passes_test(check_editing_points)
 @login_required
-def editing_points_log(request):
-
+def editing_points_log(request: HttpRequest) -> HttpResponse:
     master = Master.objects.get(user=request.user)
 
     points_adding_msgs = (
@@ -1657,13 +1637,16 @@ def editing_points_log(request):
     return render(
         request,
         "editing_points_log.html",
-        {"adding_msgs": points_adding_msgs, "deleting_msgs": points_deleting_msgs},
+        {
+            "adding_msgs": points_adding_msgs,
+            "deleting_msgs": points_deleting_msgs,
+        },
     )
 
 
 @user_passes_test(check_editing_points)
 @login_required
-def deleting_editing_points_add(request, aid):
+def deleting_editing_points_add(request: HttpRequest, aid: int) -> HttpResponse:
     if request.method == "POST":
         master = Master.objects.get(user=request.user)
         edit_id = int(request.POST.get("id"))
@@ -1676,7 +1659,7 @@ def deleting_editing_points_add(request, aid):
 
 @user_passes_test(check_editing_points)
 @login_required
-def deleting_editing_points_remove(request, rid):
+def deleting_editing_points_remove(request: HttpRequest, rid: int) -> HttpResponse:
     if request.method == "POST":
         master = Master.objects.get(user=request.user)
         edit_id = int(request.POST.get("id"))
@@ -1689,7 +1672,7 @@ def deleting_editing_points_remove(request, rid):
 
 @user_passes_test(check_admin)
 @login_required
-def deleting_editing_points_add_admin(request, aid):
+def deleting_editing_points_add_admin(_, aid: int):
     edit = PointsAdding.objects.get(pk=aid)
     edit.delete()
     return redirect("admin_editing_points_log")
@@ -1697,7 +1680,7 @@ def deleting_editing_points_add_admin(request, aid):
 
 @user_passes_test(check_admin)
 @login_required
-def deleting_editing_points_remove_admin(request, rid):
+def deleting_editing_points_remove_admin(_, rid: int):
     edit = PointsDeleting.objects.get(pk=rid)
     edit.delete()
     return redirect("admin_editing_points_log")
@@ -1705,7 +1688,7 @@ def deleting_editing_points_remove_admin(request, rid):
 
 @user_passes_test(check_admin)
 @login_required
-def students_reports(request):
+def students_reports(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
         sid = request.POST.get("student-id") or None
         reports_type = request.POST.get("type")
@@ -1777,7 +1760,7 @@ def students_reports(request):
 
 @user_passes_test(check_admin)
 @login_required
-def deleting_money(request):
+def deleting_money(request: HttpRequest) -> HttpResponse:
     causes = MoneyDeletingCause.objects.all()
     students_categories = Category.objects.all()
 
@@ -1814,7 +1797,7 @@ def deleting_money(request):
 
 @user_passes_test(check_admin)
 @login_required
-def deleting_money_category(request):
+def deleting_money_category(request: HttpRequest) -> HttpResponse:
     causes = MoneyDeletingCause.objects.all()
     students_categories = Category.objects.all()
 
@@ -1853,7 +1836,7 @@ def deleting_money_category(request):
 
 @user_passes_test(check_admin)
 @login_required
-def deleting_money_table(request):
+def deleting_money_table(request: HttpRequest) -> HttpResponse:
 
     q = request.GET.get("text-search-table") or None
     search_type = request.GET.get("type-search-table-admin-p") or None
@@ -1896,7 +1879,7 @@ def deleting_money_table(request):
 
 @user_passes_test(check_admin)
 @login_required
-def deleting_money_total_table(request):
+def deleting_money_total_table(request: HttpRequest) -> HttpResponse:
 
     q = request.GET.get("text-search-table") or None
     search_type = request.GET.get("type-search-table-admin-p") or None
@@ -1945,10 +1928,9 @@ def deleting_money_total_table(request):
     return render(request, "deleting_money_total_table.html", {"data": data, "val": q})
 
 
+
 # ajax views
-
-
-def students_ajax(request):
+def students_ajax(request: HttpRequest) -> JsonResponse | HttpResponse:
     if request.method == "POST":
         query = json.loads(request.body)["content"]
         if query is not None:
@@ -1974,7 +1956,7 @@ def students_ajax(request):
 
 @user_passes_test(check_admin)
 @login_required
-def switch_deleting_active_to_points_state(request):
+def switch_deleting_active_to_points_state(request: HttpRequest) -> JsonResponse | HttpResponse:
     if request.method == "POST":
 
         data = json.loads(request.body)["delete_id"] or None
@@ -1994,31 +1976,3 @@ def switch_deleting_active_to_points_state(request):
 
 # helper functions
 
-
-def give_section_from_page(page_num):
-    if page_num % 21 == 0 and page_num != 21:
-        return str(page_num / 21 + 1)
-    return str(math.ceil(page_num / 21))
-
-
-def give_num_pages(info):
-    data = info.second_info
-    result = 0
-
-    # q_memo
-    if info.message_type == 1:
-        for item in data:
-            if len(item) <= 3 and item != "عبس":
-                result += 1
-            else:
-                result += q_map[item] / 5
-
-    # q_test
-    else:
-        if data["type"] == "quarter":
-            result += 2.5
-        elif data["type"] == "half":
-            result += 5
-        else:
-            result += 10
-    return result
