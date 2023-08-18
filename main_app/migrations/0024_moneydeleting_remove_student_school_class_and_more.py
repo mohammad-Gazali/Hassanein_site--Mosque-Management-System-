@@ -2,8 +2,8 @@
 
 from django.conf import settings
 from django.db import migrations, models
+from main_app.default_json import json_default_value_four
 import django.db.models.deletion
-import main_app.models
 
 
 class Migration(migrations.Migration):
@@ -142,7 +142,7 @@ class Migration(migrations.Migration):
                 (
                     "permissions",
                     models.JSONField(
-                        default=main_app.models.json_default_value_four,
+                        default=json_default_value_four,
                         verbose_name="الصلاحيات",
                     ),
                 ),

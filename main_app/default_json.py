@@ -67,37 +67,6 @@ for i in range(1, 31):
             "الربع 4": "NON",
         },
     }
-
-
-def check_for_cer(dictionary):
-    result = {}
-    for i in dictionary:
-        non = 0
-        old = 0
-        new = 0
-        error = 0
-        for j in dictionary[i]:
-            for k in dictionary[i][j]:
-                if dictionary[i][j][k] == "NON":
-                    non += 1
-                elif dictionary[i][j][k] == "OLD":
-                    old += 1
-                elif dictionary[i][j][k] == "NEW":
-                    new += 1
-                else:
-                    error += 1
-        if error != 0:
-            result[i] = "ERROR"
-        elif non != 0:
-            result[i] = "NON"
-        elif new != 0:
-            result[i] = "NEW"
-        else:
-            result[i] = "OLD"
-
-    return result
-
-
 # end q_tests
 
 # start q_awqaf_test
@@ -115,3 +84,21 @@ DEFAULT_DICT_FOR_PERMISSIONS = {"q_memo": {}, "q_test": {}}
 for i in range(1, 31):
     DEFAULT_DICT_FOR_PERMISSIONS["q_memo"][i] = "NON"
     DEFAULT_DICT_FOR_PERMISSIONS["q_test"][i] = "NON"
+
+
+# default json values
+def json_default_value():
+    return DEFAULT_DICT
+
+
+def json_default_value_two():
+    return DEFAULT_DICT_FOR_q_test
+
+
+def json_default_value_three():
+    return DEFAULT_DICT_FOR_q_awqaf_test
+
+
+def json_default_value_four():
+    return DEFAULT_DICT_FOR_PERMISSIONS
+

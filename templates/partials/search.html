@@ -23,7 +23,6 @@
             </div>
         </div>
         <form id="search_form" action="{% url 'search_results' %}">
-            {% csrf_token %}
             <div class="row">
                 <div class="col-md-9 col-12" id="search-text">
                     <input placeholder="ادخل اسم الطالب" name="q_text" type="text" class="form-control" required>

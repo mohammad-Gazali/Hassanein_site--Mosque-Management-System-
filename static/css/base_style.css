@@ -129,7 +129,7 @@ footer {
     border: 2px solid black;
     border-radius: 10px;
     z-index: 10;
-    background-color: white;
+    background-color: var(--clr2);
     width: 500px;
     height: 80vh;
     max-width: 89%;
@@ -144,6 +144,7 @@ footer {
 .model-header {
     display: flex;
     justify-content: space-between;
+    background-color: white;
     align-items: center;
     padding: 10px 15px;
     border-bottom: 2px solid black;
@@ -169,6 +170,7 @@ footer {
     display: flex;
     flex-direction: column;
     gap: 2rem;
+    min-height: 100%;
 }
 
 .model::-webkit-scrollbar {

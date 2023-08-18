@@ -22,8 +22,7 @@
                 <label for="id-search-filter">البحث بالمعرف</label>
             </div>
         </div>
-        <form id="search_form" action="{% url 'search_results_coming' %}">
-            {% csrf_token %}
+        <form id="search_form" action="{% url 'search_results_coming' %}">            
             <div class="row">
                 <div class="col-md-9 col-12" id="search-text-coming">
                     <input placeholder="ادخل اسم الطالب" name="q_text" type="text" class="form-control" required>

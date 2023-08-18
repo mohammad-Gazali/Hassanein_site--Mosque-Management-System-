@@ -28,4 +28,5 @@ def give_num_pages(info: MemorizeMessage):
             result += 5
         else:
             result += 10
+            
     return result

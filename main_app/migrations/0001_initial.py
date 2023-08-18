@@ -2,7 +2,7 @@
 
 from django.db import migrations, models
 import django.db.models.deletion
-import main_app.models
+from main_app.default_json import json_default_value, json_default_value_two, json_default_value_three
 
 
 class Migration(migrations.Migration):
@@ -143,21 +143,21 @@ class Migration(migrations.Migration):
                 (
                     "q_memorizing",
                     models.JSONField(
-                        default=main_app.models.json_default_value,
+                        default=json_default_value,
                         verbose_name="حفظ القرآن",
                     ),
                 ),
                 (
                     "q_test",
                     models.JSONField(
-                        default=main_app.models.json_default_value_two,
+                        default=json_default_value_two,
                         verbose_name="السبر في المسجد",
                     ),
                 ),
                 (
                     "q_test_candidate",
                     models.JSONField(
-                        default=main_app.models.json_default_value_three,
+                        default=json_default_value_three,
                         verbose_name="السبر الترشيحي",
                     ),
                 ),

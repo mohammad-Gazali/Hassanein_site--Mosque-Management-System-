@@ -1,4 +1,4 @@
-from .models import ControlSettings
+from main_app.models import ControlSettings
 from django.contrib.auth.models import Group
 
 
@@ -7,8 +7,8 @@ class CustomMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        # checking the existance of ControlSettings instance with pk=1
-        if not ControlSettings.objects.filter(pk=1):
+        # checking the existance of ControlSettings instance
+        if not ControlSettings.objects.first():
             ControlSettings.objects.create(point_value=10)
 
         # check the existance of the groups (حضور, نقاط, اختصاصات)

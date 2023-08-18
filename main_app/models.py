@@ -3,26 +3,10 @@ from django.db.models.signals import post_save
 from django.contrib.auth import get_user_model
 from django.dispatch import receiver
 from django.conf.global_settings import AUTH_USER_MODEL
-from main_app import default_dictionary
+from main_app import default_json
 from main_app.point_map import q_map
 from datetime import date
 
-
-# * Default json
-def json_default_value():
-    return default_dictionary.DEFAULT_DICT
-
-
-def json_default_value_two():
-    return default_dictionary.DEFAULT_DICT_FOR_q_test
-
-
-def json_default_value_three():
-    return default_dictionary.DEFAULT_DICT_FOR_q_awqaf_test
-
-
-def json_default_value_four():
-    return default_dictionary.DEFAULT_DICT_FOR_PERMISSIONS
 
 
 # * Models
@@ -38,12 +22,8 @@ class Category(models.Model):
 
 
 class Master(models.Model):
-    user = models.OneToOneField(
-        AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="اسم المستخدم"
-    )
-    permissions = models.JSONField(
-        default=json_default_value_four, verbose_name="الصلاحيات"
-    )
+    user = models.OneToOneField(AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="اسم المستخدم")
+    permissions = models.JSONField(default=default_json.json_default_value_four, verbose_name="الصلاحيات")
 
     def __str__(self):
         return self.user.username
@@ -57,52 +37,22 @@ class Student(models.Model):
     name = models.CharField(max_length=511, verbose_name="الاسم الثلاثي")
     mother_name = models.CharField(max_length=255, verbose_name="اسم الأم")
     birthdate = models.DateField(verbose_name="تاريخ الميلاد", null=True, blank=True)
-    address = models.CharField(
-        max_length=511, verbose_name="العنوان تفصيلاً", null=True, blank=True
-    )
-    static_phone = models.CharField(
-        max_length=20, verbose_name="الهاتف الأرضي", blank=True, null=True
-    )
-    cell_phone = models.CharField(
-        max_length=20, verbose_name="الجوال", blank=True, null=True
-    )
-    father_phone = models.CharField(
-        max_length=20, verbose_name="جوال الأب", blank=True, null=True
-    )
-    mother_phone = models.CharField(
-        max_length=20, verbose_name="جوال الأم", null=True, blank=True
-    )
+    address = models.CharField(max_length=511, verbose_name="العنوان تفصيلاً", null=True, blank=True)
+    static_phone = models.CharField(max_length=20, verbose_name="الهاتف الأرضي", blank=True, null=True)
+    cell_phone = models.CharField(max_length=20, verbose_name="الجوال", blank=True, null=True)
+    father_phone = models.CharField(max_length=20, verbose_name="جوال الأب", blank=True, null=True)
+    mother_phone = models.CharField(max_length=20, verbose_name="جوال الأم", null=True, blank=True)
     registered_at = models.DateField(verbose_name="تاريخ التسجيل", auto_now_add=True)
-    category = models.ForeignKey(
-        Category, on_delete=models.SET_NULL, verbose_name="الفئة", null=True, blank=True
-    )
-    father_work = models.CharField(
-        max_length=255, null=True, blank=True, verbose_name="عمل الأب"
-    )
-    notes = models.CharField(
-        max_length=511, null=True, blank=True, verbose_name="ملاحظات"
-    )
-    bring_him = models.CharField(
-        max_length=511, verbose_name="أحضره", null=True, blank=True
-    )
-    q_memorizing = models.JSONField(
-        default=json_default_value, verbose_name="حفظ القرآن"
-    )
-    q_test = models.JSONField(
-        default=json_default_value_two, verbose_name="السبر في المسجد"
-    )
-    is_q_test_certificate = models.BooleanField(
-        default=True, verbose_name="هل يوجد شهادة سبر"
-    )
-    q_awqaf_test = models.JSONField(
-        default=json_default_value_three, verbose_name="سبر القرآن في الأوقاف"
-    )
-    q_awqaf_test_looking = models.JSONField(
-        default=json_default_value_three, verbose_name="سبر القرآن نظراً في الأوقاف"
-    )
-    q_awqaf_test_explaining = models.JSONField(
-        default=json_default_value_three, verbose_name="سبر القرآن تفسيراً في الأوقاف"
-    )
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, verbose_name="الفئة", null=True, blank=True)
+    father_work = models.CharField(max_length=255, null=True, blank=True, verbose_name="عمل الأب")
+    notes = models.CharField(max_length=511, null=True, blank=True, verbose_name="ملاحظات")
+    bring_him = models.CharField(max_length=511, verbose_name="أحضره", null=True, blank=True)
+    q_memorizing = models.JSONField(default=default_json.json_default_value, verbose_name="حفظ القرآن")
+    q_test = models.JSONField(default=default_json.json_default_value_two, verbose_name="السبر في المسجد")
+    is_q_test_certificate = models.BooleanField(default=True, verbose_name="هل يوجد شهادة سبر")
+    q_awqaf_test = models.JSONField(default=default_json.json_default_value_three, verbose_name="سبر القرآن في الأوقاف")
+    q_awqaf_test_looking = models.JSONField(default=default_json.json_default_value_three, verbose_name="سبر القرآن نظراً في الأوقاف")
+    q_awqaf_test_explaining = models.JSONField(default=default_json.json_default_value_three, verbose_name="سبر القرآن تفسيراً في الأوقاف")
 
     def __str__(self):
         return self.name
@@ -114,16 +64,12 @@ class Student(models.Model):
             return delta.days // 365
         else:
             return "تاريخ الميلاد غير محدد"
-
     age.fget.short_description = "العمر"
-
-    def __str__(self):
-        return self.name
 
     @property
     def q_test_certificate(self):
         result = {}
-        test_cer = default_dictionary.check_for_cer(self.q_test)
+        test_cer = default_json.check_for_cer(self.q_test)
         for i in test_cer:
             if test_cer[i] == "NEW":
                 result[i] = "تم"
@@ -131,14 +77,12 @@ class Student(models.Model):
             return "لا يوجد"
         else:
             return result
-
     q_test_certificate.fget.short_description = "شهادات السبر"
 
     @property
     def points_of_coming(self):
         list_of_point = [p.points for p in self.coming_set.all()]
         return sum(list_of_point)
-
     points_of_coming.fget.short_description = "كلي نقاط الحضور"
 
     @property
@@ -152,7 +96,6 @@ class Student(models.Model):
         for double in self.message_type_1:
             list_of_point.append(double.points)
         return sum(list_of_point)
-
     points_of_q_memo.fget.short_description = "كلي نقاط التسميع"
 
     @property
@@ -181,7 +124,6 @@ class Student(models.Model):
                 list_of_pages_num.append(q_map[key] / 5)
 
         return sum(list_of_pages_num)
-
     number_of_q_memo.fget.short_description = "عدد الصفحات المسمعة"
 
     @property
@@ -193,7 +135,6 @@ class Student(models.Model):
                     if value3 == "NEW":
                         list_of_chapters_num.append(0.25)
         return sum(list_of_chapters_num)
-
     number_of_q_test.fget.short_description = "عدد الأجزاء المسبورة"
 
     @property
@@ -202,7 +143,6 @@ class Student(models.Model):
         for process in self.pointsadding_set.all():
             result += process.value
         return result
-
     added_points.fget.short_description = "نقاط مضافة متفرقة"
 
     @property
@@ -211,7 +151,6 @@ class Student(models.Model):
         for process in self.pointsdeleting_set.all():
             result += process.value
         return result
-
     deleted_points.fget.short_description = "نقاط مخصومة متفرقة"
 
     @property
@@ -222,7 +161,6 @@ class Student(models.Model):
                 result[1] += money_deleting.value
             else:
                 result[0] += money_deleting.value
-
         return result
 
     @property
@@ -232,18 +170,14 @@ class Student(models.Model):
             if value == "NEW":
                 list_of_awqaf_normal_test_num.append(1)
         return sum(list_of_awqaf_normal_test_num)
-
-    number_of_parts_awqaf_normal_tests.fget.short_description = (
-        "عدد الأجزاء المسبورة غيباً في الأوقاف"
-    )
+    number_of_parts_awqaf_normal_tests.fget.short_description = "عدد الأجزاء المسبورة غيباً في الأوقاف"
+    
 
     @property
     def awqaf_points_normal_test(self):
         return self.number_of_parts_awqaf_normal_tests * 25
 
-    awqaf_points_normal_test.fget.short_description = (
-        "نقاط الأجزاء المسبورة غيباً في الأوقاف"
-    )
+    awqaf_points_normal_test.fget.short_description = "نقاط الأجزاء المسبورة غيباً في الأوقاف"    
 
     @property
     def number_of_parts_awqaf_looking_tests(self):
@@ -252,18 +186,14 @@ class Student(models.Model):
             if value == "NEW":
                 list_of_awqaf_looking_test_num.append(1)
         return sum(list_of_awqaf_looking_test_num)
-
-    number_of_parts_awqaf_looking_tests.fget.short_description = (
-        "عدد الأجزاء المسبورة نظراً في الأوقاف"
-    )
+    number_of_parts_awqaf_looking_tests.fget.short_description =  "عدد الأجزاء المسبورة نظراً في الأوقاف"
+    
 
     @property
     def awqaf_points_looking_test(self):
         return self.number_of_parts_awqaf_looking_tests * 13
-
-    awqaf_points_looking_test.fget.short_description = (
-        "نقاط الأجزاء المسبورة نظراً في الأوقاف"
-    )
+    awqaf_points_looking_test.fget.short_description = "نقاط الأجزاء المسبورة نظراً في الأوقاف"
+    
 
     @property
     def number_of_parts_awqaf_explaining_tests(self):
@@ -272,18 +202,13 @@ class Student(models.Model):
             if value == "NEW":
                 list_of_awqaf_explaining_test_num.append(1)
         return sum(list_of_awqaf_explaining_test_num)
-
-    number_of_parts_awqaf_explaining_tests.fget.short_description = (
-        "عدد الأجزاء المسبورة تفسيراً في الأوقاف"
-    )
+    number_of_parts_awqaf_explaining_tests.fget.short_description = "عدد الأجزاء المسبورة تفسيراً في الأوقاف"
 
     @property
     def awqaf_points_explaining_test(self):
         return self.number_of_parts_awqaf_explaining_tests * 100
-
-    awqaf_points_explaining_test.fget.short_description = (
-        "نقاط الأجزاء المسبورة تفسيراً في الأوقاف"
-    )
+    awqaf_points_explaining_test.fget.short_description = "نقاط الأجزاء المسبورة تفسيراً في الأوقاف"
+    
 
     @property
     def all_points_sum(self):
@@ -296,14 +221,10 @@ class Student(models.Model):
             + self.awqaf_points_explaining_test
             + self.added_points
         )
-        all_deleted_points = (
-            self.deleted_points + self.deleted_points_for_money_deleting[0]
-        )
+        all_deleted_points = self.deleted_points + self.deleted_points_for_money_deleting[0]        
         money_for_deleting = self.deleted_points_for_money_deleting[1]
         sum_of_added_and_deleted = all_added_points - all_deleted_points
-
         return [sum_of_added_and_deleted, money_for_deleting]
-
     all_points_sum.fget.short_description = "مجموع النقاط الكلي"
 
     class Meta:
@@ -312,16 +233,10 @@ class Student(models.Model):
 
 
 class MemorizeNotes(models.Model):
-    master_name = models.ForeignKey(
-        Master, verbose_name="اسم الأستاذ", on_delete=models.CASCADE, null=True
-    )
+    master_name = models.ForeignKey(Master, verbose_name="اسم الأستاذ", on_delete=models.CASCADE, null=True)
     content = models.CharField(verbose_name="المحتوى", max_length=511)
-    student = models.ForeignKey(
-        Student, on_delete=models.CASCADE, verbose_name="اسم الطالب"
-    )
-    student_string = models.CharField(
-        max_length=511, verbose_name="اسم الطالب", null=True, blank=True
-    )
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, verbose_name="اسم الطالب")
+    student_string = models.CharField(max_length=511, verbose_name="اسم الطالب", null=True, blank=True)
     sended_at = models.DateTimeField(auto_now_add=True, verbose_name="تاريخ الإرسال")
 
     def __str__(self):
@@ -343,23 +258,13 @@ class DoubleMessageTypeChoice(models.IntegerChoices):
 
 
 class MemorizeMessage(models.Model):
-    master_name = models.ForeignKey(
-        Master, verbose_name="اسم الأستاذ", on_delete=models.CASCADE, null=True
-    )
-    student = models.ForeignKey(
-        Student, on_delete=models.CASCADE, verbose_name="اسم الطالب"
-    )
-    student_string = models.CharField(
-        max_length=511, verbose_name="اسم الطالب", null=True, blank=True
-    )
+    master_name = models.ForeignKey(Master, verbose_name="اسم الأستاذ", on_delete=models.CASCADE, null=True)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, verbose_name="اسم الطالب")
+    student_string = models.CharField(max_length=511, verbose_name="اسم الطالب", null=True, blank=True)
     sended_at = models.DateTimeField(auto_now_add=True, verbose_name="تاريخ الإرسال")
     first_info = models.JSONField(default=dict, verbose_name="الحفظ")
     second_info = models.JSONField(default=dict, verbose_name="الحفظ قبل التعديل")
-    message_type = models.IntegerField(
-        verbose_name="نوع الرسالة",
-        choices=MessageTypeChoice.choices,
-        default=MessageTypeChoice.MEMO,
-    )
+    message_type = models.IntegerField(verbose_name="نوع الرسالة", choices=MessageTypeChoice.choices, default=MessageTypeChoice.MEMO)
 
     def __str__(self):
         return f"رسالة التسميع {self.id}"
@@ -371,6 +276,7 @@ class MemorizeMessage(models.Model):
 
 class ComingCategory(models.Model):
     name = models.CharField(max_length=255, verbose_name="الفئة")
+    
 
     def __str__(self):
         return self.name
@@ -381,22 +287,10 @@ class ComingCategory(models.Model):
 
 
 class Coming(models.Model):
-    master_name = models.ForeignKey(
-        Master, verbose_name="اسم الأستاذ", on_delete=models.CASCADE, null=True
-    )
-    student = models.ForeignKey(
-        Student, verbose_name="اسم الطالب", on_delete=models.CASCADE
-    )
-    registered_at = models.DateTimeField(
-        auto_now_add=True, verbose_name="تاريخ التسجيل"
-    )
-    category = models.ForeignKey(
-        ComingCategory,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        verbose_name="نوع الحضور",
-    )
+    master_name = models.ForeignKey(Master, verbose_name="اسم الأستاذ", on_delete=models.CASCADE, null=True)
+    student = models.ForeignKey(Student, verbose_name="اسم الطالب", on_delete=models.CASCADE)
+    registered_at = models.DateTimeField(auto_now_add=True, verbose_name="تاريخ التسجيل")
+    category = models.ForeignKey(ComingCategory, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="نوع الحضور",)
     points = models.IntegerField(verbose_name="نقاط الحضور", default=0)
     note = models.TextField(verbose_name="ملاحظة", null=True, blank=True)
 
@@ -414,24 +308,12 @@ class ControlSettings(models.Model):
 
 
 class DoublePointMessage(models.Model):
-    student = models.ForeignKey(
-        Student, on_delete=models.CASCADE, verbose_name="الطالب"
-    )
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, verbose_name="الطالب")
     sended_at = models.DateTimeField(auto_now_add=True, verbose_name="تاريخ الإرسال")
     points = models.IntegerField(verbose_name="النقاط")
     content = models.JSONField(default=dict, verbose_name="التسميع الذي تم مضاعفته")
-    memorize_message = models.OneToOneField(
-        MemorizeMessage,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        verbose_name="رسالة التسميع",
-    )
-    message_type = models.IntegerField(
-        choices=DoubleMessageTypeChoice.choices,
-        default=DoubleMessageTypeChoice.MEMO,
-        verbose_name="نوع التسميع",
-    )
+    memorize_message = models.OneToOneField(MemorizeMessage, on_delete=models.CASCADE, null=True, blank=True, verbose_name="رسالة التسميع")
+    message_type = models.IntegerField(choices=DoubleMessageTypeChoice.choices, default=DoubleMessageTypeChoice.MEMO, verbose_name="نوع التسميع")
 
     def __str__(self):
         return f"رسالة مضاعفة {self.id}"
@@ -464,21 +346,11 @@ class PointsDeletingCause(models.Model):
 
 
 class PointsAdding(models.Model):
-    master_name = models.ForeignKey(
-        Master, verbose_name="اسم الأستاذ", on_delete=models.CASCADE, null=True
-    )
+    master_name = models.ForeignKey(Master, verbose_name="اسم الأستاذ", on_delete=models.CASCADE, null=True)
     value = models.IntegerField(verbose_name="القيمة")
-    student = models.ForeignKey(
-        Student, on_delete=models.CASCADE, verbose_name="الطالب"
-    )
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, verbose_name="الطالب")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="تاريخ الإضافة")
-    cause = models.ForeignKey(
-        PointsAddingCause,
-        verbose_name="السبب",
-        on_delete=models.PROTECT,
-        null=True,
-        blank=True,
-    )
+    cause = models.ForeignKey(PointsAddingCause, verbose_name="السبب", on_delete=models.PROTECT, null=True, blank=True)
 
     def __str__(self):
         return f"إضافة نقاط {self.id}"
@@ -489,21 +361,11 @@ class PointsAdding(models.Model):
 
 
 class PointsDeleting(models.Model):
-    master_name = models.ForeignKey(
-        Master, verbose_name="اسم الأستاذ", on_delete=models.CASCADE, null=True
-    )
+    master_name = models.ForeignKey(Master, verbose_name="اسم الأستاذ", on_delete=models.CASCADE, null=True)
     value = models.IntegerField(verbose_name="القيمة")
-    student = models.ForeignKey(
-        Student, on_delete=models.CASCADE, verbose_name="الطالب"
-    )
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, verbose_name="الطالب")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="تاريخ الخصم")
-    cause = models.ForeignKey(
-        PointsDeletingCause,
-        verbose_name="السبب",
-        on_delete=models.PROTECT,
-        null=True,
-        blank=True,
-    )
+    cause = models.ForeignKey(PointsDeletingCause, verbose_name="السبب", on_delete=models.PROTECT, null=True, blank=True)
 
     def __str__(self):
         return f"خصم نقاط {self.id}"
@@ -527,15 +389,8 @@ class MoneyDeletingCause(models.Model):
 class MoneyDeleting(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE, verbose_name="الاسم")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="تاريخ التسجيل")
-    cause = models.ForeignKey(
-        MoneyDeletingCause,
-        on_delete=models.PROTECT,
-        verbose_name="سبب الغرامة",
-        null=True,
-    )
-    active_to_points = models.BooleanField(
-        verbose_name="مخصومة من النقاط", default=True
-    )
+    cause = models.ForeignKey(MoneyDeletingCause, on_delete=models.PROTECT, verbose_name="سبب الغرامة", null=True)
+    active_to_points = models.BooleanField(verbose_name="مخصومة من النقاط", default=True)
     value = models.IntegerField(verbose_name="القيمة", null=True)
     is_money_main_value = models.BooleanField(default=True)
 
@@ -560,25 +415,51 @@ class AwqafTestNoQ(models.Model):
 
 
 class AwqafNoQStudentRelation(models.Model):
-    test = models.ForeignKey(
-        AwqafTestNoQ, on_delete=models.CASCADE, verbose_name="سبر الأوقاف"
-    )
-    student = models.ForeignKey(
-        Student, on_delete=models.CASCADE, verbose_name="الطالب"
-    )
+    test = models.ForeignKey(AwqafTestNoQ, on_delete=models.CASCADE, verbose_name="سبر الأوقاف")
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, verbose_name="الطالب")
     is_old = models.BooleanField(default=False, verbose_name="هل السبر قديم")
+
 
 
 # * Signals Section
 User = get_user_model()
-
 
 @receiver(post_save, sender=User)
 def create_master(sender, instance, created, **kwargs):
     if created:
         Master.objects.create(user=instance)
 
-
 @receiver(post_save, sender=User)
 def save_master(sender, instance, **kwargs):
     instance.master.save()
+
+
+
+# helpers
+def check_for_cer(dictionary):
+    result = {}
+    for i in dictionary:
+        non = 0
+        old = 0
+        new = 0
+        error = 0
+        for j in dictionary[i]:
+            for k in dictionary[i][j]:
+                if dictionary[i][j][k] == "NON":
+                    non += 1
+                elif dictionary[i][j][k] == "OLD":
+                    old += 1
+                elif dictionary[i][j][k] == "NEW":
+                    new += 1
+                else:
+                    error += 1
+        if error != 0:
+            result[i] = "ERROR"
+        elif non != 0:
+            result[i] = "NON"
+        elif new != 0:
+            result[i] = "NEW"
+        else:
+            result[i] = "OLD"
+
+    return result
