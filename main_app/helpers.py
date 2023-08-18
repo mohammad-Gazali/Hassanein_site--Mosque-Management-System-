@@ -3,7 +3,7 @@ import math
 
 def give_section_from_page(page_num: int) -> str:
     if page_num % 21 == 0 and page_num != 21:
-        return str(page_num / 21 + 1)
+        return str(int(page_num / 21 + 1))
     return str(math.ceil(page_num / 21))
 
 
