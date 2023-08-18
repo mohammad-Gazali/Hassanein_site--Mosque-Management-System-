@@ -244,7 +244,6 @@ def add_q_test(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
         master = Master.objects.get(user=request.user)
         sid = request.POST.get("student-id")
-        test_type = request.POST.get("q-test-type-filter")
         test_type_normal = request.POST.get("add-q-test-filter")
 
         # part_number_normal = رقم الحزب في السبر العادي
@@ -258,367 +257,60 @@ def add_q_test(request: HttpRequest) -> HttpResponse:
 
         student = Student.objects.get(pk=int(sid))
 
-        if test_type == "normal-test":
-
-            if (
-                master.permissions["q_test"][
-                    str(math.ceil(int(part_number_normal) / 2))
-                ]
-                == "NON"
-            ):
-                return HttpResponseForbidden(
-                    "<h1>هذا السبر ليس من صلاحياتك</h1><h1>403</h1>"
-                )
-
-            normal_test = student.q_test
-
-            # section <==> الجزء
-            number_of_section = math.ceil(int(part_number_normal) / 2)
-
-            # part <==> الحزب
-            part = normal_test[f"الجزء {number_of_section}"][
-                f"الحزب {part_number_normal}"
+        if (
+            master.permissions["q_test"][
+                str(math.ceil(int(part_number_normal) / 2))
             ]
+            == "NON"
+        ):
+            return HttpResponseForbidden(
+                "<h1>هذا السبر ليس من صلاحياتك</h1><h1>403</h1>"
+            )
 
-            if test_type_normal == "qurater-part":
+        normal_test = student.q_test
 
-                if quarter_q_part_number == "first-quarter":
-                    val = part["الربع 1"]
-                    if val == "OLD" or val == "NEW":
-                        return render(
-                            request,
-                            "error_page.html",
-                            {
-                                "error": "يوجد تكرار في السبر, الرجاء مراجعة تفاصيل الطالب",
-                                "sid": sid,
-                            },
-                        )
+        # section <==> الجزء
+        number_of_section = math.ceil(int(part_number_normal) / 2)
 
-                    student.q_test[f"الجزء {number_of_section}"][
-                        f"الحزب {part_number_normal}"
-                    ].update({"الربع 1": "NEW"})
-                    student.save()
+        # part <==> الحزب
+        part = normal_test[f"الجزء {number_of_section}"][
+            f"الحزب {part_number_normal}"
+        ]
 
-                    q_test_normal_detail = {
-                        "type": "quarter",
-                        "section": f"الجزء {number_of_section}",
-                        "part": f"الحزب {part_number_normal}",
-                        "quarter": "الربع 1",
-                    }
-                    q_test_normal_show = {
-                        "content": f"الربع الأول من الحزب {part_number_normal}"
-                    }
+        if test_type_normal == "qurater-part":
 
-                    new_message = MemorizeMessage.objects.create(
-                        master_name=master,
-                        student_id=student.id,
-                        student_string=student,
-                        first_info=q_test_normal_show,
-                        second_info=q_test_normal_detail,
-                        message_type=2,
-                    )
-
-                    control_settings = ControlSettings.objects.get(pk=1)
-
-                    if control_settings.double_points:
-                        DoublePointMessage.objects.create(
-                            student_id=student.id,
-                            content=q_test_normal_show,
-                            points=13,
-                            memorize_message_id=new_message.id,
-                            message_type=2,
-                        )
-
-                elif quarter_q_part_number == "second-quarter":
-                    val = part["الربع 2"]
-                    if val == "OLD" or val == "NEW":
-                        return render(
-                            request,
-                            "error_page.html",
-                            {
-                                "error": "يوجد تكرار في السبر, الرجاء مراجعة تفاصيل الطالب",
-                                "sid": sid,
-                            },
-                        )
-
-                    student.q_test[f"الجزء {number_of_section}"][
-                        f"الحزب {part_number_normal}"
-                    ].update({"الربع 2": "NEW"})
-                    student.save()
-
-                    q_test_normal_detail = {
-                        "type": "quarter",
-                        "section": f"الجزء {number_of_section}",
-                        "part": f"الحزب {part_number_normal}",
-                        "quarter": "الربع 2",
-                    }
-                    q_test_normal_show = {
-                        "content": f"الربع الثاني من الحزب {part_number_normal}"
-                    }
-
-                    new_message = MemorizeMessage.objects.create(
-                        master_name=master,
-                        student_id=student.id,
-                        student_string=student,
-                        first_info=q_test_normal_show,
-                        second_info=q_test_normal_detail,
-                        message_type=2,
-                    )
-
-                    control_settings = ControlSettings.objects.get(pk=1)
-
-                    if control_settings.double_points:
-                        DoublePointMessage.objects.create(
-                            student_id=student.id,
-                            content=q_test_normal_show,
-                            points=13,
-                            memorize_message_id=new_message.id,
-                            message_type=2,
-                        )
-
-                elif quarter_q_part_number == "third-quarter":
-                    val = part["الربع 3"]
-                    if val == "OLD" or val == "NEW":
-                        return render(
-                            request,
-                            "error_page.html",
-                            {
-                                "error": "يوجد تكرار في السبر, الرجاء مراجعة تفاصيل الطالب",
-                                "sid": sid,
-                            },
-                        )
-
-                    student.q_test[f"الجزء {number_of_section}"][
-                        f"الحزب {part_number_normal}"
-                    ].update({"الربع 3": "NEW"})
-                    student.save()
-
-                    q_test_normal_detail = {
-                        "type": "quarter",
-                        "section": f"الجزء {number_of_section}",
-                        "part": f"الحزب {part_number_normal}",
-                        "quarter": "الربع 3",
-                    }
-                    q_test_normal_show = {
-                        "content": f"الربع الثالث من الحزب {part_number_normal}"
-                    }
-
-                    new_message = MemorizeMessage.objects.create(
-                        master_name=master,
-                        student_id=student.id,
-                        student_string=student,
-                        first_info=q_test_normal_show,
-                        second_info=q_test_normal_detail,
-                        message_type=2,
-                    )
-
-                    control_settings = ControlSettings.objects.get(pk=1)
-
-                    if control_settings.double_points:
-                        DoublePointMessage.objects.create(
-                            student_id=student.id,
-                            content=q_test_normal_show,
-                            points=13,
-                            memorize_message_id=new_message.id,
-                            message_type=2,
-                        )
-
-                elif quarter_q_part_number == "fourth-quarter":
-                    val = part["الربع 4"]
-                    if val == "OLD" or val == "NEW":
-                        return render(
-                            request,
-                            "error_page.html",
-                            {
-                                "error": "يوجد تكرار في السبر, الرجاء مراجعة تفاصيل الطالب",
-                                "sid": sid,
-                            },
-                        )
-
-                    student.q_test[f"الجزء {number_of_section}"][
-                        f"الحزب {part_number_normal}"
-                    ].update({"الربع 4": "NEW"})
-                    student.save()
-
-                    q_test_normal_detail = {
-                        "type": "quarter",
-                        "section": f"الجزء {number_of_section}",
-                        "part": f"الحزب {part_number_normal}",
-                        "quarter": "الربع 4",
-                    }
-                    q_test_normal_show = {
-                        "content": f"الربع الرابع من الحزب {part_number_normal}"
-                    }
-
-                    new_message = MemorizeMessage.objects.create(
-                        master_name=master,
-                        student_id=student.id,
-                        student_string=student,
-                        first_info=q_test_normal_show,
-                        second_info=q_test_normal_detail,
-                        message_type=2,
-                    )
-
-                    control_settings = ControlSettings.objects.get(pk=1)
-
-                    if control_settings.double_points:
-                        DoublePointMessage.objects.create(
-                            student_id=student.id,
-                            content=q_test_normal_show,
-                            points=13,
-                            memorize_message_id=new_message.id,
-                            message_type=2,
-                        )
-
-                else:
+            if quarter_q_part_number == "first-quarter":
+                val = part["الربع 1"]
+                if val == "OLD" or val == "NEW":
                     return render(
                         request,
                         "error_page.html",
-                        {"error": "يوجد خطأ في الإرسال", "sid": sid},
+                        {
+                            "error": "يوجد تكرار في السبر, الرجاء مراجعة تفاصيل الطالب",
+                            "sid": sid,
+                        },
                     )
-
-            elif test_type_normal == "half-part":
-                if half_q_part_number == "first-half":
-                    val = part["الربع 1"], part["الربع 2"]
-                    if (
-                        val[0] == "NEW"
-                        or val[1] == "NEW"
-                        or val[0] == "OLD"
-                        or val[1] == "OLD"
-                    ):
-                        return render(
-                            request,
-                            "error_page.html",
-                            {
-                                "error": "يوجد تكرار في السبر, الرجاء مراجعة تفاصيل الطالب",
-                                "sid": sid,
-                            },
-                        )
-
-                    student.q_test[f"الجزء {number_of_section}"][
-                        f"الحزب {part_number_normal}"
-                    ].update({"الربع 1": "NEW", "الربع 2": "NEW"})
-                    student.save()
-
-                    q_test_normal_detail = {
-                        "type": "half",
-                        "section": f"الجزء {number_of_section}",
-                        "part": f"الحزب {part_number_normal}",
-                        "half": "النصف الأول",
-                    }
-                    q_test_normal_show = {
-                        "content": f"النصف الأول من الحزب {part_number_normal}"
-                    }
-
-                    new_message = MemorizeMessage.objects.create(
-                        master_name=master,
-                        student_id=student.id,
-                        student_string=student,
-                        first_info=q_test_normal_show,
-                        second_info=q_test_normal_detail,
-                        message_type=2,
-                    )
-
-                    control_settings = ControlSettings.objects.get(pk=1)
-
-                    if control_settings.double_points:
-                        DoublePointMessage.objects.create(
-                            student_id=student.id,
-                            content=q_test_normal_show,
-                            points=26,
-                            memorize_message_id=new_message.id,
-                            message_type=2,
-                        )
-
-                elif half_q_part_number == "second-half":
-                    val = part["الربع 3"], part["الربع 4"]
-                    if (
-                        val[0] == "NEW"
-                        or val[1] == "NEW"
-                        or val[0] == "OLD"
-                        or val[1] == "OLD"
-                    ):
-                        return render(
-                            request,
-                            "error_page.html",
-                            {
-                                "error": "يوجد تكرار في السبر, الرجاء مراجعة تفاصيل الطالب",
-                                "sid": sid,
-                            },
-                        )
-
-                    student.q_test[f"الجزء {number_of_section}"][
-                        f"الحزب {part_number_normal}"
-                    ].update({"الربع 3": "NEW", "الربع 4": "NEW"})
-                    student.save()
-
-                    q_test_normal_detail = {
-                        "type": "half",
-                        "section": f"الجزء {number_of_section}",
-                        "part": f"الحزب {part_number_normal}",
-                        "half": "النصف الثاني",
-                    }
-                    q_test_normal_show = {
-                        "content": f"النصف الثاني من الحزب {part_number_normal}"
-                    }
-
-                    new_message = MemorizeMessage.objects.create(
-                        master_name=master,
-                        student_id=student.id,
-                        student_string=student,
-                        first_info=q_test_normal_show,
-                        second_info=q_test_normal_detail,
-                        message_type=2,
-                    )
-
-                    control_settings = ControlSettings.objects.get(pk=1)
-
-                    if control_settings.double_points:
-                        DoublePointMessage.objects.create(
-                            student_id=student.id,
-                            content=q_test_normal_show,
-                            points=26,
-                            memorize_message_id=new_message.id,
-                            message_type=2,
-                        )
-
-                else:
-                    return render(
-                        request,
-                        "error_page.html",
-                        {"error": "يوجد خطأ في الإرسال", "sid": sid},
-                    )
-
-            elif test_type_normal == "whole-part":
-                q_test_normal_after_edit = {}
-                for quart, val in part.items():
-                    if val == "OLD" or val == "NEW":
-                        return render(
-                            request,
-                            "error_page.html",
-                            {
-                                "error": "يوجد تكرار في السبر, الرجاء مراجعة تفاصيل الطالب",
-                                "sid": sid,
-                            },
-                        )
-                    q_test_normal_after_edit[quart] = "NEW"
 
                 student.q_test[f"الجزء {number_of_section}"][
                     f"الحزب {part_number_normal}"
-                ].update(q_test_normal_after_edit)
+                ].update({"الربع 1": "NEW"})
                 student.save()
 
                 q_test_normal_detail = {
-                    "type": "whole",
+                    "type": "quarter",
                     "section": f"الجزء {number_of_section}",
                     "part": f"الحزب {part_number_normal}",
+                    "quarter": "الربع 1",
+                }
+                q_test_normal_show = {
+                    "content": f"الربع الأول من الحزب {part_number_normal}"
                 }
 
                 new_message = MemorizeMessage.objects.create(
                     master_name=master,
                     student_id=student.id,
                     student_string=student,
-                    first_info=q_test_normal_after_edit,
+                    first_info=q_test_normal_show,
                     second_info=q_test_normal_detail,
                     message_type=2,
                 )
@@ -628,17 +320,315 @@ def add_q_test(request: HttpRequest) -> HttpResponse:
                 if control_settings.double_points:
                     DoublePointMessage.objects.create(
                         student_id=student.id,
-                        content=q_test_normal_detail,
-                        points=52,
+                        content=q_test_normal_show,
+                        points=13,
                         memorize_message_id=new_message.id,
                         message_type=2,
                     )
 
-            else:
-                return render(
-                    request,
-                    "error_page.html",
-                    {"error": "يوجد خطأ في الإرسال", "sid": sid},
+            elif quarter_q_part_number == "second-quarter":
+                val = part["الربع 2"]
+                if val == "OLD" or val == "NEW":
+                    return render(
+                        request,
+                        "error_page.html",
+                        {
+                            "error": "يوجد تكرار في السبر, الرجاء مراجعة تفاصيل الطالب",
+                            "sid": sid,
+                        },
+                    )
+
+                student.q_test[f"الجزء {number_of_section}"][
+                    f"الحزب {part_number_normal}"
+                ].update({"الربع 2": "NEW"})
+                student.save()
+
+                q_test_normal_detail = {
+                    "type": "quarter",
+                    "section": f"الجزء {number_of_section}",
+                    "part": f"الحزب {part_number_normal}",
+                    "quarter": "الربع 2",
+                }
+                q_test_normal_show = {
+                    "content": f"الربع الثاني من الحزب {part_number_normal}"
+                }
+
+                new_message = MemorizeMessage.objects.create(
+                    master_name=master,
+                    student_id=student.id,
+                    student_string=student,
+                    first_info=q_test_normal_show,
+                    second_info=q_test_normal_detail,
+                    message_type=2,
+                )
+
+                control_settings = ControlSettings.objects.get(pk=1)
+
+                if control_settings.double_points:
+                    DoublePointMessage.objects.create(
+                        student_id=student.id,
+                        content=q_test_normal_show,
+                        points=13,
+                        memorize_message_id=new_message.id,
+                        message_type=2,
+                    )
+
+            elif quarter_q_part_number == "third-quarter":
+                val = part["الربع 3"]
+                if val == "OLD" or val == "NEW":
+                    return render(
+                        request,
+                        "error_page.html",
+                        {
+                            "error": "يوجد تكرار في السبر, الرجاء مراجعة تفاصيل الطالب",
+                            "sid": sid,
+                        },
+                    )
+
+                student.q_test[f"الجزء {number_of_section}"][
+                    f"الحزب {part_number_normal}"
+                ].update({"الربع 3": "NEW"})
+                student.save()
+
+                q_test_normal_detail = {
+                    "type": "quarter",
+                    "section": f"الجزء {number_of_section}",
+                    "part": f"الحزب {part_number_normal}",
+                    "quarter": "الربع 3",
+                }
+                q_test_normal_show = {
+                    "content": f"الربع الثالث من الحزب {part_number_normal}"
+                }
+
+                new_message = MemorizeMessage.objects.create(
+                    master_name=master,
+                    student_id=student.id,
+                    student_string=student,
+                    first_info=q_test_normal_show,
+                    second_info=q_test_normal_detail,
+                    message_type=2,
+                )
+
+                control_settings = ControlSettings.objects.get(pk=1)
+
+                if control_settings.double_points:
+                    DoublePointMessage.objects.create(
+                        student_id=student.id,
+                        content=q_test_normal_show,
+                        points=13,
+                        memorize_message_id=new_message.id,
+                        message_type=2,
+                    )
+
+            elif quarter_q_part_number == "fourth-quarter":
+                val = part["الربع 4"]
+                if val == "OLD" or val == "NEW":
+                    return render(
+                        request,
+                        "error_page.html",
+                        {
+                            "error": "يوجد تكرار في السبر, الرجاء مراجعة تفاصيل الطالب",
+                            "sid": sid,
+                        },
+                    )
+
+                student.q_test[f"الجزء {number_of_section}"][
+                    f"الحزب {part_number_normal}"
+                ].update({"الربع 4": "NEW"})
+                student.save()
+
+                q_test_normal_detail = {
+                    "type": "quarter",
+                    "section": f"الجزء {number_of_section}",
+                    "part": f"الحزب {part_number_normal}",
+                    "quarter": "الربع 4",
+                }
+                q_test_normal_show = {
+                    "content": f"الربع الرابع من الحزب {part_number_normal}"
+                }
+
+                new_message = MemorizeMessage.objects.create(
+                    master_name=master,
+                    student_id=student.id,
+                    student_string=student,
+                    first_info=q_test_normal_show,
+                    second_info=q_test_normal_detail,
+                    message_type=2,
+                )
+
+                control_settings = ControlSettings.objects.get(pk=1)
+
+                if control_settings.double_points:
+                    DoublePointMessage.objects.create(
+                        student_id=student.id,
+                        content=q_test_normal_show,
+                        points=13,
+                        memorize_message_id=new_message.id,
+                        message_type=2,
+                    )
+
+                else:
+                    return render(
+                        request,
+                        "error_page.html",
+                        {"error": "يوجد خطأ في الإرسال", "sid": sid},
+                    )
+
+        elif test_type_normal == "half-part":
+            if half_q_part_number == "first-half":
+                val = part["الربع 1"], part["الربع 2"]
+                if (
+                    val[0] == "NEW"
+                    or val[1] == "NEW"
+                    or val[0] == "OLD"
+                    or val[1] == "OLD"
+                ):
+                    return render(
+                        request,
+                        "error_page.html",
+                        {
+                            "error": "يوجد تكرار في السبر, الرجاء مراجعة تفاصيل الطالب",
+                            "sid": sid,
+                        },
+                    )
+
+                student.q_test[f"الجزء {number_of_section}"][
+                    f"الحزب {part_number_normal}"
+                ].update({"الربع 1": "NEW", "الربع 2": "NEW"})
+                student.save()
+
+                q_test_normal_detail = {
+                    "type": "half",
+                    "section": f"الجزء {number_of_section}",
+                    "part": f"الحزب {part_number_normal}",
+                    "half": "النصف الأول",
+                }
+                q_test_normal_show = {
+                    "content": f"النصف الأول من الحزب {part_number_normal}"
+                }
+
+                new_message = MemorizeMessage.objects.create(
+                    master_name=master,
+                    student_id=student.id,
+                    student_string=student,
+                    first_info=q_test_normal_show,
+                    second_info=q_test_normal_detail,
+                    message_type=2,
+                )
+
+                control_settings = ControlSettings.objects.get(pk=1)
+
+                if control_settings.double_points:
+                    DoublePointMessage.objects.create(
+                        student_id=student.id,
+                        content=q_test_normal_show,
+                        points=26,
+                        memorize_message_id=new_message.id,
+                        message_type=2,
+                    )
+
+            elif half_q_part_number == "second-half":
+                val = part["الربع 3"], part["الربع 4"]
+                if (
+                    val[0] == "NEW"
+                    or val[1] == "NEW"
+                    or val[0] == "OLD"
+                    or val[1] == "OLD"
+                ):
+                    return render(
+                        request,
+                        "error_page.html",
+                        {
+                            "error": "يوجد تكرار في السبر, الرجاء مراجعة تفاصيل الطالب",
+                            "sid": sid,
+                        },
+                    )
+
+                student.q_test[f"الجزء {number_of_section}"][
+                    f"الحزب {part_number_normal}"
+                ].update({"الربع 3": "NEW", "الربع 4": "NEW"})
+                student.save()
+
+                q_test_normal_detail = {
+                    "type": "half",
+                    "section": f"الجزء {number_of_section}",
+                    "part": f"الحزب {part_number_normal}",
+                    "half": "النصف الثاني",
+                }
+                q_test_normal_show = {
+                    "content": f"النصف الثاني من الحزب {part_number_normal}"
+                }
+
+                new_message = MemorizeMessage.objects.create(
+                    master_name=master,
+                    student_id=student.id,
+                    student_string=student,
+                    first_info=q_test_normal_show,
+                    second_info=q_test_normal_detail,
+                    message_type=2,
+                )
+
+                control_settings = ControlSettings.objects.get(pk=1)
+
+                if control_settings.double_points:
+                    DoublePointMessage.objects.create(
+                        student_id=student.id,
+                        content=q_test_normal_show,
+                        points=26,
+                        memorize_message_id=new_message.id,
+                        message_type=2,
+                    )
+
+                else:
+                    return render(
+                        request,
+                        "error_page.html",
+                        {"error": "يوجد خطأ في الإرسال", "sid": sid},
+                    )
+
+        elif test_type_normal == "whole-part":
+            q_test_normal_after_edit = {}
+            for quart, val in part.items():
+                if val == "OLD" or val == "NEW":
+                    return render(
+                        request,
+                        "error_page.html",
+                        {
+                            "error": "يوجد تكرار في السبر, الرجاء مراجعة تفاصيل الطالب",
+                            "sid": sid,
+                        },
+                    )
+                q_test_normal_after_edit[quart] = "NEW"
+
+            student.q_test[f"الجزء {number_of_section}"][
+                f"الحزب {part_number_normal}"
+            ].update(q_test_normal_after_edit)
+            student.save()
+
+            q_test_normal_detail = {
+                "type": "whole",
+                "section": f"الجزء {number_of_section}",
+                "part": f"الحزب {part_number_normal}",
+            }
+
+            new_message = MemorizeMessage.objects.create(
+                master_name=master,
+                student_id=student.id,
+                student_string=student,
+                first_info=q_test_normal_after_edit,
+                second_info=q_test_normal_detail,
+                message_type=2,
+            )
+
+            control_settings = ControlSettings.objects.get(pk=1)
+
+            if control_settings.double_points:
+                DoublePointMessage.objects.create(
+                    student_id=student.id,
+                    content=q_test_normal_detail,
+                    points=52,
+                    memorize_message_id=new_message.id,
+                    message_type=2,
                 )
 
         else:

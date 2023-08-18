@@ -1,17 +1,19 @@
 {% load static %}
 
 <div class="container">
-    <section class="text-white container mb-4 pb-4 pl-4 pr-4 rounded-3 search">
-        <h5 style="text-align: center;
-                margin: 2rem auto;
-                margin-top: -2rem;
-                padding: 1rem;
-                width: 60%;
-                border-radius: 15px;
-                background: rgb(109, 40, 193);
-                border: 2px solid white;
-                ">
-                بحث تسجيل الحضور</h5>
+    <section class="text-white container mb-4 pb-4 pl-4 {% if inside %}pt-4{% endif %} pr-4 rounded-3 search">
+        {% if not inside %}
+            <h5 style="text-align: center;
+                    margin: 2rem auto;
+                    margin-top: -2rem;
+                    padding: 1rem;
+                    width: 60%;
+                    border-radius: 15px;
+                    background: rgb(109, 40, 193);
+                    border: 2px solid white;
+                    ">
+                    بحث تسجيل الحضور</h5>
+        {% endif %}
         <div id="filter-search-coming-radio" class="d-flex flex-column gap-3 mb-3 rounded p-3" style="background-color: #001845; border: 1px solid rgba(255, 255, 255, 0.8)"> 
             <div>
                 <input type="radio" name="search-filter" id="name-search-filter" checked>
@@ -35,7 +37,9 @@
                 </div>
             </div>
         </form>
-        <a class="btn btn-dark mt-3 w-100" href="{% url 'list_coming' %}">سجل الحضور <i class="bi bi-journal-bookmark-fill"></i></a>
+        {% if not inside %}
+            <a class="btn btn-dark mt-3 w-100" href="{% url 'list_coming' %}">سجل الحضور <i class="bi bi-journal-bookmark-fill"></i></a>
+        {% endif %}
     </section>
     <script src="{% static 'js/search_coming_part_script.js' %}"></script>
 </div>
