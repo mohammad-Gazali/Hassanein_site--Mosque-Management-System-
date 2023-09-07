@@ -20,7 +20,19 @@
                         <td class="text-center" style="white-space: nowrap;">{{ message.master_name }}</td>
                         <td class="text-center" style="white-space: nowrap;">{{ message.student_string }}</td>
                         <td class="text-center" style="white-space: nowrap;">{{ message.sended_at|date:'Y/m/d - h:i A'  }}</td>
-                        <td class="text-center" style="white-space: nowrap;">{% if message.message_type == 1 %}تسميع{% else %}سبر{% endif %}</td>
+                        <td class="text-center" style="white-space: nowrap;">
+                            {% if message.message_type == 1 %}
+                                تسميع
+                            {% elif message.message_type == 2 %}
+                                سبر
+                            {% elif message.message_type == 3 %}
+                                الأربعين النووية
+                            {% elif message.message_type == 4 %}
+                                رياض الصالحين
+                            {% elif message.message_type == 5 %}
+                                أسماء الله الحسنى
+                            {% endif %}
+                        </td>
                         <td class="text-center" style="white-space: nowrap;">
                             <div data-model-target="#model-{{ message.id }}-id-master_activity_admin_content" class="btn btn-primary w-100">عرض المحتوى</div>
                             {% include 'models/activity_content_admin_model.html' with message=message key="المحتوى" type="master_activity_admin_content" %}

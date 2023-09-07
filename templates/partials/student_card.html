@@ -23,7 +23,11 @@
             <button data-model-target="#model-{{ student.id }}-id-create_note" class="btn btn-purple position-absolute-bottom mt-3 translate-middle col-6 text-white">إضافة ملاحظة</button>
             {% include 'models/create_notes_model.html' with student=student key="إضافة ملاحظة" type="create_note" %}
             <button data-model-target="#model-{{ student.id }}-id-add_q_test" class="btn btn-orange position-absolute-bottom mt-3 translate-middle col-6 text-white">إضافة سبر</button>
-            {% include 'models/q_test_add_model.html' with student=student key="إضافة سبر" type="add_q_test" %}    
+            {% include 'models/q_test_add_model.html' with student=student key="إضافة سبر" type="add_q_test" %}
+            {% if 'حديث' in groups or user.is_superuser %}
+                <button data-model-target="#model-{{ student.id }}-id-add_hadeeth" class="btn btn-primary position-absolute-bottom mt-3 translate-middle col-6 text-white">إضافة حديث</button>
+                {% include 'models/add_hadeeth_model.html' with student=student key="إضافة حديث" type="add_hadeeth" %}
+            {% endif %}
         {% endif %}
     </div>
     

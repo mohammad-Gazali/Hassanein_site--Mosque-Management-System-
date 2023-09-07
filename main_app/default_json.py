@@ -1,6 +1,3 @@
-from main_app.helpers import DaysEnum
-
-
 # start q_memorizing
 
 DEFAULT_DICT = {}

@@ -3,6 +3,7 @@ from django.db.models.signals import post_save
 from django.contrib.auth import get_user_model
 from django.dispatch import receiver
 from django.conf.global_settings import AUTH_USER_MODEL
+from django.core.validators import MinValueValidator, MaxValueValidator
 from main_app import default_json
 from main_app.point_map import q_map
 from datetime import date
@@ -11,7 +12,7 @@ from datetime import date
 
 # * Models
 class Category(models.Model):
-    name = models.CharField(max_length=255, verbose_name="الفئة")
+    name = models.CharField(max_length=255, verbose_name="الفئة", unique=True)
 
     def __str__(self):
         return self.name
@@ -35,7 +36,7 @@ class Master(models.Model):
 
 class Student(models.Model):
     name = models.CharField(max_length=511, verbose_name="الاسم الثلاثي")
-    mother_name = models.CharField(max_length=255, verbose_name="اسم الأم")
+    mother_name = models.CharField(max_length=255, verbose_name="اسم الأم", null=True, blank=True)
     birthdate = models.DateField(verbose_name="تاريخ الميلاد", null=True, blank=True)
     address = models.CharField(max_length=511, verbose_name="العنوان تفصيلاً", null=True, blank=True)
     static_phone = models.CharField(max_length=20, verbose_name="الهاتف الأرضي", blank=True, null=True)
@@ -53,6 +54,12 @@ class Student(models.Model):
     q_awqaf_test = models.JSONField(default=default_json.json_default_value_three, verbose_name="سبر القرآن في الأوقاف")
     q_awqaf_test_looking = models.JSONField(default=default_json.json_default_value_three, verbose_name="سبر القرآن نظراً في الأوقاف")
     q_awqaf_test_explaining = models.JSONField(default=default_json.json_default_value_three, verbose_name="سبر القرآن تفسيراً في الأوقاف")
+    alarbaein_alnawawia_old = models.IntegerField(verbose_name="الأربعين النووية قديم", default=0, validators=[MinValueValidator(0)])
+    alarbaein_alnawawia_new = models.IntegerField(verbose_name="الأربعين النووية جديد", default=0, validators=[MinValueValidator(0)])
+    riad_alsaalihin_old = models.IntegerField(verbose_name="رياض الصالحين قديم", default=0, validators=[MinValueValidator(0)])
+    riad_alsaalihin_new = models.IntegerField(verbose_name="رياض الصالحين جديد", default=0, validators=[MinValueValidator(0)])
+    allah_names_old = models.BooleanField(verbose_name="أسماء الله الحسنى قديم", default=False)
+    allah_names_new = models.BooleanField(verbose_name="أسماء الله الحسنى جديد", default=False)
 
     def __str__(self):
         return self.name
@@ -201,6 +208,36 @@ class Student(models.Model):
         return self.number_of_parts_awqaf_explaining_tests * 100
     awqaf_points_explaining_test.fget.short_description = "نقاط الأجزاء المسبورة تفسيراً في الأوقاف"
     
+    @property
+    def alarbaein_alnawawia_points(self):
+        result = self.alarbaein_alnawawia_new * 2
+
+        for double in self.message_type_3:
+            result += double.points
+
+        return result
+    alarbaein_alnawawia_points.fget.short_description = "نقاط الأربعين النووية"
+
+    @property
+    def riad_alsaalihin_points(self):
+        result = self.riad_alsaalihin_new * 2
+
+        for double in self.message_type_4:
+            result += double.points
+
+        return result
+    riad_alsaalihin_points.fget.short_description = "نقاط رياض الصالحين"
+
+    @property
+    def allah_names_points(self):
+        result = 50 if self.allah_names_new else 0
+
+        for double in self.message_type_5:
+            result += double.points
+
+        return result
+    allah_names_points.fget.short_description = "نقاط أسماء الله الحسنى"
+    
 
     @property
     def all_points_sum(self):
@@ -212,6 +249,9 @@ class Student(models.Model):
             + self.awqaf_points_looking_test
             + self.awqaf_points_explaining_test
             + self.added_points
+            + self.alarbaein_alnawawia_points
+            + self.riad_alsaalihin_points
+            + self.allah_names_points
         )
         all_deleted_points = self.deleted_points_for_money_deleting[0]        
         money_for_deleting = self.deleted_points_for_money_deleting[1]
@@ -242,11 +282,17 @@ class MemorizeNotes(models.Model):
 class MessageTypeChoice(models.IntegerChoices):
     MEMO = 1, "تسميع"
     TEST = 2, "سبر"
+    ALNAWAWIA = 3, "أربعين نووية"
+    ALSAALIHIN = 4, "رياض الصالحين"
+    ALLAH_NAMES = 5, "أسماء الله الحسنى"
 
 
 class DoubleMessageTypeChoice(models.IntegerChoices):
     MEMO = 1, "تسميع"
     TEST = 2, "سبر"
+    ALNAWAWIA = 3, "أربعين نووية"
+    ALSAALIHIN = 4, "رياض الصالحين"
+    ALLAH_NAMES = 5, "أسماء الله الحسنى"
 
 
 class MemorizeMessage(models.Model):
@@ -254,8 +300,8 @@ class MemorizeMessage(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE, verbose_name="اسم الطالب")
     student_string = models.CharField(max_length=511, verbose_name="اسم الطالب", null=True, blank=True)
     sended_at = models.DateTimeField(auto_now_add=True, verbose_name="تاريخ الإرسال")
-    first_info = models.JSONField(default=dict, verbose_name="الحفظ")
-    second_info = models.JSONField(default=dict, verbose_name="الحفظ قبل التعديل")
+    first_info = models.JSONField(default=dict, verbose_name="الحفظ", null=True)
+    second_info = models.JSONField(default=dict, verbose_name="الحفظ قبل التعديل", null=True)
     message_type = models.IntegerField(verbose_name="نوع الرسالة", choices=MessageTypeChoice.choices, default=MessageTypeChoice.MEMO)
 
     def __str__(self):
@@ -301,7 +347,7 @@ class DoublePointMessage(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE, verbose_name="الطالب")
     sended_at = models.DateTimeField(auto_now_add=True, verbose_name="تاريخ الإرسال")
     points = models.IntegerField(verbose_name="النقاط")
-    content = models.JSONField(default=dict, verbose_name="التسميع الذي تم مضاعفته")
+    content = models.JSONField(default=dict, verbose_name="التسميع الذي تم مضاعفته", null=True)
     memorize_message = models.OneToOneField(MemorizeMessage, on_delete=models.CASCADE, null=True, blank=True, verbose_name="رسالة التسميع")
     message_type = models.IntegerField(choices=DoubleMessageTypeChoice.choices, default=DoubleMessageTypeChoice.MEMO, verbose_name="نوع التسميع")
 

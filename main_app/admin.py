@@ -51,7 +51,13 @@ class AdminStudent(admin.ModelAdmin):
                 "q_awqaf_test",
                 "q_awqaf_test_looking",
                 "q_awqaf_test_explaining",
-                "is_q_test_certificate",
+                "is_q_test_certificate",                
+                "alarbaein_alnawawia_old",
+                "alarbaein_alnawawia_new",
+                "riad_alsaalihin_old",
+                "riad_alsaalihin_new",
+                "allah_names_old",
+                "allah_names_new",
             )
         return super().get_form(request, obj, **kwargs)
 

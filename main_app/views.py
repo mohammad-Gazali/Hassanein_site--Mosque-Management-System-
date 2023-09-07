@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.generic import ListView, DeleteView, UpdateView
@@ -7,11 +7,13 @@ from django.http import HttpRequest, HttpResponse, HttpResponseForbidden, HttpRe
 from django.db.models import Prefetch, Sum, Q
 from main_app.models import (
     MemorizeNotes,
+    MessageTypeChoice,
     Student,
     Category,
     MemorizeMessage,
     Coming,
     ControlSettings,
+    DoubleMessageTypeChoice,
     DoublePointMessage,
     Master,
     PointsAddingCause,
@@ -24,7 +26,7 @@ from main_app.models import (
 )
 from main_app.forms import SettingForm
 from main_app.point_map import apply_q_map
-from main_app.check_functions import check_admin, check_coming, check_adding_points
+from main_app.check_functions import check_adding_hadeeth, check_admin, check_coming, check_adding_points
 from main_app.helpers import give_section_from_page, give_num_pages
 from specializations.models import Part, SpecializationMessage, Specialization, Level
 from specializations.views import apply_edit_changes
@@ -666,13 +668,13 @@ class MessageDelete(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def get_success_url(self):
 
-        if self.get_object().message_type == 1:
+        if self.get_object().message_type == MessageTypeChoice.MEMO:
             q_memo = self.get_object().second_info
             student = self.get_object().student
             student.q_memorizing.update(q_memo)
             student.save()
 
-        elif self.get_object().message_type == 2:
+        elif self.get_object().message_type == MessageTypeChoice.TEST:
             q_memo = self.get_object().second_info
             student = self.get_object().student
             if q_memo["type"] == "whole":
@@ -695,6 +697,23 @@ class MessageDelete(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
             else:
                 student.q_test[q_memo["section"]][q_memo["part"]][q_memo["quarter"]] = "NON"
                 student.save()
+        
+        elif self.get_object().message_type == MessageTypeChoice.ALNAWAWIA:
+            student = self.get_object().student
+            student.alarbaein_alnawawia_old = self.get_object().second_info["old"]
+            student.alarbaein_alnawawia_new = self.get_object().second_info["new"]
+            student.save()
+
+        elif self.get_object().message_type == MessageTypeChoice.ALSAALIHIN:
+            student = self.get_object().student
+            student.riad_alsaalihin_old = self.get_object().second_info["old"]
+            student.riad_alsaalihin_new = self.get_object().second_info["new"]
+            student.save()
+    
+        elif self.get_object().message_type == MessageTypeChoice.ALLAH_NAMES:
+            student = self.get_object().student
+            student.allah_names_new = False
+            student.save()
 
         return reverse("master_activity")
 
@@ -894,6 +913,21 @@ def admin_points_information(request: HttpRequest) -> HttpResponse:
                 to_attr="message_type_2",  # * this is the name of the attribute we will use to access specific query in points_of_q_test property method inside Student model
             ),
             Prefetch(
+                "doublepointmessage_set",
+                queryset=DoublePointMessage.objects.filter(message_type=3),
+                to_attr="message_type_3",
+            ),
+            Prefetch(
+                "doublepointmessage_set",
+                queryset=DoublePointMessage.objects.filter(message_type=4),
+                to_attr="message_type_4",
+            ),
+            Prefetch(
+                "doublepointmessage_set",
+                queryset=DoublePointMessage.objects.filter(message_type=5),
+                to_attr="message_type_5",
+            ),
+            Prefetch(
                 "moneydeleting_set",
                 queryset=MoneyDeleting.objects.filter(active_to_points=True),
                 to_attr="money_deleting_info",
@@ -923,6 +957,21 @@ def admin_points_information(request: HttpRequest) -> HttpResponse:
                         to_attr="message_type_2",
                     ),
                     Prefetch(
+                        "doublepointmessage_set",
+                        queryset=DoublePointMessage.objects.filter(message_type=3),
+                        to_attr="message_type_3",
+                    ),
+                    Prefetch(
+                        "doublepointmessage_set",
+                        queryset=DoublePointMessage.objects.filter(message_type=4),
+                        to_attr="message_type_4",
+                    ),
+                    Prefetch(
+                        "doublepointmessage_set",
+                        queryset=DoublePointMessage.objects.filter(message_type=5),
+                        to_attr="message_type_5",
+                    ),
+                    Prefetch(
                         "moneydeleting_set",
                         queryset=MoneyDeleting.objects.filter(active_to_points=True),
                         to_attr="money_deleting_info",
@@ -946,6 +995,21 @@ def admin_points_information(request: HttpRequest) -> HttpResponse:
                     "doublepointmessage_set",
                     queryset=DoublePointMessage.objects.filter(message_type=2),
                     to_attr="message_type_2",
+                ),
+                Prefetch(
+                    "doublepointmessage_set",
+                    queryset=DoublePointMessage.objects.filter(message_type=3),
+                    to_attr="message_type_3",
+                ),
+                Prefetch(
+                    "doublepointmessage_set",
+                    queryset=DoublePointMessage.objects.filter(message_type=4),
+                    to_attr="message_type_4",
+                ),
+                Prefetch(
+                    "doublepointmessage_set",
+                    queryset=DoublePointMessage.objects.filter(message_type=5),
+                    to_attr="message_type_5",
                 ),
                 Prefetch(
                     "moneydeleting_set",
@@ -1249,13 +1313,13 @@ class DeleteMessageAdminPanel(UserPassesTestMixin, LoginRequiredMixin, DeleteVie
 
     def get_success_url(self):
 
-        if self.get_object().message_type == 1:
+        if self.get_object().message_type == MessageTypeChoice.MEMO:
             q_memo = self.get_object().second_info
             student = self.get_object().student
             student.q_memorizing.update(q_memo)
             student.save()
 
-        elif self.get_object().message_type == 2:
+        elif self.get_object().message_type == MessageTypeChoice.TEST:
             q_memo = self.get_object().second_info
             student = self.get_object().student
             if q_memo["type"] == "whole":
@@ -1276,10 +1340,25 @@ class DeleteMessageAdminPanel(UserPassesTestMixin, LoginRequiredMixin, DeleteVie
                     student.save()
 
             else:
-                student.q_test[q_memo["section"]][q_memo["part"]][
-                    q_memo["quarter"]
-                ] = "NON"
+                student.q_test[q_memo["section"]][q_memo["part"]][q_memo["quarter"]] = "NON"
                 student.save()
+
+        elif self.get_object().message_type == MessageTypeChoice.ALNAWAWIA:
+            student = self.get_object().student
+            student.alarbaein_alnawawia_old = self.get_object().second_info["old"]
+            student.alarbaein_alnawawia_new = self.get_object().second_info["new"]
+            student.save()
+
+        elif self.get_object().message_type == MessageTypeChoice.ALSAALIHIN:
+            student = self.get_object().student
+            student.riad_alsaalihin_old = self.get_object().second_info["old"]
+            student.riad_alsaalihin_new = self.get_object().second_info["new"]
+            student.save()
+    
+        elif self.get_object().message_type == MessageTypeChoice.ALLAH_NAMES:
+            student = self.get_object().student
+            student.allah_names_new = False
+            student.save()
 
         return reverse("admin_master_activities")
 
@@ -1845,6 +1924,97 @@ def deleting_money_total_table(request: HttpRequest) -> HttpResponse:
     search_type = request.GET.get("type-search-table-admin-p") or None
 
     return render(request, "deleting_money_total_table.html", {"data": data, "val": q})
+
+
+@user_passes_test(check_adding_hadeeth)
+@login_required
+def add_hadeeth(request: HttpRequest) -> HttpResponse:
+    if request.method == "POST":
+        student_id = request.POST.get("student-id")
+        hadeeth_number = int(request.POST.get("hadeeth-number"))
+        add_hadeeth_type = request.POST.get("add-hadeeth-type")
+
+        student = get_object_or_404(Student, id=student_id)
+
+        master = Master.objects.get(user=request.user)
+
+        control_settings = ControlSettings.objects.first()
+
+        if add_hadeeth_type == "allah_names":
+            if not (student.allah_names_old or student.allah_names_new):
+                student.allah_names_new = True
+                student.save()
+
+                memorize_message = MemorizeMessage.objects.create(
+                    master_name=master,
+                    student=student,
+                    student_string=student.name,
+                    first_info=None,
+                    second_info=None,
+                    message_type=MessageTypeChoice.ALLAH_NAMES,
+                )
+
+                if control_settings.double_points:
+                    DoublePointMessage.objects.create(
+                        student=student,
+                        points=50,
+                        content=None,
+                        memorize_message=memorize_message,
+                        message_type=DoubleMessageTypeChoice.ALLAH_NAMES,
+                    )
+
+        elif add_hadeeth_type == "alarbaein_alnawawia":
+            if student.alarbaein_alnawawia_old + student.alarbaein_alnawawia_new < hadeeth_number <= 50:
+                memorize_message = MemorizeMessage.objects.create(
+                    master_name=master,
+                    student=student,
+                    student_string=student.name,
+                    first_info=[f"الحديث {i}" for i in range(student.alarbaein_alnawawia_old + student.alarbaein_alnawawia_new + 1, hadeeth_number + 1)],
+                    second_info={"old": student.alarbaein_alnawawia_old, "new": student.alarbaein_alnawawia_new},
+                    message_type=MessageTypeChoice.ALNAWAWIA,
+                )
+
+                if control_settings.double_points:
+                    DoublePointMessage.objects.create(
+                        student=student,
+                        points=(hadeeth_number - student.alarbaein_alnawawia_old - student.alarbaein_alnawawia_new) * 2,
+                        content=[f"الحديث {i}" for i in range(student.alarbaein_alnawawia_old + student.alarbaein_alnawawia_new + 1, hadeeth_number + 1)],
+                        memorize_message=memorize_message,
+                        message_type=DoubleMessageTypeChoice.ALNAWAWIA,
+                    )
+
+                student.alarbaein_alnawawia_new = hadeeth_number - student.alarbaein_alnawawia_old
+                student.save()
+
+
+            
+        elif add_hadeeth_type == "riad_alsaalihin":
+            if student.riad_alsaalihin_old + student.riad_alsaalihin_new < hadeeth_number:
+                memorize_message = MemorizeMessage.objects.create(
+                    master_name=master,
+                    student=student,
+                    student_string=student.name,
+                    first_info=[f"الحديث {i}" for i in range(student.riad_alsaalihin_old + student.riad_alsaalihin_new + 1, hadeeth_number + 1)],
+                    second_info={"old": student.riad_alsaalihin_old, "new": student.riad_alsaalihin_new},
+                    message_type=MessageTypeChoice.ALSAALIHIN,
+                )
+
+                if control_settings.double_points:
+                    DoublePointMessage.objects.create(
+                        student=student,
+                        points=(hadeeth_number - student.riad_alsaalihin_old - student.riad_alsaalihin_new) * 2,
+                        content=[f"الحديث {i}" for i in range(student.riad_alsaalihin_old + student.riad_alsaalihin_new + 1, hadeeth_number + 1)],
+                        memorize_message=memorize_message,
+                        message_type=DoubleMessageTypeChoice.ALSAALIHIN,
+                    )
+
+                student.riad_alsaalihin_new = hadeeth_number - student.riad_alsaalihin_old
+                student.save()
+
+
+
+    return redirect(request.META.get("HTTP_REFERER"))
+        
 
 
 

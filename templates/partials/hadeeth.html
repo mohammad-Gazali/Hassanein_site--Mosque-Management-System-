@@ -1,0 +1,84 @@
+<section id="student-hadeeth-details-{{ student.id }}" class="hadeeth-detail">
+    <h6 class="text-white title">
+        الأحاديث وأسماء الله الحسنى
+    </h6>
+    <hr class="mt-4" style="border-color: white">
+    <h6 class="title text-white" style="background: rgb(109, 40, 193); border: 2px white solid">
+        الأربعين النووية
+    </h6>
+    {% if student.alarbaein_alnawawia_old %}
+        {% if student.alarbaein_alnawawia_old == 1 %}
+            <div class="hadeeth-detail-block bg-warning">
+                الأحاديث المسمعة قديماً: 1
+            </div>
+        {% else %}
+            <div class="hadeeth-detail-block bg-warning">
+                الأحاديث المسمعة قديماً: من 1 إلى {{ student.alarbaein_alnawawia_old }}
+            </div>
+        {% endif %}
+    {% endif %}
+
+    {% if student.alarbaein_alnawawia_new %}
+        {% if student.alarbaein_alnawawia_new == 1 %}
+            <div class="hadeeth-detail-block text-white bg-success {% if student.alarbaein_alnawawia_old %}mt-3{% endif %}">
+                الأحاديث المسمعة في هذه السنة: {{ student.alarbaein_alnawawia_old|add:1 }}
+            </div>
+        {% else %}
+            <div class="hadeeth-detail-block text-white bg-success {% if student.alarbaein_alnawawia_old %}mt-3{% endif %}">
+                الأحاديث المسمعة في هذه السنة: من {{ student.alarbaein_alnawawia_old|add:1 }} إلى {{ student.alarbaein_alnawawia_old|add:student.alarbaein_alnawawia_new }}
+            </div>
+        {% endif %}
+    {% endif %}
+
+    {% if student.alarbaein_alnawawia_old == 0 and student.alarbaein_alnawawia_new == 0 %}
+        <div class="text-white text-center">لا يوجد</div>
+    {% endif %}
+
+    <h6 class="title text-white mt-5" style="background: rgb(109, 40, 193); border: 2px white solid">
+        رياض الصالحين
+    </h6>
+    {% if student.riad_alsaalihin_old %}
+        {% if student.riad_alsaalihin_old == 1 %}
+            <div class="hadeeth-detail-block bg-warning">
+                الأحاديث المسمعة قديماً: 1
+            </div>
+        {% else %}
+            <div class="hadeeth-detail-block bg-warning">
+                الأحاديث المسمعة قديماً: من 1 إلى {{ student.riad_alsaalihin_old }}
+            </div>
+        {% endif %}
+    {% endif %}
+
+    {% if student.riad_alsaalihin_new %}
+        {% if student.riad_alsaalihin_new == 1 %}
+            <div class="hadeeth-detail-block text-white bg-success {% if student.riad_alsaalihin_old %}mt-3{% endif %}">
+                الأحاديث المسمعة في هذه السنة: {{ student.riad_alsaalihin_old|add:1 }}
+            </div>
+        {% else %}
+            <div class="hadeeth-detail-block text-white bg-success {% if student.riad_alsaalihin_old %}mt-3{% endif %}">
+                الأحاديث المسمعة في هذه السنة: من {{ student.riad_alsaalihin_old|add:1 }} إلى {{ student.riad_alsaalihin_old|add:student.riad_alsaalihin_new }}
+            </div>
+        {% endif %}
+    {% endif %}
+
+    {% if student.riad_alsaalihin_old == 0 and student.riad_alsaalihin_new == 0 %}
+        <div class="text-white text-center">لا يوجد</div>
+    {% endif %}
+
+    <h6 class="title text-white mt-5" style="background: rgb(109, 40, 193); border: 2px white solid">
+        أسماء الله الحسنى
+    </h6>
+    {% if student.allah_names_old %}
+        <div class="hadeeth-detail-block bg-warning">
+            تم التسميع قديماً
+        </div>
+    {% elif student.allah_names_new %}
+        <div class="hadeeth-detail-block text-white bg-success">
+            تم التسميع في هذه السنة
+        </div>
+    {% else %}
+        <div class="hadeeth-detail-block text-white bg-secondary">
+            غير مسمعة
+        </div>
+    {% endif %}
+</section>

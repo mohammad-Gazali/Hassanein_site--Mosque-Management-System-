@@ -1,0 +1,112 @@
+{% load static %}
+
+<div class="model" id="model-{{ student.id }}-id-{{type}}">
+    <div class="model-header">
+        <div class="title-model">{{key}} : {{student.name}}</div>
+        <button data-close-button class="close-btn">&times;</button>
+    </div>
+    <div class="model-body">
+        <div class="main-add-hadeeth container">
+            <h3 class="title text-white">إضافة حديث</h3>
+            <form id="add-hadeeth-form-{{ student.id }}" class="form-control" action="{% url "add_hadeeth" %}" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="student-id" value="{{ student.id }}" required>
+                <p id="number-hadeeth-{{ student.id }}" class="mt-3 bg-warning rounded border p-2 text-center fs-5">
+                    آخر حديث وصل إليه الطالب: <span class="fw-bold fs-2">{{ student.alarbaein_alnawawia_old|add:student.alarbaein_alnawawia_new }}</span>
+                </p>
+                <div class="error-content text-danger"></div>
+                <select class="form-control mt-2" name="add-hadeeth-type" required>
+                    <option value="alarbaein_alnawawia" selected>
+                        الأربعين النووية
+                    </option>
+                    <option value="riad_alsaalihin">
+                        رياض الصالحين
+                    </option>
+                    {% if student.allah_names_new or student.allah_names_old %}
+                    {% else %}
+                        <option value="allah_names">
+                            أسماء الله الحسنى
+                        </option>
+                    {% endif %}
+                </select>
+                <input class="form-control mt-2" type="number" name="hadeeth-number" placeholder="رقم آخر حديث تم تسميعه" min="1" required>
+                <button type="submit" class="btn btn-success mt-3 w-100">إضافة</button>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    const addHadeethForm{{ student.id }} = document.getElementById("add-hadeeth-form-{{ student.id }}");
+    const selectInputAddHadeethForm{{ student.id }} = document.querySelector("#add-hadeeth-form-{{ student.id }} select");
+    const numberInputAddHadeethForm{{ student.id }} = document.querySelector("#add-hadeeth-form-{{ student.id }} input[name='hadeeth-number']");
+    const numberHadeeth{{ student.id }} = document.getElementById("number-hadeeth-{{ student.id }}");
+    
+    addHadeethForm{{ student.id }}.onsubmit = (e) => {
+        e.preventDefault();
+
+        const errorBox = addHadeethForm{{ student.id }}.querySelector(".error-content");
+
+        if (selectInputAddHadeethForm{{ student.id }}.value === "riad_alsaalihin") {
+            
+            const hadeethValue = parseInt("{{ student.riad_alsaalihin_old }}") + parseInt("{{ student.riad_alsaalihin_new }}");
+
+            if (parseInt(numberInputAddHadeethForm{{ student.id }}.value) <= hadeethValue) {
+
+                errorBox.style.transform = "scale(1)";
+                errorBox.classList.add("mb-3");
+                errorBox.innerText = "انتبه: يوجد خطأ في رقم الحديث, انظر لآخر حديث وصل إليه الطالب";
+
+                return;
+            }
+
+        } else if (selectInputAddHadeethForm{{ student.id }}.value === "alarbaein_alnawawia") {
+
+            const hadeethValue = parseInt("{{ student.alarbaein_alnawawia_old }}") + parseInt("{{ student.alarbaein_alnawawia_new }}");
+
+            if (parseInt(numberInputAddHadeethForm{{ student.id }}.value) <= hadeethValue) {
+
+                errorBox.style.transform = "scale(1)";
+                errorBox.classList.add("mb-3");
+                errorBox.innerText = "انتبه: يوجد خطأ في رقم الحديث, انظر لآخر حديث وصل إليه الطالب";
+
+                return
+            }
+
+        }
+
+        e.target.submit();
+    }
+
+    if (parseInt("{{ student.alarbaein_alnawawia_old }}") + parseInt("{{ student.alarbaein_alnawawia_new }}") >= 50) {
+        selectInputAddHadeethForm{{ student.id }}.querySelector('option[value="alarbaein_alnawawia"]').remove();
+        selectInputAddHadeethForm{{ student.id }}.querySelector('option[value="riad_alsaalihin"]').selected = true;
+
+        numberHadeeth{{ student.id }}.querySelector("span").innerHTML = parseInt("{{ student.riad_alsaalihin_old }}") + parseInt("{{ student.riad_alsaalihin_new }}");
+    }
+
+    {% if student.allah_names_new or student.allah_names_old %}
+    {% else %}
+        selectInputAddHadeethForm{{ student.id }}.onchange = (e) => {
+            if (e.target.value === "allah_names") {
+                numberInputAddHadeethForm{{ student.id }}.value = 1;
+                numberInputAddHadeethForm{{ student.id }}.classList.add("d-none");
+
+                numberHadeeth{{ student.id }}.classList.add("d-none");
+            } else if (e.target.value === "alarbaein_alnawawia") {
+                numberInputAddHadeethForm{{ student.id }}.value = null;
+                numberInputAddHadeethForm{{ student.id }}.classList.remove("d-none");
+
+                numberHadeeth{{ student.id }}.querySelector("span").innerHTML = parseInt("{{ student.alarbaein_alnawawia_old }}") + parseInt("{{ student.alarbaein_alnawawia_new }}");
+
+                numberHadeeth{{ student.id }}.classList.remove("d-none");
+            } else {
+                numberInputAddHadeethForm{{ student.id }}.value = null;
+                numberInputAddHadeethForm{{ student.id }}.classList.remove("d-none");
+
+                numberHadeeth{{ student.id }}.querySelector("span").innerHTML = parseInt("{{ student.riad_alsaalihin_old }}") + parseInt("{{ student.riad_alsaalihin_new }}");
+
+                numberHadeeth{{ student.id }}.classList.remove("d-none");
+            }
+        }
+    {% endif %}
+</script>

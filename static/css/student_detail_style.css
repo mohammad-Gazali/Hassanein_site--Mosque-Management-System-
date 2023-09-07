@@ -253,3 +253,28 @@
 
 
 /* memorize notes end */
+
+/* hadeeth details start */
+
+.hadeeth-detail {
+    position: relative;
+    width: 100%;
+    background-color: rgba(135, 135, 161, 0.103);
+    border: 1px solid rgba(255, 255, 255, 0.098);
+    padding: 2rem 0.5rem;
+    padding-top: 20px;
+    border-radius: 4px;
+}
+
+.hadeeth-detail-block {
+    margin: 0 auto;
+    max-width: 23rem;
+    border-radius: 5px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px 10px;
+}
+
+/* hadeeth details end */
