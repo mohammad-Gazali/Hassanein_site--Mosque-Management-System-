@@ -1540,28 +1540,18 @@ def admin_test_certificates(request: HttpRequest) -> HttpResponse:
     q = request.GET.get("text-search-table") or None
     search_type = request.GET.get("type-search-table-admin-p") or None
 
-    # for updating certificates state for students
-    for st in Student.objects.all():
-        if st.q_test_certificate == "لا يوجد":
-            st.is_q_test_certificate = False
-        else:
-            st.is_q_test_certificate = True
-        st.save()
-
-    students = Student.objects.filter(is_q_test_certificate=True).order_by("id")
+    students = [s for s in Student.objects.all().order_by("id") if s.q_test_certificate != "لا يوجد"]
 
     if (q is not None) and (search_type is not None):
         if search_type == "by-text":
             my_regex = r""
             for word in re.split(r"\s+", q.strip()):
                 my_regex += word + r".*"
-            students = Student.objects.filter(
-                is_q_test_certificate=True, name__iregex=r"{}".format(my_regex)
-            ).order_by("id")
+            students = [s for s in Student.objects.filter(
+                name__iregex=r"{}".format(my_regex)
+            ).order_by("id") if s.q_test_certificate != "لا يوجد"]
         else:
-            students = Student.objects.filter(
-                is_q_test_certificate=True, pk=int(q)
-            ).order_by("id")
+            students = [s for s in Student.objects.filter(pk=int(q)).order_by("id") if s.q_test_certificate != "لا يوجد"]
 
     ordered_students_by_q_test_certificates = []
     for student in students:

@@ -50,7 +50,6 @@ class Student(models.Model):
     bring_him = models.CharField(max_length=511, verbose_name="أحضره", null=True, blank=True)
     q_memorizing = models.JSONField(default=default_json.json_default_value, verbose_name="حفظ القرآن")
     q_test = models.JSONField(default=default_json.json_default_value_two, verbose_name="السبر في المسجد")
-    is_q_test_certificate = models.BooleanField(default=True, verbose_name="هل يوجد شهادة سبر")
     q_awqaf_test = models.JSONField(default=default_json.json_default_value_three, verbose_name="سبر القرآن في الأوقاف")
     q_awqaf_test_looking = models.JSONField(default=default_json.json_default_value_three, verbose_name="سبر القرآن نظراً في الأوقاف")
     q_awqaf_test_explaining = models.JSONField(default=default_json.json_default_value_three, verbose_name="سبر القرآن تفسيراً في الأوقاف")

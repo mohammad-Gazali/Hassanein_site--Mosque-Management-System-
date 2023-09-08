@@ -18,7 +18,6 @@ class AdminStudent(admin.ModelAdmin):
     search_fields = ["name"]
     list_select_related = ["category"]
     list_filter = ["category"]
-    exclude = ["is_q_test_certificate"]
 
     # here changed the widget of JSONField into another widget, this widget is imported from django_json_widget.widgets
     # we should firstly install the module 'django-json-widget' by using 'pip install django-json-widget', then we should go INSTALLED_APPS in settings.py and add 'django_json_widget'
@@ -41,7 +40,7 @@ class AdminStudent(admin.ModelAdmin):
 
         # here when the object has already been added (change object case)
         if obj:
-            kwargs["exclude"] = ("is_q_test_certificate",)
+            pass
 
         # here when the object doesn't exisit (add object case)
         else:
@@ -51,7 +50,6 @@ class AdminStudent(admin.ModelAdmin):
                 "q_awqaf_test",
                 "q_awqaf_test_looking",
                 "q_awqaf_test_explaining",
-                "is_q_test_certificate",                
                 "alarbaein_alnawawia_old",
                 "alarbaein_alnawawia_new",
                 "riad_alsaalihin_old",

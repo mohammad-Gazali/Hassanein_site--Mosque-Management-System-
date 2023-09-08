@@ -32,7 +32,7 @@
                             </a>
                         </td>
                         <td class="text-center" style="white-space: nowrap;">{{ student.name }}</td>
-                        <td class="text-center" style="white-space: nowrap;">{{ student.mother_name }}</td>
+                        <td class="text-center" style="white-space: nowrap;">{{ student.mother_name|default_if_none:"-" }}</td>
                         <td class="text-center" style="white-space: nowrap;">{{ student.age }}</td>
                         <td class="text-center" style="white-space: nowrap;">{{ student.address|default_if_none:"-" }}</td>
                         <td class="text-center" style="white-space: nowrap;">{{ student.static_phone|default_if_none:"-" }}</td>
