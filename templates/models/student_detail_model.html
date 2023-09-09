@@ -27,10 +27,10 @@
                 <ul class="list-group p-0" style="width: 80%;">
                     <li class="list-group-item border text-center text-white" style="background-color: #1c283f;"><b>الاسم الثلاثي: </b>{{ student.name }}</li>
                     <li class="list-group-item border text-center text-white" style="background-color: #1c283f;"><b>المعرف: </b>{{ student.id }}</li>
-                    <li class="list-group-item border text-center text-white" style="background-color: #1c283f;"><b>الفئة: </b>{{ student.category }}</li>
-                    <li class="list-group-item border text-center text-white" style="background-color: #1c283f;"><b>العمر: </b>{% if student.age != "تاريخ الميلاد غير محدد" %}{{ student.age }} سنة{% else %}{{student.age}}{% endif %}</li>
+                    <li class="list-group-item border text-center text-white" style="background-color: #1c283f;"><b>الفئة: </b>{{ student.category|default_if_none:"-" }}</li>
+                    <li class="list-group-item border text-center text-white" style="background-color: #1c283f;"><b>العمر: </b>{% if student.age != "تاريخ الميلاد غير محدد" %}{{ student.age }} سنة{% else %}-{% endif %}</li>
                     {% if user.is_authenticated %}
-                        <li class="list-group-item border text-center text-white" style="background-color: #1c283f;"><b>اسم الأم: </b>{{ student.mother_name }}</li>
+                        <li class="list-group-item border text-center text-white" style="background-color: #1c283f;"><b>اسم الأم: </b>{{ student.mother_name|default_if_none:"-" }}</li>
                     {% endif %}
                 </ul>
             </div>

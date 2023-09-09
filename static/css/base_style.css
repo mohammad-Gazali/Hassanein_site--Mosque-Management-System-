@@ -366,6 +366,16 @@ a:focus-visible .logo-image {
     color: white !important;
 }
 
+.only-big {
+    display: none;
+}
+
+@media (min-width: 992px) {
+    .only-big {
+        display: block;
+    }
+}
+
 /** scrollbar-table */
 .scrollbar-table::-webkit-scrollbar {
     height: 10px;

@@ -11,10 +11,12 @@ firstInput.onclick = function () {
         searchText.children[0].required = true
         searchId.classList.add("d-none")
         searchId.children[0].required = false
+        searchId.children[0].value = null
     }
     else if (secondInput.checked) {
         searchText.classList.add("d-none")
         searchText.children[0].required = false
+        searchText.children[0].value = null
         searchId.classList.remove("d-none")
         searchId.children[0].required = true
     }
@@ -27,10 +29,12 @@ secondInput.onclick = function () {
         searchText.children[0].required = true
         searchId.classList.add("d-none")
         searchId.children[0].required = false
+        searchId.children[0].value = null
     }
     else if (secondInput.checked) {
         searchText.classList.add("d-none")
         searchText.children[0].required = false
+        searchText.children[0].value = null
         searchId.classList.remove("d-none")
         searchId.children[0].required = true
     }

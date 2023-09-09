@@ -2,11 +2,15 @@
 
 <nav id="main-nav" class="navbar navbar-expand-lg py-3">
     <div class="container-fluid position-relative">
-        <span class="navbar-brand fs-4">
+        <span class="d-flex navbar-brand fs-4">
             <a class="nav-link text-white p-0" href="{% url 'home' %}">
                 <img class="position-absolute logo-image" width="50" src="{% static 'white-logo-icon.svg' %}" alt="logo">
             </a>
+            <span class="only-big">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
         </span>
+            <p class="text-white fs-5 fw-bold my-auto">
+                أهلاً {{ user }}
+            </p>
         <button id="toggler-icon" class="navbar-toggler p-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <i class="bi bi-list" aria-hidden="true" style="color: white; font-size: 1.5rem"></i>
         </button>
