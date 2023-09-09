@@ -6,11 +6,15 @@
             <a class="nav-link text-white p-0" href="{% url 'home' %}">
                 <img class="position-absolute logo-image" width="50" src="{% static 'white-logo-icon.svg' %}" alt="logo">
             </a>
-            <span class="only-big">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            {% if user.is_authenticated %}
+                <span class="only-big">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            {% endif %}
         </span>
-            <p class="text-white fs-6 my-auto">
-                أهلاً {{ user }}
-            </p>
+            {% if user.is_authenticated %}
+                <p class="text-white fs-6 my-auto">
+                    أهلاً {{ user }}
+                </p>
+            {% endif %}
         <button id="toggler-icon" class="navbar-toggler p-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <i class="bi bi-list" aria-hidden="true" style="color: white; font-size: 1.5rem"></i>
         </button>

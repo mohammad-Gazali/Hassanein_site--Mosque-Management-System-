@@ -160,11 +160,19 @@ footer {
 }
 
 .model-header .close-btn {
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     font-size: 1.5rem;
+    padding-bottom: 3px;
     font-weight: bolder;
+    color: white;
+    background-color: var(--bs-danger);
+    border-radius: 50%;
     border: none;
     outline: none;
-    background-color: transparent;
     cursor: pointer;
 }
 
