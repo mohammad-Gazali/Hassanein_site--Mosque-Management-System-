@@ -3,6 +3,7 @@ const comingPointsInput = determingAddingComingForm.querySelector("#coming-point
 const comingCategoryInput = determingAddingComingForm.querySelector("#coming-category");
 const submitComingButtons = document.querySelectorAll(".submit-coming-button");
 const studentIdHiddenInput = document.getElementById("student-id-hidden-input");
+const warningModelComing = document.getElementById("warning-model-coming");
 
 if (localStorage.getItem("coming-points")) {
     comingPointsInput.value = localStorage.getItem("coming-points");
@@ -28,7 +29,11 @@ determingAddingComingForm.addEventListener("submit", (e) => {
 
 submitComingButtons.forEach(btn => {
     btn.addEventListener("click", () => {
-        studentIdHiddenInput.value = btn.dataset.studentId;
-        determingAddingComingForm.submit();
+        if (!comingPointsInput.value) {
+            openModel(warningModelComing);
+        } else {
+            studentIdHiddenInput.value = btn.dataset.studentId;
+            determingAddingComingForm.submit();
+        }
     })
 })

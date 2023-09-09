@@ -141,6 +141,10 @@ footer {
     transform: translate(-50%, -50%) scale(1);
 }
 
+.model.warning {
+    height: auto;
+}
+
 .model-header {
     display: flex;
     justify-content: space-between;
@@ -171,6 +175,12 @@ footer {
     flex-direction: column;
     gap: 2rem;
     min-height: 100%;
+}
+
+.model.warning .model-body {
+    background-color: var(--bs-danger);
+    color: white;
+    align-items: center;
 }
 
 .model::-webkit-scrollbar {

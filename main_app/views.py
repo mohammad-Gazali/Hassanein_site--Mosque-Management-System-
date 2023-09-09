@@ -868,7 +868,7 @@ def admin_main(request: HttpRequest) -> HttpResponse:
     q = request.GET.get("text-search-table") or None
     search_type = request.GET.get("type-search-table-admin-p") or None
 
-    students = Student.objects.select_related("category").all().order_by("id")
+    students = []
 
     if (q is not None) and (search_type is not None):
         if search_type == "by-text":
@@ -900,44 +900,7 @@ def admin_points_information(request: HttpRequest) -> HttpResponse:
 
     point_value = ControlSettings.objects.get(pk=1).point_value
 
-    students = (
-        Student.objects.prefetch_related(
-            Prefetch(
-                "doublepointmessage_set",
-                queryset=DoublePointMessage.objects.filter(message_type=1),
-                to_attr="message_type_1",  # * this is the name of the attribute we will use to access specific query in points_of_q_memo property method inside Student model
-            ),
-            Prefetch(
-                "doublepointmessage_set",
-                queryset=DoublePointMessage.objects.filter(message_type=2),
-                to_attr="message_type_2",  # * this is the name of the attribute we will use to access specific query in points_of_q_test property method inside Student model
-            ),
-            Prefetch(
-                "doublepointmessage_set",
-                queryset=DoublePointMessage.objects.filter(message_type=3),
-                to_attr="message_type_3",
-            ),
-            Prefetch(
-                "doublepointmessage_set",
-                queryset=DoublePointMessage.objects.filter(message_type=4),
-                to_attr="message_type_4",
-            ),
-            Prefetch(
-                "doublepointmessage_set",
-                queryset=DoublePointMessage.objects.filter(message_type=5),
-                to_attr="message_type_5",
-            ),
-            Prefetch(
-                "moneydeleting_set",
-                queryset=MoneyDeleting.objects.filter(active_to_points=True),
-                to_attr="money_deleting_info",
-            ),
-            "pointsadding_set",
-            "coming_set",
-        )
-        .all()
-        .order_by("id")
-    )
+    students = []
 
     if (q is not None) and (search_type is not None):
         if search_type == "by-text":
@@ -949,12 +912,12 @@ def admin_points_information(request: HttpRequest) -> HttpResponse:
                     Prefetch(
                         "doublepointmessage_set",
                         queryset=DoublePointMessage.objects.filter(message_type=1),
-                        to_attr="message_type_1",
+                        to_attr="message_type_1", # * this is the name of the attribute we will use to access specific query in points_of_q_memo property method inside Student model
                     ),
                     Prefetch(
                         "doublepointmessage_set",
                         queryset=DoublePointMessage.objects.filter(message_type=2),
-                        to_attr="message_type_2",
+                        to_attr="message_type_2", # * this is the name of the attribute we will use to access specific query in points_of_q_test property method inside Student model
                     ),
                     Prefetch(
                         "doublepointmessage_set",
@@ -976,7 +939,6 @@ def admin_points_information(request: HttpRequest) -> HttpResponse:
                         queryset=MoneyDeleting.objects.filter(active_to_points=True),
                         to_attr="money_deleting_info",
                     ),
-                    "pointsdeleting_set",
                     "pointsadding_set",
                     "coming_set",
                     "moneydeleting_set",
@@ -1016,7 +978,6 @@ def admin_points_information(request: HttpRequest) -> HttpResponse:
                     queryset=MoneyDeleting.objects.filter(active_to_points=True),
                     to_attr="money_deleting_info",
                 ),
-                "pointsdeleting_set",
                 "pointsadding_set",
                 "coming_set",
                 "moneydeleting_set",
