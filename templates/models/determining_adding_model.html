@@ -9,20 +9,13 @@
             <form action="{% url 'add_coming' %}" id="determing-adding-coming-form" class="form-control" method="POST">
                 {% csrf_token %}
                 <input id="student-id-hidden-input" type="hidden" name="student-id">
+                <input type="hidden" id="coming-category" name="coming-category" value="{{ request.GET.category_id }}">
                 <label class="form-label mt-3" for="coming-points">النقاط</label>
                 <input id="coming-points" class="form-control" min="1" type="number" name="points" required>
-                <label class="form-label mt-3" for="coming-category">نوع الحضور</label>
-                <select class="form-select" name="coming-category" id="coming-category">
-                    {% for category in coming_categories %}
-                        <option value="{{ category.id }}">{{ category }}</option>
-                    {% endfor %}
-                </select>
                 <button class="btn btn-success w-100 mt-3">
                     حفظ
                 </button>
             </form>
-            
-            
         </div>
     </div>
 </div>
