@@ -758,7 +758,8 @@ def del_note(request: HttpRequest, nid: int) -> HttpResponse:
 @user_passes_test(check_coming)
 @login_required
 def search_coming(request: HttpRequest) -> HttpResponse:
-    return render(request, "coming/search_coming.html")
+    coming_categories = ComingCategory.objects.all()
+    return render(request, "coming/search_coming.html", {"coming_categories": coming_categories})
 
 
 @user_passes_test(check_coming)
@@ -766,14 +767,15 @@ def search_coming(request: HttpRequest) -> HttpResponse:
 def search_results_of_student_coming(request: HttpRequest) -> HttpResponse:
     query_text = request.GET.get("q_text")
     query_id = request.GET.get("q_search_id")
+    category_id = request.GET.get("category_id")
 
-    registered_today = Coming.objects.filter(registered_at__date=date.today())
+    registered_today = Coming.objects.filter(registered_at__date=date.today(), category_id=category_id)
     registered_today_ids = set(map(lambda x: x.student_id, registered_today))
 
     com_cats = ComingCategory.objects.all()
 
     if query_id:
-        student = Student.objects.filter(pk=query_id)
+        student = Student.objects.filter(pk=query_id).exclude(id__in=registered_today_ids)
         return render(
             request,
             "search_results_coming.html",
@@ -794,6 +796,7 @@ def search_results_of_student_coming(request: HttpRequest) -> HttpResponse:
         students = (
             Student.objects.select_related("category")
             .filter(name__iregex=r"{}".format(my_regex))
+            .exclude(id__in=registered_today_ids)
             .order_by("id")
         )
 
@@ -818,6 +821,11 @@ def add_coming(request: HttpRequest) -> HttpResponse:
         student_id = int(request.POST.get("student-id"))
         points = int(request.POST.get("points"))
         category_id = int(request.POST.get("coming-category"))
+
+        coming_today = Coming.objects.filter(registered_at__date=date.today(), category_id=category_id, student_id=student_id)
+
+        if coming_today:
+            return HttpResponseForbidden("<h1>403</h1><h1>Forbidden</h1>")
 
         Coming.objects.create(
             master_name=master,

@@ -1,6 +1,6 @@
 {% load static %}
 
-<div class="card position-relative card-border {% if student.id in reg_today %} card-border-danger {% endif %}" style="width: 285px">
+<div class="card position-relative card-border" style="width: 285px">
     <div class="card-body">
         <div class="card-title text-dark mb-3">
             <b>الاسم الثلاثي:</b> {{ student.name }}
@@ -14,5 +14,5 @@
             </ul>
         </div>
     </div>
-    <button data-student-id="{{ student.id }}" class="btn {% if student.id in reg_today %} btn-danger {% else %} btn-success {% endif %} position-absolute-bottom mt-3 translate-middle col-6 text-white submit-coming-button">تسجيل حضور</button>
+    <button data-student-id="{{ student.id }}" class="btn btn-success position-absolute-bottom mt-3 translate-middle col-6 text-white submit-coming-button">تسجيل حضور</button>
 </div>

@@ -26,14 +26,29 @@
         </div>
         <form id="search_form" action="{% url 'search_results_coming' %}">            
             <div class="row">
-                <div class="col-md-9 col-12" id="search-text-coming">
+                <div class="col-12">
+                    <select class="form-control w-100 " name="category_id" id="category_id">
+                        {% for category in coming_categories %}
+                            {% if category.id|stringformat:"i" == request.GET.category_id %}
+                                <option value="{{ category.id }}" selected>
+                                    {{ category }}
+                                </option>
+                            {% else %}
+                                <option value="{{ category.id }}">
+                                    {{ category }}
+                                </option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-9 mt-3 col-12" id="search-text-coming">
                     <input placeholder="ادخل اسم الطالب" name="q_text" type="text" class="form-control" required>
                 </div>
-                <div class="col-md-9 col-12 mt-md-0 d-none" id="search-id-coming">
+                <div class="col-md-9 mt-3 col-12 mt-md-0 d-none" id="search-id-coming">
                     <input placeholder="ادخل المعرف" name="q_search_id" min="1" type="number" class="form-control">
                 </div>
                 <div class="col-md-3 mt-md-0 mt-4">
-                    <button type="submit" class="btn btn-primary w-100">ابحث <i class="bi bi-search"></i></button>
+                    <button type="submit" class="btn btn-primary mt-0 mt-md-3 w-100">ابحث <i class="bi bi-search"></i></button>
                 </div>
             </div>
         </form>
