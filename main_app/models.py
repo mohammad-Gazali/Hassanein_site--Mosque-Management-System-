@@ -340,6 +340,7 @@ class Coming(models.Model):
 class ControlSettings(models.Model):
     double_points = models.BooleanField(default=False, verbose_name="مضاعفة النقاط")
     point_value = models.IntegerField(verbose_name="قيمة النقطة")
+    hidden_ids = models.JSONField(verbose_name="المعرفات المخفية", default=list)
 
 
 class DoublePointMessage(models.Model):

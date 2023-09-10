@@ -44,4 +44,6 @@ urlpatterns = [
     path("hadeeth/add", views.add_hadeeth, name="add_hadeeth"),
     path("json/students", views.students_ajax, name="students_ajax"),
     path("json/switch/money-delete", views.switch_deleting_active_to_points_state, name="switch_money_deleting_ajax"),
+    path("json/add-hidden-id", views.adding_hidden_id, name="adding_hidden_id_ajax"),
+    path("json/remove-hidden-id", views.removing_hidden_id, name="remove_hidden_id_ajax"),
 ]

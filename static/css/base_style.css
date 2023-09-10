@@ -207,6 +207,10 @@ footer {
     background-clip: content-box;
 }
 
+#adding-hidden-id-model {
+    height: unset;
+}
+
 #overlay {
     position: fixed;
     z-index: 5;

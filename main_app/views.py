@@ -61,8 +61,16 @@ def search_results_of_student(request: HttpRequest) -> HttpResponse:
         "test_id", "student_id", "is_old"
     )
 
+    control_settings = ControlSettings.objects.first()
+
     if query_id:
-        student = Student.objects.filter(pk=query_id)
+
+        # hiding hidden ids from non-authenticated users
+        if request.user.is_authenticated:
+            student = Student.objects.filter(pk=query_id)
+        else:
+            student = Student.objects.filter(pk=query_id).exclude(pk__in=control_settings.hidden_ids)
+
         return render(
             request,
             "search_results.html",
@@ -82,16 +90,29 @@ def search_results_of_student(request: HttpRequest) -> HttpResponse:
         for word in re.split(r"\s+", query_text.strip()):
             my_regex += word + r".*"
 
-        students = (
-            Student.objects.prefetch_related(
-                "memorizenotes_set",
-                "part_set__level__specialization",
-                "awqafnoqstudentrelation_set",
+        if request.user.is_authenticated:
+            students = (
+                Student.objects.prefetch_related(
+                    "memorizenotes_set",
+                    "part_set__level__specialization",
+                    "awqafnoqstudentrelation_set",
+                )
+                .select_related("category")
+                .filter(name__iregex="{}".format(my_regex))
+                .order_by("id")
             )
-            .select_related("category")
-            .filter(name__iregex="{}".format(my_regex))
-            .order_by("id")
-        )
+        else:
+            students = (
+                Student.objects.prefetch_related(
+                    "memorizenotes_set",
+                    "part_set__level__specialization",
+                    "awqafnoqstudentrelation_set",
+                )
+                .select_related("category")
+                .filter(name__iregex="{}".format(my_regex))
+                .exclude(pk__in=control_settings.hidden_ids)
+                .order_by("id")
+            )
 
         return render(
             request,
@@ -2022,5 +2043,51 @@ def switch_deleting_active_to_points_state(request: HttpRequest) -> JsonResponse
     return HttpResponseNotAllowed("")
 
 
-# helper functions
+@user_passes_test(check_admin)
+@login_required
+def adding_hidden_id(request: HttpRequest) -> JsonResponse:
+    id = json.loads(request.body).get("id")
 
+    if id is None:
+        return JsonResponse({
+            "message": "Invalid payload"
+        }, status=400)
+    
+    control_settings = ControlSettings.objects.first()
+
+    if int(id) in control_settings.hidden_ids:
+        return JsonResponse({
+            "message": "duplicated id"
+        }, status=400)
+
+    control_settings.hidden_ids.append(int(id))
+    control_settings.save()
+
+    return JsonResponse({
+        "message": "success",
+    })
+
+
+@user_passes_test(check_admin)
+@login_required
+def removing_hidden_id(request: HttpRequest) -> JsonResponse:
+    id = json.loads(request.body).get("id")
+
+    if id is None:
+        return JsonResponse({
+            "message": "Invalid payload"
+        }, status=400)
+    
+    control_settings = ControlSettings.objects.first()
+
+    try:
+        control_settings.hidden_ids.remove(int(id))
+        control_settings.save()
+    except ValueError:
+        return JsonResponse({
+            "message": "id doesn't exist",
+        }, status=404)
+
+    return JsonResponse({
+        "message": "success",
+    })

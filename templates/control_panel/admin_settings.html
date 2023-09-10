@@ -7,7 +7,99 @@
         <form method="POST" class="container border rounded pb-3" style="border-color: black !important; background-color: rgba(221, 221, 221);">
             {% csrf_token %}
             {% include 'common/control_form.html' with form=form %}
+            <label class="form-check-label fw-bold">المعرفات المخفية</label>
+            <ul id="hidden-ids-list" class="my-3 flex-wrap gap-2 p-0 list-unstyled d-none"></ul>
+            <button data-model-target="#adding-hidden-id-model" class="btn btn-success btn-sm" type="button">إضافة معرف</button>
+            <hr>
             <button class="btn btn-primary" type="submit">حفظ التغييرات</button>
         </form>
+        <div id="overlay"></div>
+        {% include "models/add_hidden_id_model.html" %}
+        <script src="{% static 'js/popped_up_models.js' %}"></script>
+        <script>
+            const addingHiddenIdButton = document.getElementById("adding-hidden-id-button");
+            const idInputAdminSettings = addingHiddenIdButton.previousElementSibling;
+            const hiddenIdsList = document.getElementById("hidden-ids-list");
+            const addingHiddenIdModel = document.getElementById("adding-hidden-id-model");
+
+            {% for id in object.hidden_ids %}
+                addIdChip("{{ id }}")
+            {% endfor %}
+
+            addingHiddenIdButton.onclick = async () => {
+                const studentId = idInputAdminSettings.value;
+
+                if (!studentId) return;
+
+                addingHiddenIdButton.disabled = true;
+
+                const response = await fetch("{% url 'adding_hidden_id_ajax' %}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": "{{ csrf_token }}",
+                    },
+                    body: JSON.stringify({
+                        id: studentId,
+                    })
+                })
+
+                addingHiddenIdButton.disabled = false;
+
+                if (response.status !== 200) return;
+
+
+                addIdChip(studentId)
+
+                idInputAdminSettings.value = null;
+            }
+
+            idInputAdminSettings.onkeyup = (e) => {
+                e.preventDefault();
+                if (e.key === "Enter") {
+                    addingHiddenIdButton.click();
+                }
+            }
+
+            function addIdChip(id) {
+                const chip = document.createElement("li");
+                const closeBtn = document.createElement("button");
+                const chipText = document.createTextNode(id);
+
+                chip.className = "bg-primary d-flex align-items-center gap-2 text-white rounded-5 px-3";
+                
+                chip.appendChild(chipText);
+
+                closeBtn.onclick = removeIdAndChip(chip, id);
+                closeBtn.type = "button";
+                closeBtn.innerHTML = "&times;";
+                closeBtn.className = "text-white bg-transparent border-0 p-0 fs-5";
+                chip.appendChild(closeBtn);
+
+                hiddenIdsList.classList.remove("d-none");
+                hiddenIdsList.classList.add("d-flex");
+
+                hiddenIdsList.appendChild(chip);
+                closeModel(addingHiddenIdModel);
+            }
+
+            function removeIdAndChip(chip, id) {
+                return async () => {
+                    const response = await fetch("{% url 'remove_hidden_id_ajax' %}", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRFToken": "{{ csrf_token }}",
+                        },
+                        body: JSON.stringify({
+                            id,
+                        })
+                    })
+    
+                    if (response.status !== 200) return;
+                    chip.remove();
+                }
+            }
+        </script>
     </section>
 {% endblock admin_content %}
