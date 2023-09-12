@@ -168,3 +168,18 @@ class MoneyDeletingCauseAdmin(admin.ModelAdmin):
 @admin.register(models.AwqafTestNoQ)
 class AwqafTestNoQAdmin(admin.ModelAdmin):
     list_display = ["name", "points"]
+
+
+@admin.register(models.PointsAdding)
+class PointsAddingAdmin(admin.ModelAdmin):
+    list_display = ["student", "master_name", "cause", "created_at"]
+    list_select_related = ["student", "cause"]
+
+    def has_delete_permission(self, _, __=None):
+        return False
+
+    def has_change_permission(self, _, __=None):
+        return False
+
+    def has_add_permission(self, _, __=None):
+        return False

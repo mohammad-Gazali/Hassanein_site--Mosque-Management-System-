@@ -104,6 +104,9 @@ addingPointsFormSearchStudent.onsubmit = async (e) => {
                 addingPointsDisplayingStudentsFormBody.appendChild(textContent);
                 addingPointsDisplayingStudentsFormBody.appendChild(xIcon)
 
+                // scroll to the bottom of the page
+                window.scrollTo(0, document.body.scrollHeight);
+
                 xIcon.onclick = () => {
                     addingPointsHiddenInput.value = ''
                     addingPointsDisplayingStudentsFormBody.className = ''
