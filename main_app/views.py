@@ -1201,7 +1201,7 @@ def admin_activity_master(request: HttpRequest) -> HttpResponse:
         MemorizeMessage.objects.select_related(
             "student", "master_name__user", "doublepointmessage"
         )
-        .all()
+        .filter(sended_at__date=date.today())
         .order_by("-sended_at")
     )
     if (q is not None) and (search_type is not None):
@@ -1251,7 +1251,7 @@ def admin_coming_list(request: HttpRequest) -> HttpResponse:
     search_type = request.GET.get("type-search-table-admin-p") or None
     coming_list = (
         Coming.objects.select_related("student", "master_name__user", "category")
-        .all()
+        .filter(registered_at__date=date.today())
         .order_by("-registered_at")
     )
     if (q is not None) and (search_type is not None):
@@ -1421,7 +1421,7 @@ def admin_adding_points_log(request: HttpRequest) -> HttpResponse:
     search_type = request.GET.get("type-search-table-admin-p") or None
     add_messages = (
         PointsAdding.objects.select_related("student", "master_name__user", "cause")
-        .all()
+        .filter(created_at__date=date.today())
         .order_by("-created_at")
     )
     if (q is not None) and (search_type is not None):
@@ -1566,8 +1566,8 @@ def admin_test_certificates(request: HttpRequest) -> HttpResponse:
 
 @user_passes_test(check_admin)
 @login_required
-def admin_info(request: HttpRequest) -> HttpResponse:
-    students = Student.objects.all()
+def admin_statistics(request: HttpRequest) -> HttpResponse:
+    students = Student.objects.prefetch_related("coming_set").all()
 
     number_of_pages = sum([s.number_of_q_memo for s in students])
     number_of_parts = sum([s.number_of_q_test for s in students])
@@ -1580,16 +1580,18 @@ def admin_info(request: HttpRequest) -> HttpResponse:
     number_of_parts_awqaf_explaining = sum(
         [s.number_of_parts_awqaf_explaining_tests for s in students]
     )
+    number_of_active_students = students.exclude(coming__isnull=True).count()
 
     return render(
         request,
-        "control_panel/admin_info.html",
+        "control_panel/admin_statistics.html",
         {
             "number_of_pages": int(number_of_pages),
             "number_of_parts": int(number_of_parts),
             "number_of_parts_awqaf_normal": number_of_parts_awqaf_normal,
             "number_of_parts_awqaf_looking": number_of_parts_awqaf_looking,
             "number_of_parts_awqaf_explaining": number_of_parts_awqaf_explaining,
+            "number_of_active_students": number_of_active_students,
         },
     )
 

@@ -14,7 +14,7 @@
         <div><a href="{% url 'money_deleting' %}" class="btn btn-primary">الغرامات</a></div>
         <div><a href="{% url 'admin_specializations' %}" class="btn btn-primary">الاختصاصات</a></div>
         <div><a href="{% url 'admin_test_certificates' %}" class="btn btn-primary">شهادات السبر</a></div>
-        <div><a href="{% url 'admin_info' %}" class="btn btn-primary">التسميعات في الدورة</a></div>
+        <div><a href="{% url 'admin_statistics' %}" class="btn btn-primary">الإحصائيات في الدورة</a></div>
         <div><a href="{% url 'admin:main_app_student_add' %}" class="btn btn-primary">إضافة طالب</a></div>
         <div><a href="{% url 'admin:index' %}" class="btn btn-primary">لوحة التحكم العليا</a></div>
     </div>
@@ -29,7 +29,7 @@
         {% include 'partials/search_control_panel.html' with current_url="admin_master_activities" %}
     {% elif request.path == "/control/master" %}
         {% include 'partials/search_control_panel.html' with current_url="admin_master_list" %}
-    {% elif request.path == "/control/settings/1" or request.path == "/control/info" %}
+    {% elif request.path == "/control/settings/1" or request.path == "/control/statistics" %}
         {% include 'partials/search_control_panel.html' with current_url="HIDDEN" %}
     {% elif request.path == "/control/coming" %}
         {% include 'partials/search_control_panel.html' with current_url="admin_coming_list" %}
