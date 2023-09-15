@@ -234,6 +234,9 @@ def add_q_memorize(request: HttpRequest, sid: int) -> HttpResponse:
                         "<h1>ليس هذا التسميع من صلاحياتك</h1><h1>403<h1/>"
                     )
 
+        if (not q_memo_before_edit) or (not q_memo_after_edit) or (not total_list):
+            return redirect(request.META.get("HTTP_REFERER"))
+
         student.q_memorizing.update(q_memo_after_edit)
         student.save()
 
