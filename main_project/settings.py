@@ -150,3 +150,6 @@ LOGOUT_REDIRECT_URL = "/accounts/login"
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
+
+
+MASJED_NAME = os.getenv("MASJED_NAME")

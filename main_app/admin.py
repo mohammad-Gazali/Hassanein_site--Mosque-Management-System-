@@ -2,10 +2,11 @@ from django.contrib import admin
 from django.db.models import JSONField
 from main_app import models
 from django_json_widget.widgets import JSONEditorWidget
+from django.conf import settings
 
 
-admin.site.site_title = "لوحة إدارة مسجد الحسنين"
-admin.site.site_header = "إدارة مسجد الحسنين"
+admin.site.site_title = f"لوحة إدارة مسجد {settings.MASJED_NAME}"
+admin.site.site_header = f"إدارة مسجد {settings.MASJED_NAME}"
 
 
 @admin.register(models.Category)
