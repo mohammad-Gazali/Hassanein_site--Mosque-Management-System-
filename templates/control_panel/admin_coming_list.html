@@ -17,7 +17,7 @@
             <tbody>
                 {% for coming in coming_list %}
                     <tr>
-                        <td class="text-center" style="white-space: nowrap;">{{ coming.master_name }}</td>
+                        <td class="text-center" style="white-space: nowrap;">{{ coming.master_name.first_name }} {{ coming.master_name.last_name }}</td>
                         <td class="text-center" style="white-space: nowrap;">{{ coming.student }}</td>
                         <td class="text-center" style="white-space: nowrap;">{{ coming.category }}</td>
                         <td class="text-center" style="white-space: nowrap;">{{ coming.registered_at|date:'Y/m/d - h:i A'  }}</td>

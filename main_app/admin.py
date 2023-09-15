@@ -102,12 +102,16 @@ class AdminMemorizeMessage(admin.ModelAdmin):
 
 @admin.register(models.MemorizeNotes)
 class AdminMemorizeNote(admin.ModelAdmin):
-    list_display = ["master_name", "student", "sended_at"]
+    list_display = ["master_full_name", "student", "sended_at"]
     list_select_related = ["master_name__user", "student"]
     readonly_fields = ["master_name", "student", "content", "sended_at"]
     list_filter = ["master_name"]
     search_fields = ["student_string"]
     exclude = ["student_string"]
+
+    def master_full_name(self, obj: models.MemorizeNotes) -> str:
+        return f"{obj.master_name.first_name} {obj.master_name.last_name}"
+    master_full_name.short_description = "اسم الأستاذ"
 
     def has_delete_permission(self, _, __=None):
         return False
@@ -126,9 +130,13 @@ class ComingCategoryAdmin(admin.ModelAdmin):
 
 @admin.register(models.Coming)
 class ComingAdmin(admin.ModelAdmin):
-    list_display = ["student", "master_name", "category", "registered_at"]
+    list_display = ["student", "master_full_name", "category", "registered_at"]
     list_filter = ["registered_at", "category"]
     list_select_related = ["student", "master_name__user", "category"]
+
+    def master_full_name(self, obj: models.MemorizeNotes) -> str:
+        return f"{obj.master_name.first_name} {obj.master_name.last_name}"
+    master_full_name.short_description = "اسم الأستاذ"
 
     def has_delete_permission(self, _, __=None):
         return False
@@ -173,8 +181,12 @@ class AwqafTestNoQAdmin(admin.ModelAdmin):
 
 @admin.register(models.PointsAdding)
 class PointsAddingAdmin(admin.ModelAdmin):
-    list_display = ["student", "master_name", "cause", "created_at"]
-    list_select_related = ["student", "cause"]
+    list_display = ["student", "master_full_name", "cause", "created_at"]
+    list_select_related = ["student", "cause", "master_name__user"]
+
+    def master_full_name(self, obj: models.MemorizeNotes) -> str:
+        return f"{obj.master_name.first_name} {obj.master_name.last_name}"
+    master_full_name.short_description = "اسم الأستاذ"
 
     def has_delete_permission(self, _, __=None):
         return False

@@ -12,7 +12,7 @@
         </span>
             {% if user.is_authenticated %}
                 <p class="text-white fs-6 my-auto">
-                    أهلاً {{ user }}
+                    أهلاً {{ user.first_name }}
                 </p>
             {% endif %}
         <button id="toggler-icon" class="navbar-toggler p-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">

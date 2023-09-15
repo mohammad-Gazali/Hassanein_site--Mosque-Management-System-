@@ -22,7 +22,7 @@
                             </button>
                         {% endif %}
                         <span>
-                            <b>الأستاذ: {{ note.master_name }}</b>
+                            <b>الأستاذ: {{ note.master_name.first_name }} {{ note.master_name.last_name }}</b>
                         </span>
                         <div class="memorize-note-content">
                             {{ note.content }}
