@@ -490,12 +490,12 @@ def add_q_test(request: HttpRequest) -> HttpResponse:
                         message_type=2,
                     )
 
-                else:
-                    return render(
-                        request,
-                        "error_page.html",
-                        {"error": "يوجد خطأ في الإرسال", "sid": sid},
-                    )
+            else:
+                return render(
+                    request,
+                    "error_page.html",
+                    {"error": "يوجد خطأ في الإرسال", "sid": sid},
+                )
 
         elif test_type_normal == "half-part":
             if half_q_part_number == "first-half":
@@ -602,12 +602,12 @@ def add_q_test(request: HttpRequest) -> HttpResponse:
                         message_type=2,
                     )
 
-                else:
-                    return render(
-                        request,
-                        "error_page.html",
-                        {"error": "يوجد خطأ في الإرسال", "sid": sid},
-                    )
+            else:
+                return render(
+                    request,
+                    "error_page.html",
+                    {"error": "يوجد خطأ في الإرسال", "sid": sid},
+                )
 
         elif test_type_normal == "whole-part":
             q_test_normal_after_edit = {}
