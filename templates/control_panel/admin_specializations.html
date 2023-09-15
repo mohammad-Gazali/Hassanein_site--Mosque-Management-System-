@@ -97,7 +97,7 @@
             <tbody id="main-tbody-admin-specializations">
                 {% for message in messages %}
                     <tr>
-                        <td style="white-space: nowrap">{{ message.master_name.first_name }} {{ message.master_name.last_name }}</td>
+                        <td style="white-space: nowrap">{{ message.master_name.user.first_name }} {{ message.master_name.user.last_name }}</td>
                         <td style="white-space: nowrap">{{ message.student }}</td>
                         <td style="white-space: nowrap">{{ message.part }}</td>
                         <td style="white-space: nowrap">{{ message.created_at }}</td>

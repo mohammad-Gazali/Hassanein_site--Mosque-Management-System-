@@ -17,7 +17,7 @@
             <tbody>
                 {% for a_msg in a_msgs %}
                     <tr>
-                        <td style="white-space: nowrap;">{{ a_msg.master_name.first_name }} {{ a_msg.master_name.last_name }}</td>
+                        <td style="white-space: nowrap;">{{ a_msg.master_name.user.first_name }} {{ a_msg.master_name.user.last_name }}</td>
                         <td style="white-space: nowrap;">{{ a_msg.student }}</td>
                         <td style="white-space: nowrap;">{{ a_msg.created_at }}</td>
                         <td style="white-space: nowrap;">{{ a_msg.cause }}</td>

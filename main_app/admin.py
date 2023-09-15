@@ -63,7 +63,7 @@ class AdminStudent(admin.ModelAdmin):
 
 @admin.register(models.MemorizeMessage)
 class AdminMemorizeMessage(admin.ModelAdmin):
-    list_display = ["id", "master_name", "student", "message_type", "sended_at"]
+    list_display = ["id", "master_full_name", "student", "message_type", "sended_at"]
     list_select_related = ["master_name__user", "student"]
     readonly_fields = [
         "master_name",
@@ -75,6 +75,10 @@ class AdminMemorizeMessage(admin.ModelAdmin):
     list_filter = ["master_name", "message_type"]
     search_fields = ["student_string"]
     exclude = ["student_string", "second_info"]
+
+    def master_full_name(self, obj: models.MemorizeMessage) -> str:
+        return f"{obj.master_name.user.first_name} {obj.master_name.user.last_name}"
+    master_full_name.short_description = "اسم الأستاذ"
 
     # this method prevent admin from deleting objects in this model
     def has_delete_permission(self, _, __=None):
@@ -110,7 +114,7 @@ class AdminMemorizeNote(admin.ModelAdmin):
     exclude = ["student_string"]
 
     def master_full_name(self, obj: models.MemorizeNotes) -> str:
-        return f"{obj.master_name.first_name} {obj.master_name.last_name}"
+        return f"{obj.master_name.user.first_name} {obj.master_name.user.last_name}"
     master_full_name.short_description = "اسم الأستاذ"
 
     def has_delete_permission(self, _, __=None):
@@ -134,8 +138,8 @@ class ComingAdmin(admin.ModelAdmin):
     list_filter = ["registered_at", "category"]
     list_select_related = ["student", "master_name__user", "category"]
 
-    def master_full_name(self, obj: models.MemorizeNotes) -> str:
-        return f"{obj.master_name.first_name} {obj.master_name.last_name}"
+    def master_full_name(self, obj: models.Coming) -> str:
+        return f"{obj.master_name.user.first_name} {obj.master_name.user.last_name}"
     master_full_name.short_description = "اسم الأستاذ"
 
     def has_delete_permission(self, _, __=None):
@@ -185,7 +189,7 @@ class PointsAddingAdmin(admin.ModelAdmin):
     list_select_related = ["student", "cause", "master_name__user"]
 
     def master_full_name(self, obj: models.MemorizeNotes) -> str:
-        return f"{obj.master_name.first_name} {obj.master_name.last_name}"
+        return f"{obj.master_name.user.first_name} {obj.master_name.user.last_name}"
     master_full_name.short_description = "اسم الأستاذ"
 
     def has_delete_permission(self, _, __=None):

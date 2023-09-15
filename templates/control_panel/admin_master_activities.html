@@ -17,7 +17,7 @@
             <tbody>
                 {% for message in messages %}
                     <tr class="{% if message.doublepointmessage %}ramadan-table-message-color{% endif %}">
-                        <td class="text-center" style="white-space: nowrap;">{{ message.master_name.first_name }} {{ message.master_name.last_name }}</td>
+                        <td class="text-center" style="white-space: nowrap;">{{ message.master_name.user.first_name }} {{ message.master_name.user.last_name }}</td>
                         <td class="text-center" style="white-space: nowrap;">{{ message.student_string }}</td>
                         <td class="text-center" style="white-space: nowrap;">{{ message.sended_at|date:'Y/m/d - h:i A'  }}</td>
                         <td class="text-center" style="white-space: nowrap;">
