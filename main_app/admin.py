@@ -224,7 +224,7 @@ def set_active(_, __, queryset: QuerySet[User]):
 
 @admin.register(User)
 class AdminUser(UserAdmin):
-    list_display = ["full_name", "username", "is_superuser", "is_active"]
+    list_display = ["id", "full_name", "username", "is_superuser", "is_active"]
     list_filter = ["is_superuser", "is_active", "groups"]
     actions = [set_active, set_unactive]
 

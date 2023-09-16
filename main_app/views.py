@@ -141,7 +141,6 @@ def add_q_memorize(request: HttpRequest, sid: int) -> HttpResponse:
         student = Student.objects.get(pk=sid)
         q_memo_before_edit = student.q_memorizing
         form = list(request.POST.items())
-        print(form)
         single_page = form[1][1]
         start_page = form[2][1]
         end_page = form[3][1]
@@ -162,7 +161,7 @@ def add_q_memorize(request: HttpRequest, sid: int) -> HttpResponse:
                     "error_page.html",
                     {
                         "error": "يوجد تكرار في التسميع, الرجاء مراجعة تفاصيل الطالب",
-                        "sid": sid,
+                        "student": student,
                     },
                 )
 
@@ -173,7 +172,7 @@ def add_q_memorize(request: HttpRequest, sid: int) -> HttpResponse:
                     "error_page.html",
                     {
                         "error": "يوجد تكرار في التسميع, الرجاء مراجعة تفاصيل الطالب",
-                        "sid": sid,
+                        "student": student,
                     },
                 )
 
@@ -188,7 +187,7 @@ def add_q_memorize(request: HttpRequest, sid: int) -> HttpResponse:
                         "error_page.html",
                         {
                             "error": "يوجد تكرار في التسميع, الرجاء مراجعة تفاصيل الطالب",
-                            "sid": sid,
+                            "student": student,
                         },
                     )
 
@@ -314,7 +313,7 @@ def add_q_test(request: HttpRequest) -> HttpResponse:
                         "error_page.html",
                         {
                             "error": "يوجد تكرار في السبر, الرجاء مراجعة تفاصيل الطالب",
-                            "sid": sid,
+                            "student": student,
                         },
                     )
 
@@ -361,7 +360,7 @@ def add_q_test(request: HttpRequest) -> HttpResponse:
                         "error_page.html",
                         {
                             "error": "يوجد تكرار في السبر, الرجاء مراجعة تفاصيل الطالب",
-                            "sid": sid,
+                            "student": student,
                         },
                     )
 
@@ -408,7 +407,7 @@ def add_q_test(request: HttpRequest) -> HttpResponse:
                         "error_page.html",
                         {
                             "error": "يوجد تكرار في السبر, الرجاء مراجعة تفاصيل الطالب",
-                            "sid": sid,
+                            "student": student,
                         },
                     )
 
@@ -455,7 +454,7 @@ def add_q_test(request: HttpRequest) -> HttpResponse:
                         "error_page.html",
                         {
                             "error": "يوجد تكرار في السبر, الرجاء مراجعة تفاصيل الطالب",
-                            "sid": sid,
+                            "student": student,
                         },
                     )
 
@@ -515,7 +514,7 @@ def add_q_test(request: HttpRequest) -> HttpResponse:
                         "error_page.html",
                         {
                             "error": "يوجد تكرار في السبر, الرجاء مراجعة تفاصيل الطالب",
-                            "sid": sid,
+                            "student": student,
                         },
                     )
 
@@ -567,7 +566,7 @@ def add_q_test(request: HttpRequest) -> HttpResponse:
                         "error_page.html",
                         {
                             "error": "يوجد تكرار في السبر, الرجاء مراجعة تفاصيل الطالب",
-                            "sid": sid,
+                            "student": student,
                         },
                     )
 
@@ -622,7 +621,7 @@ def add_q_test(request: HttpRequest) -> HttpResponse:
                         "error_page.html",
                         {
                             "error": "يوجد تكرار في السبر, الرجاء مراجعة تفاصيل الطالب",
-                            "sid": sid,
+                            "student": student,
                         },
                     )
                 q_test_normal_after_edit[quart] = "NEW"
@@ -1098,6 +1097,8 @@ def admin_awqaf_no_q(request: HttpRequest) -> HttpResponse:
         student_id = int(request.POST.get("student-id"))
         test_id = int(request.POST.get("type"))
 
+        student = get_object_or_404(Student, pk=student_id)
+
         if not AwqafNoQStudentRelation.objects.filter(
             student_id=student_id, test_id=test_id
         ):
@@ -1107,7 +1108,7 @@ def admin_awqaf_no_q(request: HttpRequest) -> HttpResponse:
 
         else:
             return render(
-                request, "error_page.html", {"error": "هذا السبر قد تم تسجيله مسبقاً"}
+                request, "error_page.html", {"error": "هذا السبر قد تم تسجيله مسبقاً", "student": student,}
             )
 
     return render(request, "awqaf_tests.html", {"test_types": test_types})

@@ -14,6 +14,12 @@
         <div class="text-white p-3 bg-danger border rounded">{{ error }}</div>
         <div class="d-flex justify-content-center flex-wrap align-items-center mt-5" style="gap: 16px">
             <a href="javascript:history.back()" class="btn btn-secondary px-3">الرجوع</a>
+            {% if student %}
+                <div data-model-target="#model-{{ student.id }}-id-detail" class="btn btn-primary px-3">عرض التفاصيل</div>
+                {% include 'models/student_detail_model.html' with student=student key="تفاصيل الطالب" type="detail" %}
+                <div id="overlay"></div>
+                <script src="{% static 'js/popped_up_models.js' %}"></script>
+            {% endif %}
         </div>
     </div>
 {% endblock content %}
