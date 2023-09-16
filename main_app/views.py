@@ -141,12 +141,13 @@ def add_q_memorize(request: HttpRequest, sid: int) -> HttpResponse:
         student = Student.objects.get(pk=sid)
         q_memo_before_edit = student.q_memorizing
         form = list(request.POST.items())
+        print(form)
         single_page = form[1][1]
         start_page = form[2][1]
         end_page = form[3][1]
         q_names = []
-        if len(form) >= 6:
-            for i in form[5:]:
+        if len(form) >= 5:
+            for i in form[4:]:
                 q_names.append(i[0])
 
         # Errors handling section start
