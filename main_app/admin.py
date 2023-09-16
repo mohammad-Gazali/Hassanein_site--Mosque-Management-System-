@@ -1,8 +1,11 @@
 from django.contrib import admin
 from django.db.models import JSONField
-from main_app import models
 from django_json_widget.widgets import JSONEditorWidget
 from django.conf import settings
+from django.contrib.auth.models import User
+from django.contrib.auth.admin import UserAdmin
+from django.db.models import QuerySet
+from main_app import models
 
 
 admin.site.site_title = f"لوحة إدارة مسجد {settings.MASJED_NAME}"
@@ -200,3 +203,31 @@ class PointsAddingAdmin(admin.ModelAdmin):
 
     def has_add_permission(self, _, __=None):
         return False
+    
+
+admin.site.unregister(User)
+
+@admin.action(description = "تعطيل المستخدمين العاديين")
+def set_unactive(_, __, queryset: QuerySet[User]):
+        for user in queryset:
+            if user.is_superuser:
+                continue
+            user.is_active = False
+            user.save()
+
+@admin.action(description = "تفعيل المستخدمين")
+def set_active(_, __, queryset: QuerySet[User]):
+    for user in queryset:
+        user.is_active = True
+        user.save()
+
+
+@admin.register(User)
+class AdminUser(UserAdmin):
+    list_display = ["full_name", "username", "is_superuser", "is_active"]
+    list_filter = ["is_superuser", "is_active", "groups"]
+    actions = [set_active, set_unactive]
+
+    def full_name(self, obj: User) -> str:
+        return f"{obj.first_name} {obj.last_name}"
+    full_name.short_description = "اسم الأستاذ"
