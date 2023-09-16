@@ -16,12 +16,23 @@ admin.site.site_header = f"إدارة مسجد {settings.MASJED_NAME}"
 class AdminCategory(admin.ModelAdmin):
     list_display = ["name"]
 
+
+@admin.action(description="إخفاء الطلاب المحددين")
+def hide_student(_, __, queryset: QuerySet[models.Student]):
+    control_settings = models.ControlSettings.objects.first()
+    for student in queryset:
+        control_settings.hidden_ids.append(int(student.id))
+    
+    control_settings.save()
+
+
 @admin.register(models.Student)
 class AdminStudent(admin.ModelAdmin):
     list_display = ["name", "age", "category", "mother_name"]
     search_fields = ["name"]
     list_select_related = ["category"]
     list_filter = ["category"]
+    actions = [hide_student]
 
     # here changed the widget of JSONField into another widget, this widget is imported from django_json_widget.widgets
     # we should firstly install the module 'django-json-widget' by using 'pip install django-json-widget', then we should go INSTALLED_APPS in settings.py and add 'django_json_widget'
