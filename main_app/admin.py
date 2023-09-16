@@ -149,7 +149,7 @@ class ComingCategoryAdmin(admin.ModelAdmin):
 @admin.register(models.Coming)
 class ComingAdmin(admin.ModelAdmin):
     list_display = ["student", "master_full_name", "category", "registered_at"]
-    list_filter = ["registered_at", "category"]
+    list_filter = ["registered_at", "category", "student__category"]
     list_select_related = ["student", "master_name__user", "category"]
 
     def master_full_name(self, obj: models.Coming) -> str:
