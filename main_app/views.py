@@ -5,6 +5,8 @@ from django.views.generic import ListView, DeleteView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import HttpRequest, HttpResponse, HttpResponseForbidden, HttpResponseNotAllowed, JsonResponse
 from django.db.models import Prefetch, Sum, Q
+from django.conf import settings
+from django.utils import timezone
 from main_app.models import (
     MemorizeNotes,
     MessageTypeChoice,
@@ -67,9 +69,31 @@ def search_results_of_student(request: HttpRequest) -> HttpResponse:
 
         # hiding hidden ids from non-authenticated users
         if request.user.is_authenticated:
-            student = Student.objects.filter(pk=query_id)
+            student = Student.objects.filter(pk=query_id).prefetch_related(
+                        Prefetch(
+                            "coming_set",
+                            queryset=Coming.objects.filter(category_id=settings.Q_COMING_CATEGORY_ID).order_by("-registered_at"),
+                            to_attr="last_comings",
+                        ),
+                        Prefetch(
+                            "memorizemessage_set",
+                            queryset=MemorizeMessage.objects.filter(sended_at__date=timezone.datetime.today()),
+                            to_attr="today_messages",
+                        )
+                    )
         else:
-            student = Student.objects.filter(pk=query_id).exclude(pk__in=control_settings.hidden_ids)
+            student = Student.objects.filter(pk=query_id).exclude(pk__in=control_settings.hidden_ids).prefetch_related(
+                        Prefetch(
+                            "coming_set",
+                            queryset=Coming.objects.filter(category_id=settings.Q_COMING_CATEGORY_ID).order_by("-registered_at"),
+                            to_attr="last_comings",
+                        ),
+                        Prefetch(
+                            "memorizemessage_set",
+                            queryset=MemorizeMessage.objects.filter(sended_at__date=timezone.datetime.today()),
+                            to_attr="today_messages",
+                        ),
+                    )
 
         return render(
             request,
@@ -92,25 +116,44 @@ def search_results_of_student(request: HttpRequest) -> HttpResponse:
 
         if request.user.is_authenticated:
             students = (
-                Student.objects.prefetch_related(
+                Student.objects.filter(name__iregex="{}".format(my_regex)).prefetch_related(
                     "memorizenotes_set",
                     "part_set__level__specialization",
                     "awqafnoqstudentrelation_set",
+                    Prefetch(
+                        "coming_set",
+                        queryset=Coming.objects.filter(category_id=settings.Q_COMING_CATEGORY_ID).order_by("-registered_at"),
+                        to_attr="last_comings",
+                    ),
+                    Prefetch(
+                        "memorizemessage_set",
+                        queryset=MemorizeMessage.objects.filter(sended_at__date=timezone.datetime.today()),
+                        to_attr="today_messages",
+                    ),
                 )
                 .select_related("category")
-                .filter(name__iregex="{}".format(my_regex))
                 .order_by("id")
             )
         else:
             students = (
-                Student.objects.prefetch_related(
+                Student.objects.filter(name__iregex="{}".format(my_regex))
+                .exclude(pk__in=control_settings.hidden_ids)
+                .prefetch_related(
                     "memorizenotes_set",
                     "part_set__level__specialization",
                     "awqafnoqstudentrelation_set",
+                    Prefetch(
+                        "coming_set",
+                        queryset=Coming.objects.filter(category_id=settings.Q_COMING_CATEGORY_ID).order_by("-registered_at"),
+                        to_attr="last_comings",
+                    ),
+                    Prefetch(
+                        "memorizemessage_set",
+                        queryset=MemorizeMessage.objects.filter(sended_at__date=timezone.datetime.today()),
+                        to_attr="today_messages",
+                    ),
                 )
                 .select_related("category")
-                .filter(name__iregex="{}".format(my_regex))
-                .exclude(pk__in=control_settings.hidden_ids)
                 .order_by("id")
             )
 

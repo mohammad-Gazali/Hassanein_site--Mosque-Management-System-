@@ -34,6 +34,64 @@
                     {% endif %}
                 </ul>
             </div>
+            <hr class="border-light">
+            <h6 class="title text-white" style="background: rgb(109, 40, 193); border: 2px white solid">
+                تاريخ آخر حضور للطالب في الدورة
+            </h6>
+            <div class="d-flex justify-content-center">
+                {% if student.last_comings %}
+                    <div class="flex-block bg-success text-white px-2">
+                        {{ student.last_comings.0.registered_at|date:"Y/m/d" }}
+                    </div>
+                {% else %}
+                    <div class="flex-block px-2 bg-secondary text-white">
+                        لم يحضر
+                    </div>
+                {% endif %}
+            </div>
+            <hr class="border-light">
+            <h6 class="title text-white" style="background: rgb(109, 40, 193); border: 2px white solid">
+                تسميعات اليوم
+            </h6>
+            <div class="d-flex justify-content-center">
+                {% if student.today_messages %}
+                    <div class="d-flex flex-wrap justify-content-center gap-2">
+                        {% for message in student.today_messages %}
+                            {% if message.message_type == 1 %}
+                                {% for key, _ in message.first_info.items %}
+                                    <div class="block bg-success text-white">
+                                        {{ key }}
+                                    </div>    
+                                {% endfor %}
+                            {% elif message.message_type == 2 %}
+                                <div class="flex-block bg-success text-white px-2">
+                                    سبر {{ message.first_info.content }}
+                                </div>
+                            {% elif message.message_type == 3 %}
+                                {% for item in message.first_info %}
+                                    <div class="flex-block bg-success text-white px-2">
+                                        {{ item }} من الأربعين النووية
+                                    </div>  
+                                {% endfor %}
+                            {% elif message.message_type == 4 %}
+                                {% for item in message.first_info %}
+                                    <div class="flex-block bg-success text-white px-2">
+                                        {{ item }} من رياض الصالحين
+                                    </div>    
+                                {% endfor %}
+                            {% else %}
+                                <div class="flex-block bg-success text-white px-2">
+                                    أسماء الله الحسنى
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="flex-block px-2 bg-secondary text-white">
+                        لا يوجد
+                    </div>
+                {% endif %}
+            </div>
         </section>
         <section id="instructions-{{ student.id }}" class="instructions">
             <h6 class="text-white title" style="width: 70%">
