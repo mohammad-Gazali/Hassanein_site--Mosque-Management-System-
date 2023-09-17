@@ -36,8 +36,8 @@ def give_num_pages(info):
     return result
 
 
-def get_last_sat_date_range(initial_date=None):
-    today = timezone.datetime.today().date() if initial_date is None else initial_date
+def get_last_sat_date_range():
+    today = timezone.datetime.today().date()
 
     # When day is saturday
     if today.weekday() == 5:
