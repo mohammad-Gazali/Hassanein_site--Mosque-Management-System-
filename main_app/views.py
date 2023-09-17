@@ -29,7 +29,7 @@ from main_app.models import (
 from main_app.forms import SettingForm
 from main_app.point_map import apply_q_map
 from main_app.check_functions import check_adding_hadeeth, check_admin, check_coming, check_adding_points
-from main_app.helpers import give_section_from_page, give_num_pages
+from main_app.helpers import give_section_from_page, give_num_pages, get_last_sat_date_range
 from specializations.models import Part, SpecializationMessage, Specialization, Level
 from specializations.views import apply_edit_changes
 from datetime import datetime, date
@@ -77,8 +77,8 @@ def search_results_of_student(request: HttpRequest) -> HttpResponse:
                         ),
                         Prefetch(
                             "memorizemessage_set",
-                            queryset=MemorizeMessage.objects.filter(sended_at__date=timezone.datetime.today()),
-                            to_attr="today_messages",
+                            queryset=MemorizeMessage.objects.filter(sended_at__range=get_last_sat_date_range()),
+                            to_attr="last_week_messages",
                         )
                     )
         else:
@@ -90,8 +90,8 @@ def search_results_of_student(request: HttpRequest) -> HttpResponse:
                         ),
                         Prefetch(
                             "memorizemessage_set",
-                            queryset=MemorizeMessage.objects.filter(sended_at__date=timezone.datetime.today()),
-                            to_attr="today_messages",
+                            queryset=MemorizeMessage.objects.filter(sended_at__range=get_last_sat_date_range()),
+                            to_attr="last_week_messages",
                         ),
                     )
 
@@ -127,8 +127,8 @@ def search_results_of_student(request: HttpRequest) -> HttpResponse:
                     ),
                     Prefetch(
                         "memorizemessage_set",
-                        queryset=MemorizeMessage.objects.filter(sended_at__date=timezone.datetime.today()),
-                        to_attr="today_messages",
+                        queryset=MemorizeMessage.objects.filter(sended_at__range=get_last_sat_date_range()),
+                        to_attr="last_week_messages",
                     ),
                 )
                 .select_related("category")
@@ -149,8 +149,8 @@ def search_results_of_student(request: HttpRequest) -> HttpResponse:
                     ),
                     Prefetch(
                         "memorizemessage_set",
-                        queryset=MemorizeMessage.objects.filter(sended_at__date=timezone.datetime.today()),
-                        to_attr="today_messages",
+                        queryset=MemorizeMessage.objects.filter(sended_at__range=get_last_sat_date_range()),
+                        to_attr="last_week_messages",
                     ),
                 )
                 .select_related("category")

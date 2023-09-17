@@ -51,12 +51,12 @@
             </div>
             <hr class="border-light">
             <h6 class="title text-white" style="background: rgb(109, 40, 193); border: 2px white solid">
-                تسميعات اليوم
+                تسميعات آخر أسبوع
             </h6>
             <div class="d-flex justify-content-center">
-                {% if student.today_messages %}
+                {% if student.last_week_messages %}
                     <div class="d-flex flex-wrap justify-content-center gap-2">
-                        {% for message in student.today_messages %}
+                        {% for message in student.last_week_messages %}
                             {% if message.message_type == 1 %}
                                 {% for key, _ in message.first_info.items %}
                                     <div class="block bg-success text-white">

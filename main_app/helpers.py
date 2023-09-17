@@ -1,3 +1,4 @@
+from django.utils import timezone
 from main_app.point_map import q_map
 import math
 
@@ -33,3 +34,18 @@ def give_num_pages(info):
             result += 10
             
     return result
+
+
+def get_last_sat_date_range(initial_date=None):
+    today = timezone.datetime.today().date() if initial_date is None else initial_date
+
+    # When day is saturday
+    if today.weekday() == 5:
+        next_sat = today + timezone.timedelta(7)
+        return [today, next_sat]
+
+    idx = (today.weekday() + 1) % 7
+
+    last_sat = today - timezone.timedelta(idx+1)
+    next_sat = last_sat + timezone.timedelta(7)
+    return [last_sat, next_sat]
