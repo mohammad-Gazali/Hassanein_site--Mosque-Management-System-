@@ -1086,46 +1086,18 @@ def admin_awqaf(request: HttpRequest) -> HttpResponse:
 
         filterd_sections = list(set(re.split(r"\s+", sections.strip())))
 
+        new_sections = {s: "NEW" for s in filterd_sections}
+
         student = Student.objects.get(pk=student_id)
 
         if test_type == "normal":
-            new_sections = {s: "NEW" for s in filterd_sections}
-            for section, value in student.q_awqaf_test.items():
-                if value == "OLD":
-                    new_sections[section] = "OLD"
-                elif section in new_sections:
-                    pass
-                else:
-                    new_sections[section] = value
-
-            student.q_awqaf_test = new_sections
-            student.save()
-
+            student.q_awqaf_test.update(new_sections)
         elif test_type == "looking":
-            new_sections = {s: "NEW" for s in filterd_sections}
-            for section, value in student.q_awqaf_test_looking.items():
-                if value == "OLD":
-                    new_sections[section] = "OLD"
-                elif section in new_sections:
-                    pass
-                else:
-                    new_sections[section] = value
-
-            student.q_awqaf_test_looking = new_sections
-            student.save()
-
+            student.q_awqaf_test_looking.update(new_sections)
         else:
-            new_sections = {s: "NEW" for s in filterd_sections}
-            for section, value in student.q_awqaf_test_explaining.items():
-                if value == "OLD":
-                    new_sections[section] = "OLD"
-                elif section in new_sections:
-                    pass
-                else:
-                    new_sections[section] = value
+            student.q_awqaf_test_explaining.update(new_sections)
 
-            student.q_awqaf_test_explaining = new_sections
-            student.save()
+        student.save()
 
     return render(request, "awqaf_tests.html", {"test_types": test_types})
 
