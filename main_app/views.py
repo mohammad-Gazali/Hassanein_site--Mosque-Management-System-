@@ -1086,12 +1086,10 @@ def admin_awqaf(request: HttpRequest) -> HttpResponse:
 
         filterd_sections = list(set(re.split(r"\s+", sections.strip())))
 
-        list_of_sections = list(map(lambda x: "الجزء " + x, filterd_sections))
-
         student = Student.objects.get(pk=student_id)
 
         if test_type == "normal":
-            new_sections = {s: "NEW" for s in list_of_sections}
+            new_sections = {s: "NEW" for s in filterd_sections}
             for section, value in student.q_awqaf_test.items():
                 if value == "OLD":
                     new_sections[section] = "OLD"
@@ -1104,7 +1102,7 @@ def admin_awqaf(request: HttpRequest) -> HttpResponse:
             student.save()
 
         elif test_type == "looking":
-            new_sections = {s: "NEW" for s in list_of_sections}
+            new_sections = {s: "NEW" for s in filterd_sections}
             for section, value in student.q_awqaf_test_looking.items():
                 if value == "OLD":
                     new_sections[section] = "OLD"
@@ -1117,7 +1115,7 @@ def admin_awqaf(request: HttpRequest) -> HttpResponse:
             student.save()
 
         else:
-            new_sections = {s: "NEW" for s in list_of_sections}
+            new_sections = {s: "NEW" for s in filterd_sections}
             for section, value in student.q_awqaf_test_explaining.items():
                 if value == "OLD":
                     new_sections[section] = "OLD"
