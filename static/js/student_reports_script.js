@@ -28,7 +28,7 @@ Array.from(studentsReportsRadioInputs).forEach((item, index) => {
 
 studentsReportsReportsForm.onsubmit = (e) => {
     e.preventDefault();
-    if (!studentsReportsHiddenInput.value) {
+    if (!studentsReportsHiddenInput.value && studentsReportsRadioInputs[2].checked) {
         studentsReportsErrorNotStudentChoosed.innerHTML = ''
         studentsReportsErrorNotStudentChoosed.className = ''
 

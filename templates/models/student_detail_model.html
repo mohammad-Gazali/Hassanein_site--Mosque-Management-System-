@@ -60,9 +60,15 @@
                         {% for message in student.last_week_messages %}
                             {% if message.message_type == 1 %}
                                 {% for key, _ in message.first_info.items %}
-                                    <div class="block bg-success text-white">
-                                        {{ key }}
-                                    </div>    
+                                    {% if key|length > 3 or key == 'عبس' %}
+                                        <div class="flex-block bg-success text-white">
+                                            {{ key }}
+                                        </div>
+                                    {% else %}
+                                        <div class="block bg-success text-white">
+                                            {{ key }}
+                                        </div>
+                                    {% endif %}
                                 {% endfor %}
                             {% elif message.message_type == 2 %}
                                 <div class="flex-block bg-success text-white px-2">
