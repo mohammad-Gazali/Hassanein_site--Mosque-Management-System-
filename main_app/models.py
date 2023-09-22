@@ -3,7 +3,7 @@ from django.db.models.signals import post_save
 from django.contrib.auth import get_user_model
 from django.dispatch import receiver
 from django.conf.global_settings import AUTH_USER_MODEL
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MinValueValidator
 from main_app import default_json
 from main_app.point_map import q_map
 from datetime import date
@@ -20,6 +20,17 @@ class Category(models.Model):
     class Meta:
         verbose_name = "الفئة"
         verbose_name_plural = "الفئات"
+
+
+class StudentGroup(models.Model):
+    name = models.CharField(max_length=255, verbose_name="الاسم", unique=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "مجموعة الطلاب"
+        verbose_name_plural = "مجموعات الطلاب"
 
 
 class Master(models.Model):
@@ -59,6 +70,7 @@ class Student(models.Model):
     riad_alsaalihin_new = models.IntegerField(verbose_name="رياض الصالحين جديد", default=0, validators=[MinValueValidator(0)])
     allah_names_old = models.BooleanField(verbose_name="أسماء الله الحسنى قديم", default=False)
     allah_names_new = models.BooleanField(verbose_name="أسماء الله الحسنى جديد", default=False)
+    student_group = models.ForeignKey(StudentGroup, on_delete=models.SET_NULL, verbose_name="مجموعة الطالب", null=True, blank=True)
 
     def __str__(self):
         return self.name

@@ -6,7 +6,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import HttpRequest, HttpResponse, HttpResponseForbidden, HttpResponseNotAllowed, JsonResponse
 from django.db.models import Prefetch, Sum, Q
 from django.conf import settings
-from django.utils import timezone
 from main_app.models import (
     MemorizeNotes,
     MessageTypeChoice,
@@ -25,6 +24,7 @@ from main_app.models import (
     ComingCategory,
     AwqafTestNoQ,
     AwqafNoQStudentRelation,
+    StudentGroup,
 )
 from main_app.forms import SettingForm
 from main_app.point_map import apply_q_map
@@ -1693,12 +1693,9 @@ def students_reports(request: HttpRequest) -> HttpResponse:
         start = request.POST.get("start").split("-")
         end = request.POST.get("end").split("-")
 
-        start = datetime(
-            year=int(start[0]), month=int(start[1]), day=int(start[2]), tzinfo=pytz.UTC
-        )
-        end = datetime(
-            year=int(end[0]), month=int(end[1]), day=int(end[2]), tzinfo=pytz.UTC
-        )
+        start = datetime(year=int(start[0]), month=int(start[1]), day=int(start[2]), tzinfo=pytz.UTC)
+        end = datetime(year=int(end[0]), month=int(end[1]), day=int(end[2]), tzinfo=pytz.UTC)
+
         if reports_type == "all":
             data = {}
             reports = []
@@ -1706,7 +1703,7 @@ def students_reports(request: HttpRequest) -> HttpResponse:
 
             for student in students:
                 data[student.id, student.name] = student.memorizemessage_set.filter(
-                    sended_at__range=[start, end], message_type__in=[1, 2]
+                    sended_at__range=[start, end], message_type__in=[MessageTypeChoice.MEMO, MessageTypeChoice.TEST]
                 )
 
             for personal_info, messages in data.items():
@@ -1724,16 +1721,40 @@ def students_reports(request: HttpRequest) -> HttpResponse:
                     "reports": reports,
                     "start": request.POST.get("start"),
                     "end": request.POST.get("end"),
-                    "one_report": False,
+                    "type": reports_type,
                 },
+            )
+
+        elif reports_type == "groups":
+            reports = []
+            students_groups = StudentGroup.objects.all()
+
+            for group in students_groups:
+                sum_pages = 0
+                for student in group.student_set.all():
+                    for message in student.memorizemessage_set.filter(sended_at__range=[start, end], message_type__in=[MessageTypeChoice.MEMO, MessageTypeChoice.TEST]):
+                        sum_pages += give_num_pages(message)
+                reports.append({"group": group, "sum_pages": sum_pages})
+
+            reports.sort(key=lambda x: x["sum_pages"], reverse=True)
+
+            return render(
+                request,
+                "reports/reports_results.html",
+                {
+                    "reports": reports,
+                    "start": request.POST.get("start"),
+                    "end": request.POST.get("end"),
+                    "type": reports_type,
+                }
             )
 
         else:
             result = {}
-            student = Student.objects.get(pk=int(sid))
+            student = Student.objects.get(pk=sid)
             result["student"] = student
             messages = student.memorizemessage_set.filter(
-                sended_at__range=[start, end], message_type__in=[1, 2]
+                sended_at__range=[start, end], message_type__in=[MessageTypeChoice.MEMO, MessageTypeChoice.TEST]
             )
             sum_pages = 0
             for message in messages:
@@ -1748,12 +1769,12 @@ def students_reports(request: HttpRequest) -> HttpResponse:
                     "reports": result,
                     "start": request.POST.get("start"),
                     "end": request.POST.get("end"),
-                    "one_report": True,
+                    "type": reports_type,
                 },
             )
 
     else:
-        return render(request, "reports/all_students_reports.html")
+        return render(request, "reports/students_reports.html")
 
 
 @user_passes_test(check_admin)
@@ -2014,7 +2035,7 @@ def add_hadeeth(request: HttpRequest) -> HttpResponse:
 
 
     return redirect(request.META.get("HTTP_REFERER"))
-        
+
 
 
 

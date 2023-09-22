@@ -1,19 +1,19 @@
-let studentsReportsSearchStudentSection = document.getElementById('search-student-section-students-reports')
-let studentsReportsFormSearchStudent = document.querySelector('#search-student-section-students-reports form')
-let studentsReportsTitle = studentsReportsSearchStudentSection.closest('h3')
-let studentsReportsRadioInputs = document.querySelectorAll('#reports-form-students-reports input[name="type"]')
-let studentsReportsSearchInput = document.getElementById('students-reports-search-student')
-let studentsReportsHiddenInput = document.querySelector('#reports-form-students-reports input[name="student-id"]')
-let studentsReportsDisplayingStudents = document.getElementById('displaying-students-students-reports') 
-let studentsReportsDisplayingStudentsFormBody = document.getElementById('div-for-displaying-student-in-form-body-students-reports')
-let studentsReportsErrorNotStudentChoosed = document.getElementById('error-section-for-not-choosing-student-students-reports')
-let studentsReportsReportsForm = document.getElementById('reports-form-students-reports')
-let csrfMiddlewareToken = document.querySelector('#reports-form-students-reports input[name="csrfmiddlewaretoken"]')
+const studentsReportsSearchStudentSection = document.getElementById('search-student-section-students-reports');
+const studentsReportsFormSearchStudent = document.querySelector('#search-student-section-students-reports form');
+const studentsReportsTitle = studentsReportsSearchStudentSection.closest('h3');
+const studentsReportsRadioInputs = document.querySelectorAll('#reports-form-students-reports input[name="type"]');
+const studentsReportsSearchInput = document.getElementById('students-reports-search-student');
+const studentsReportsHiddenInput = document.querySelector('#reports-form-students-reports input[name="student-id"]');
+const studentsReportsDisplayingStudents = document.getElementById('displaying-students-students-reports') ;
+const studentsReportsDisplayingStudentsFormBody = document.getElementById('div-for-displaying-student-in-form-body-students-reports');
+const studentsReportsErrorNotStudentChoosed = document.getElementById('error-section-for-not-choosing-student-students-reports');
+const studentsReportsReportsForm = document.getElementById('reports-form-students-reports');
+const csrfMiddlewareToken = document.querySelector('#reports-form-students-reports input[name="csrfmiddlewaretoken"]');
 
 
 Array.from(studentsReportsRadioInputs).forEach((item, index) => {
     item.onchange = () => {
-        if (index === 0) {
+        if (index !== 2) {
             studentsReportsSearchStudentSection.classList.add('d-none')
             studentsReportsDisplayingStudentsFormBody.classList.add('d-none')
             studentsReportsReportsForm.onsubmit = (e) => {
@@ -22,23 +22,23 @@ Array.from(studentsReportsRadioInputs).forEach((item, index) => {
         } else {
             studentsReportsSearchStudentSection.classList.remove('d-none')
             studentsReportsDisplayingStudentsFormBody.classList.remove('d-none')
-            studentsReportsReportsForm.onsubmit = (e) => {
-                e.preventDefault();
-                if (!studentsReportsHiddenInput.value) {
-                    studentsReportsErrorNotStudentChoosed.innerHTML = ''
-                    studentsReportsErrorNotStudentChoosed.className = ''
-            
-                    studentsReportsErrorNotStudentChoosed.className = 'alert alert-danger'
-                    studentsReportsErrorNotStudentChoosed.role = 'alert'
-                    studentsReportsErrorNotStudentChoosed.textContent = 'يجب اختيار الطالب قبل إيجاد التقرير'
-                } else {
-                    e.target.submit();
-                }
-            }   
         }
     }
 })
 
+studentsReportsReportsForm.onsubmit = (e) => {
+    e.preventDefault();
+    if (!studentsReportsHiddenInput.value) {
+        studentsReportsErrorNotStudentChoosed.innerHTML = ''
+        studentsReportsErrorNotStudentChoosed.className = ''
+
+        studentsReportsErrorNotStudentChoosed.className = 'alert alert-danger'
+        studentsReportsErrorNotStudentChoosed.role = 'alert'
+        studentsReportsErrorNotStudentChoosed.textContent = 'يجب اختيار الطالب قبل إيجاد التقرير'
+    } else {
+        e.target.submit();
+    }
+}
 
 //* Handling AJAX
 const handleFetchEditPoints = async () => {

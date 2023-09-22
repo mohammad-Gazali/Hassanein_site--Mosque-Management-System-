@@ -28,11 +28,12 @@ def hide_student(_, __, queryset: QuerySet[models.Student]):
 
 @admin.register(models.Student)
 class AdminStudent(admin.ModelAdmin):
-    list_display = ["name", "age", "category", "mother_name"]
+    list_display = ["name", "age", "category", "student_group", "mother_name"]
     search_fields = ["name"]
     list_select_related = ["category"]
-    list_filter = ["category"]
+    list_filter = ["category", "student_group"]
     actions = [hide_student]
+    list_editable = ["student_group"]
 
     # here changed the widget of JSONField into another widget, this widget is imported from django_json_widget.widgets
     # we should firstly install the module 'django-json-widget' by using 'pip install django-json-widget', then we should go INSTALLED_APPS in settings.py and add 'django_json_widget'
@@ -242,3 +243,8 @@ class AdminUser(UserAdmin):
     def full_name(self, obj: User) -> str:
         return f"{obj.first_name} {obj.last_name}"
     full_name.short_description = "اسم الأستاذ"
+
+
+@admin.register(models.StudentGroup)
+class AdminStudentGroup(admin.ModelAdmin):
+    pass

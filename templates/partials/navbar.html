@@ -4,7 +4,13 @@
     <div class="container-fluid position-relative">
         <span class="d-flex navbar-brand fs-4">
             <a class="nav-link text-white p-0" href="{% url 'home' %}">
-                <img class="position-absolute logo-image" width="50" src="{% static 'white-logo-icon.svg' %}" alt="logo">
+                {% if masjed_name == "الحسنين" %}
+                <img class="position-absolute logo-image" width="50" src="{% static 'hassanein-white-logo-icon.svg' %}" alt="logo">
+                {% elif masjed_name == "السلام" %}
+                <img class="position-absolute logo-image" width="50" src="{% static 'salam-white-logo-icon.svg' %}" alt="logo">
+                {% elif masjed_name == "القزاز" %}
+                <img class="position-absolute logo-image" width="50" src="{% static 'qazzaz-white-logo-icon.svg' %}" alt="logo">
+                {% endif %}
             </a>
             {% if user.is_authenticated %}
                 <span class="only-big">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>

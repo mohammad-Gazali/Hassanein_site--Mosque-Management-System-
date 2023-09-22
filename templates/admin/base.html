@@ -3,7 +3,13 @@
 
 
 {% block extrahead %}
-    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}" />
+    {% if masjed_name == "الحسنين" %}
+    <link rel="icon" type="image/x-icon" href="{% static 'imgs/hassanein-favicon.ico' %}">
+    {% elif masjed_name == "السلام" %}
+    <link rel="icon" type="image/x-icon" href="{% static 'imgs/salam-favicon.ico' %}">
+    {% elif masjed_name == "القزاز" %}
+    <link rel="icon" type="image/x-icon" href="{% static 'imgs/qazzaz-favicon.ico' %}">
+    {% endif %}
 {% endblock %}
 
 {% block extrastyle %}
