@@ -885,9 +885,10 @@ def search_results_of_student_coming(request: HttpRequest) -> HttpResponse:
 def add_coming(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
         master = Master.objects.get(user=request.user)
-        student_id = int(request.POST.get("student-id"))
-        points = int(request.POST.get("points"))
-        category_id = int(request.POST.get("coming-category"))
+        student_id = request.POST.get("student-id")
+        category_id = request.POST.get("category-id")
+
+        control_settings = ControlSettings.objects.first()
 
         coming_today = Coming.objects.filter(registered_at__date=date.today(), category_id=category_id, student_id=student_id)
 
@@ -898,7 +899,7 @@ def add_coming(request: HttpRequest) -> HttpResponse:
             master_name=master,
             student_id=student_id,
             category_id=category_id,
-            points=points,
+            is_doubled=control_settings.double_points,
         )
 
         return redirect(request.META.get("HTTP_REFERER"))

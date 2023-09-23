@@ -33,15 +33,4 @@
             {% endif %}
         {% endif %}
     </section>
-    <div class="determining-btn-container">
-        <button data-model-target="#model-determining-adding" class="btn btn-purple d-flex justify-content-center align-items-center gap-2">
-            تحديد الإضافة <i class="bi bi-plus-square"></i>
-        </button>
-    </div>
-    {% include "models/determining_adding_model.html" %}
-    {% include "models/warning_model.html" with warning="يجب تحديد النقاط قبل البدء بستجيل الحضور" key="coming" %}
-    <div id="overlay"></div>
-    <script src="{% static 'js/popped_up_models.js' %}"></script>
-    {% comment %} ! Here we must add search_results_coming_script.js after popped_up_models.js because we use function "closeModel" from popped_up_models.js inside search_results_coming_script.js {% endcomment %}
-    <script src="{% static 'js/search_results_coming_script.js' %}"></script>
 {% endblock content %}

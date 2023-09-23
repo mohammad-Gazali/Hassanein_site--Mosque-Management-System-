@@ -3,7 +3,6 @@
 <div class="card w-100" style="border: 1px solid rgba(255, 255, 255, 0.098); background-color: #354462">
     <div class="card-body">
         <h5 class="card-title text-white rounded p-4 mb-3" style="background-color: var(--clr1); border: 2px solid white">اسم الطالب: {{ coming.student }}</h5>
-        <p class="card-text bg-white rounded p-2 fw-bold">النقاط: {{ coming.points }}</p>
         <p class="card-text bg-white rounded p-2 fw-bold">نوع الحضور: {{ coming.category }}</p>
         <p class="card-text bg-white rounded p-2 fw-bold">{{ coming.registered_at|date:'Y/m/d - h:i A' }}</p>
         <a href="{% url 'delete_coming' coming.id %}" class="btn btn-danger w-100">

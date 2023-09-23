@@ -144,7 +144,7 @@ class AdminMemorizeNote(admin.ModelAdmin):
 
 @admin.register(models.ComingCategory)
 class ComingCategoryAdmin(admin.ModelAdmin):
-    list_display = ["name"]
+    list_display = ["name", "points"]
 
 
 @admin.register(models.Coming)

@@ -14,5 +14,10 @@
             </ul>
         </div>
     </div>
-    <button data-student-id="{{ student.id }}" class="btn btn-success position-absolute-bottom mt-3 translate-middle col-6 text-white submit-coming-button">تسجيل حضور</button>
+    <form action="{% url 'add_coming' %}" method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="student-id" value="{{ student.id }}">
+        <input type="hidden" name="category-id" value="{{ request.GET.category_id }}">
+        <button class="btn btn-success position-absolute-bottom mt-3 translate-middle col-6 text-white submit-coming-button">تسجيل حضور</button>
+    </form>
 </div>
