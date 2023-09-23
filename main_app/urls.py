@@ -42,6 +42,7 @@ urlpatterns = [
     path("money/delete/table", views.deleting_money_table, name="money_deleting_table"),
     path("money/delete/total-table", views.deleting_money_total_table, name="money_deleting_total_table"),
     path("hadeeth/add", views.add_hadeeth, name="add_hadeeth"),
+    path("parts-received/edit", views.edit_parts_received, name="edit_parts_received"),
     path("json/students", views.students_ajax, name="students_ajax"),
     path("json/switch/money-delete", views.switch_deleting_active_to_points_state, name="switch_money_deleting_ajax"),
     path("json/add-hidden-id", views.adding_hidden_id, name="adding_hidden_id_ajax"),

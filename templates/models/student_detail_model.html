@@ -32,6 +32,7 @@
                     <li class="list-group-item border text-center text-white" style="background-color: #1c283f;"><b>العمر: </b>{% if student.age != "تاريخ الميلاد غير محدد" %}{{ student.age }} سنة{% else %}-{% endif %}</li>
                     {% if user.is_authenticated %}
                         <li class="list-group-item border text-center text-white" style="background-color: #1c283f;"><b>اسم الأم: </b>{{ student.mother_name|default_if_none:"-" }}</li>
+                        <li class="list-group-item border text-center text-white" style="background-color: #1c283f;"><b>الأجزاء المستلمة: </b>{{ student.parts_received|default_if_none:"-" }}</li>
                     {% endif %}
                 </ul>
             </div>

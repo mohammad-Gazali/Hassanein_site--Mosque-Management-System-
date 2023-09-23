@@ -20,6 +20,7 @@
                     <th style="white-space: nowrap;" class="text-center">عمل الأب</th>
                     <th style="white-space: nowrap;" class="text-center">ملاحظات</th>
                     <th style="white-space: nowrap;" class="text-center">الطالب الذي أحضره</th>
+                    <th style="white-space: nowrap;" class="text-center">الأجزاء المستلمة</th>
                     <th style="white-space: nowrap;" class="text-center"></th>
                 </tr>
             </thead>
@@ -44,6 +45,7 @@
                         <td class="text-center" style="white-space: nowrap;">{{ student.father_work|default_if_none:"-" }}</td>
                         <td class="text-center" style="white-space: nowrap;">{{ student.notes|default_if_none:"-" }}</td>
                         <td class="text-center" style="white-space: nowrap;">{{ student.bring_him|default_if_none:"-" }}</td>
+                        <td class="text-center" style="white-space: nowrap;">{{ student.parts_received|default_if_none:"-" }}</td>
                         <td class="text-center" style="white-space: nowrap;">
                             <a class="btn btn-warning w-100" href="{% url 'admin:main_app_student_change' student.id %}">
                                 تعديل <i class="bi bi-pencil-square"></i>

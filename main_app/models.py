@@ -71,6 +71,7 @@ class Student(models.Model):
     allah_names_old = models.BooleanField(verbose_name="أسماء الله الحسنى قديم", default=False)
     allah_names_new = models.BooleanField(verbose_name="أسماء الله الحسنى جديد", default=False)
     student_group = models.ForeignKey(StudentGroup, on_delete=models.SET_NULL, verbose_name="مجموعة الطالب", null=True, blank=True)
+    parts_received = models.CharField(max_length=255, verbose_name="الأجزاء المستلمة", null=True, blank=True)
 
     def __str__(self):
         return self.name

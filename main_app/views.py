@@ -2038,6 +2038,21 @@ def add_hadeeth(request: HttpRequest) -> HttpResponse:
     return redirect(request.META.get("HTTP_REFERER"))
 
 
+@login_required
+def edit_parts_received(request: HttpRequest) -> HttpResponse:
+    if request.method == "POST":
+        content = request.POST.get("content")
+        student_id = request.POST.get("student-id")
+
+        student = get_object_or_404(Student, pk=student_id)
+
+        student.parts_received = content
+
+        student.save()
+
+    return redirect(request.META.get("HTTP_REFERER"))
+
+
 
 
 # ajax views

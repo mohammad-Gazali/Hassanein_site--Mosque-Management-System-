@@ -8,12 +8,21 @@
     <div class="model-body">
         <link rel="stylesheet" href="{% static 'css/create_note_style.css' %}">
         <div class="main-create-note container">
+            <h3 class="title text-white" style="width: unset !important;">الأجزاء المستلمة</h3>
+            <form class="form-control" action="{% url "edit_parts_received" %}" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="student-id" value="{{ student.id }}" required>
+                <p class="fw-bold text-center rounded p-3 text-white" style="border: 1px solid black; width: 100%; background-color: #6f42c1">الأجزاء المستلمة</p>
+                <input type="text" placeholder="الأجزاء المستلمة" type="text" name="content" value="{{ student.parts_received }}" class="form-control d-flex align-items-start" required></input>
+                <button type="submit" class="btn btn-success w-100">تعديل</button>
+            </form>
+            <hr class="border-light">
             <h3 class="title text-white">إنشاء ملاحظة</h3>
             <form class="form-control" action="{% url "create_note" %}" method="POST">
                 {% csrf_token %}
                 <input type="hidden" name="student-id" value="{{ student.id }}" required>
-                <label class="form-label fw-bold text-center rounded p-3 text-white" style="border: 1px solid black; width: 100%; background-color: #6f42c1" for="content-form-create-note">الملاحظة</label>
-                <textarea id="content-form-create-note" placeholder="محتوى الملاحظة" type="text" name="content" class="form-control d-flex align-items-start" style="border: 1px solid black; height: 140px;" required></textarea>
+                <p class="fw-bold text-center rounded p-3 text-white" style="border: 1px solid black; width: 100%; background-color: #6f42c1">الملاحظة</p>
+                <textarea placeholder="محتوى الملاحظة" type="text" name="content" class="form-control d-flex align-items-start" style="border: 1px solid black; height: 140px;" required></textarea>
                 <button type="submit" class="btn btn-success w-100">إنشاء</button>
             </form>
         </div>
