@@ -28,7 +28,7 @@ def hide_student(_, __, queryset: QuerySet[models.Student]):
 
 @admin.register(models.Student)
 class AdminStudent(admin.ModelAdmin):
-    list_display = ["name", "age", "category", "student_group", "mother_name"]
+    list_display = ["name", "age", "category", "student_group", "mother_name", "registered_at"]
     search_fields = ["name"]
     list_select_related = ["category"]
     list_filter = ["category", "student_group"]
