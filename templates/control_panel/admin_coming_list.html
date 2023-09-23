@@ -15,7 +15,7 @@
             </thead>
             <tbody>
                 {% for coming in coming_list %}
-                    <tr>
+                    <tr class="{% if coming.is_doubled %}ramadan-table-message-color{% endif %}">
                         <td class="text-center" style="white-space: nowrap;">{{ coming.master_name.user.first_name }} {{ coming.master_name.user.last_name }}</td>
                         <td class="text-center" style="white-space: nowrap;">{{ coming.student }}</td>
                         <td class="text-center" style="white-space: nowrap;">{{ coming.category }}</td>

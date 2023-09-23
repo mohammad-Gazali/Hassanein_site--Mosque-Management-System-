@@ -1016,7 +1016,7 @@ def admin_points_information(request: HttpRequest) -> HttpResponse:
                         to_attr="money_deleting_info",
                     ),
                     "pointsadding_set",
-                    "coming_set",
+                    "coming_set__category",
                     "moneydeleting_set",
                 )
                 .filter(name__iregex=r"{}".format(my_regex))
@@ -1055,7 +1055,7 @@ def admin_points_information(request: HttpRequest) -> HttpResponse:
                     to_attr="money_deleting_info",
                 ),
                 "pointsadding_set",
-                "coming_set",
+                "coming_set__category",
                 "moneydeleting_set",
             ).filter(pk=int(q))
 

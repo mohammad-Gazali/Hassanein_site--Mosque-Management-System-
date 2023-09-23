@@ -99,8 +99,13 @@ class Student(models.Model):
 
     @property
     def points_of_coming(self):
-        list_of_point = [p.points for p in self.coming_set.all()]
-        return sum(list_of_point)
+        result = 0
+        for coming in self.coming_set.all():
+            if coming.is_doubled:
+                result += coming.category.points * 2
+            else:
+                result += coming.category.points
+        return result
     points_of_coming.fget.short_description = "كلي نقاط الحضور"
 
     @property
