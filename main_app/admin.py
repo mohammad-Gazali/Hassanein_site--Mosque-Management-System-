@@ -31,7 +31,7 @@ class AdminStudent(admin.ModelAdmin):
     list_display = ["name", "age", "category", "student_group", "mother_name", "registered_at"]
     search_fields = ["name"]
     list_select_related = ["category"]
-    list_filter = ["category", "student_group"]
+    list_filter = ["category", "student_group", "registered_at"]
     actions = [hide_student]
     list_editable = ["student_group"]
 
