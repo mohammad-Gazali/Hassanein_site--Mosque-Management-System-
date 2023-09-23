@@ -1710,9 +1710,13 @@ def students_reports(request: HttpRequest) -> HttpResponse:
                 sum_pages = 0
                 for message in messages:
                     sum_pages += give_num_pages(message)
-                reports.append([personal_info, sum_pages])
+                reports.append({
+                    "student_id": personal_info[0],
+                    "student": personal_info[1],
+                    "sum_pages": sum_pages,
+                })
 
-            reports.sort(key=lambda x: x[1], reverse=True)
+            reports.sort(key=lambda x: x["sum_pages"], reverse=True)
 
             return render(
                 request,

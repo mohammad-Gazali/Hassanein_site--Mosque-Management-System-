@@ -58,7 +58,7 @@
                     <div class="card-body text-dark text-center fs-3 fw-bold d-flex justify-content-center align-items-center flex-wrap gap-3">
                         مجموع الصفحات المسمعة:
                         <span class="text-success">
-                            {{ reports.sum_pages }}
+                            {{ reports.sum_pages|floatformat }}
                         </span>
                     </div>
                 </div>
@@ -80,7 +80,7 @@
                             <tr>
                                 <td>{{ forloop.counter }}</td>
                                 <td>{{ report.group }}</td>
-                                <td>{{ report.sum_pages }}</td>
+                                <td>{{ report.sum_pages|floatformat }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -104,18 +104,10 @@
                     <tbody>
                         {% for report in reports %}
                             <tr>
-                                <td>
-                                    {{ forloop.counter }}
-                                </td>
-                                <td>
-                                    {{ report.0.1 }}
-                                </td>
-                                <td>
-                                    {{ report.1 }}
-                                </td>
-                                <td>
-                                    {{ report.0.0 }}
-                                </td>        
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ report.student }}</td>
+                                <td>{{ report.sum_pages|floatformat }}</td>
+                                <td>{{ report.student_id }}</td>        
                             </tr>
                         {% endfor %}
                     </tbody>
