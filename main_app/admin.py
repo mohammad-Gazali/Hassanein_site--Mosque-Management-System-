@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.db.models import JSONField
+from django.http import HttpRequest
 from django_json_widget.widgets import JSONEditorWidget
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -26,13 +27,27 @@ def hide_student(_, __, queryset: QuerySet[models.Student]):
     control_settings.save()
 
 
+@admin.action(description="تسجيل حضور الطلاب المحددين الذين سجلوا اليوم")
+def add_coming_for_today_registerd_at_students(_, request: HttpRequest, queryset: QuerySet[models.Student]):
+    master = models.Master.objects.get(user_id=request.user.id)
+    control_settings = models.ControlSettings.objects.first()
+
+    for student in queryset:
+        models.Coming.objects.get_or_create(
+            student=student,
+            category_id=settings.Q_COMING_CATEGORY_ID,
+            master_name=master,
+            is_doubled=control_settings.double_points,
+        )
+
+
 @admin.register(models.Student)
 class AdminStudent(admin.ModelAdmin):
     list_display = ["name", "age", "category", "student_group", "mother_name", "registered_at"]
     search_fields = ["name"]
     list_select_related = ["category"]
     list_filter = ["category", "student_group", "registered_at"]
-    actions = [hide_student]
+    actions = [hide_student, add_coming_for_today_registerd_at_students]
     list_editable = ["student_group"]
 
     # here changed the widget of JSONField into another widget, this widget is imported from django_json_widget.widgets
