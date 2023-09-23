@@ -4,7 +4,7 @@
 
 {% block content %}
     {% include 'partials/search.html' %}
-    {% if ramadan %}
-        {% include 'partials/ramadan.html' %}
+    {% if ramadan or title %}
+        {% include 'partials/event.html' with title=title ramadan=ramadan %}
     {% endif %}
 {% endblock content %}

@@ -1,5 +1,9 @@
 {% load static %}
 
 <section id="ramadan-section" class="fs-1 text-white text-center w-100 rounded mx-auto py-3 mb-4 container" style="max-width: 800px; border: 2px solid white; background-color: rgb(109, 40, 193)">    
-    رمضان كريم <i class="bi bi-moon-stars"></i>
+    {% if ramadan %}
+        رمضان كريم <i class="bi bi-moon-stars"></i>
+    {% else %}
+        {{ title }}
+    {% endif %}
 </section>

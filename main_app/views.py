@@ -42,12 +42,11 @@ import re
 def index(request: HttpRequest) -> HttpResponse:
     control_settings = ControlSettings.objects.first()
 
-    ramadan = False
+    ramadan = control_settings.double_points
 
-    if control_settings.double_points:
-        ramadan = True
+    title = control_settings.event_title
 
-    return render(request, "index.html", {"ramadan": ramadan})
+    return render(request, "index.html", {"ramadan": ramadan, "title": title})
 
 
 def search_results_of_student(request: HttpRequest) -> HttpResponse:

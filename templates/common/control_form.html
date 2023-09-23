@@ -10,7 +10,7 @@
 </ul>
 
 {% for field in form %}
-    <div class="mb-3 {% if field.widget_type == 'checkbox' %}form-check form-switch{% endif %} {% if field.widget_type == 'number' %}d-flex justify-content-between align-items-center{% endif %}">
+    <div class="mb-3 {% if field.widget_type == 'checkbox' %}form-check form-switch{% else %}d-flex justify-content-between align-items-center{% endif %}">
         <label class="form-check-label fw-bold"> {{ field.label }} </label>
         {{ field }}
     </div>
