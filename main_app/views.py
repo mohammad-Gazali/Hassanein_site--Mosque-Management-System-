@@ -1734,11 +1734,15 @@ def students_reports(request: HttpRequest) -> HttpResponse:
             students_groups = StudentGroup.objects.all()
 
             for group in students_groups:
+                students = []
                 sum_pages = 0
                 for student in group.student_set.all():
+                    student_sum = 0
                     for message in student.memorizemessage_set.filter(sended_at__range=[start, end], message_type__in=[MessageTypeChoice.MEMO, MessageTypeChoice.TEST]):
+                        student_sum += give_num_pages(message)
                         sum_pages += give_num_pages(message)
-                reports.append({"group": group, "sum_pages": sum_pages})
+                    students.append({"id": student.id, "name": student.name, "sum_pages": student_sum})
+                reports.append({"group": group, "sum_pages": sum_pages, "students": students})
 
             reports.sort(key=lambda x: x["sum_pages"], reverse=True)
 
