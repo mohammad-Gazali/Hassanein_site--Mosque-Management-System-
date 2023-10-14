@@ -6,3 +6,4 @@ superusers.txt
 staticfiles
 __pycache__
 list.txt
+.vscode

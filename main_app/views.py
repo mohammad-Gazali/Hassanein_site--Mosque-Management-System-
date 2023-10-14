@@ -111,7 +111,7 @@ def search_results_of_student(request: HttpRequest) -> HttpResponse:
     if query_text:
         my_regex = ""
         for word in re.split(r"\s+", query_text.strip()):
-            my_regex += word.replace("\u0627", "(\u0623|\u0625|\u0627)").replace("أ", "(\u0623|\u0625|\u0627)").replace("إ", "(\u0623|\u0625|\u0627)") + r".*"
+            my_regex += re.escape(word).replace("\u0627", "(\u0623|\u0625|\u0627)").replace("أ", "(\u0623|\u0625|\u0627)").replace("إ", "(\u0623|\u0625|\u0627)") + r".*"
 
         if request.user.is_authenticated:
             students = (
@@ -857,7 +857,7 @@ def search_results_of_student_coming(request: HttpRequest) -> HttpResponse:
     if query_text:
         my_regex = r""
         for word in re.split(r"\s+", query_text.strip()):
-            my_regex += word.replace("\u0627", "(\u0623|\u0625|\u0627)").replace("أ", "(\u0623|\u0625|\u0627)").replace("إ", "(\u0623|\u0625|\u0627)") + r".*"
+            my_regex += re.escape(word).replace("\u0627", "(\u0623|\u0625|\u0627)").replace("أ", "(\u0623|\u0625|\u0627)").replace("إ", "(\u0623|\u0625|\u0627)") + r".*"
 
         students = (
             Student.objects.select_related("category")
@@ -949,7 +949,7 @@ def admin_main(request: HttpRequest) -> HttpResponse:
         if search_type == "by-text":
             my_regex = r""
             for word in re.split(r"\s+", q.strip()):
-                my_regex += word.replace("\u0627", "(\u0623|\u0625|\u0627)").replace("أ", "(\u0623|\u0625|\u0627)").replace("إ", "(\u0623|\u0625|\u0627)") + r".*"
+                my_regex += re.escape(word).replace("\u0627", "(\u0623|\u0625|\u0627)").replace("أ", "(\u0623|\u0625|\u0627)").replace("إ", "(\u0623|\u0625|\u0627)") + r".*"
             students = (
                 Student.objects.select_related("category")
                 .filter(name__iregex=r"{}".format(my_regex))
@@ -981,7 +981,7 @@ def admin_points_information(request: HttpRequest) -> HttpResponse:
         if search_type == "by-text":
             my_regex = r""
             for word in re.split(r"\s+", q.strip()):
-                my_regex += word.replace("\u0627", "(\u0623|\u0625|\u0627)").replace("أ", "(\u0623|\u0625|\u0627)").replace("إ", "(\u0623|\u0625|\u0627)") + r".*"
+                my_regex += re.escape(word).replace("\u0627", "(\u0623|\u0625|\u0627)").replace("أ", "(\u0623|\u0625|\u0627)").replace("إ", "(\u0623|\u0625|\u0627)") + r".*"
             students = (
                 Student.objects.prefetch_related(
                     Prefetch(
@@ -1186,7 +1186,7 @@ def admin_awqaf_table(request: HttpRequest) -> HttpResponse:
         if search_type == "by-text":
             my_regex = r""
             for word in re.split(r"\s+", q.strip()):
-                my_regex += word.replace("\u0627", "(\u0623|\u0625|\u0627)").replace("أ", "(\u0623|\u0625|\u0627)").replace("إ", "(\u0623|\u0625|\u0627)") + r".*"
+                my_regex += re.escape(word).replace("\u0627", "(\u0623|\u0625|\u0627)").replace("أ", "(\u0623|\u0625|\u0627)").replace("إ", "(\u0623|\u0625|\u0627)") + r".*"
             students = (
                 Student.objects.prefetch_related("awqafnoqstudentrelation_set")
                 .exclude(awqafnoqstudentrelation__isnull=True)
@@ -1226,7 +1226,7 @@ def admin_activity_master(request: HttpRequest) -> HttpResponse:
         if search_type == "by-master":
             my_regex = r""
             for word in re.split(r"\s+", q.strip()):
-                my_regex += word.replace("\u0627", "(\u0623|\u0625|\u0627)").replace("أ", "(\u0623|\u0625|\u0627)").replace("إ", "(\u0623|\u0625|\u0627)") + r".*"
+                my_regex += re.escape(word).replace("\u0627", "(\u0623|\u0625|\u0627)").replace("أ", "(\u0623|\u0625|\u0627)").replace("إ", "(\u0623|\u0625|\u0627)") + r".*"
             messages = (
                 MemorizeMessage.objects.select_related(
                     "student", "master_name__user", "doublepointmessage"
@@ -1242,7 +1242,7 @@ def admin_activity_master(request: HttpRequest) -> HttpResponse:
         else:
             my_regex = r""
             for word in re.split(r"\s+", q.strip()):
-                my_regex += word.replace("\u0627", "(\u0623|\u0625|\u0627)").replace("أ", "(\u0623|\u0625|\u0627)").replace("إ", "(\u0623|\u0625|\u0627)") + r".*"
+                my_regex += re.escape(word).replace("\u0627", "(\u0623|\u0625|\u0627)").replace("أ", "(\u0623|\u0625|\u0627)").replace("إ", "(\u0623|\u0625|\u0627)") + r".*"
             messages = (
                 MemorizeMessage.objects.select_related(
                     "student", "master_name__user", "doublepointmessage"
@@ -1276,7 +1276,7 @@ def admin_coming_list(request: HttpRequest) -> HttpResponse:
         if search_type == "by-master":
             my_regex = r""
             for word in re.split(r"\s+", q.strip()):
-                my_regex += word.replace("\u0627", "(\u0623|\u0625|\u0627)").replace("أ", "(\u0623|\u0625|\u0627)").replace("إ", "(\u0623|\u0625|\u0627)") + r".*"
+                my_regex += re.escape(word).replace("\u0627", "(\u0623|\u0625|\u0627)").replace("أ", "(\u0623|\u0625|\u0627)").replace("إ", "(\u0623|\u0625|\u0627)") + r".*"
             coming_list = (
                 Coming.objects.select_related(
                     "student", "master_name__user", "category"
@@ -1292,7 +1292,7 @@ def admin_coming_list(request: HttpRequest) -> HttpResponse:
         else:
             my_regex = r""
             for word in re.split(r"\s+", q.strip()):
-                my_regex += word.replace("\u0627", "(\u0623|\u0625|\u0627)").replace("أ", "(\u0623|\u0625|\u0627)").replace("إ", "(\u0623|\u0625|\u0627)") + r".*"
+                my_regex += re.escape(word).replace("\u0627", "(\u0623|\u0625|\u0627)").replace("أ", "(\u0623|\u0625|\u0627)").replace("إ", "(\u0623|\u0625|\u0627)") + r".*"
             coming_list = (
                 Coming.objects.select_related(
                     "student", "master_name__user", "category"
@@ -1388,7 +1388,7 @@ def master_list_admin(request: HttpRequest) -> HttpResponse:
     if q is not None:
         my_regex = r""
         for word in re.split(r"\s+", q.strip()):
-            my_regex += word.replace("\u0627", "(\u0623|\u0625|\u0627)").replace("أ", "(\u0623|\u0625|\u0627)").replace("إ", "(\u0623|\u0625|\u0627)") + r".*"
+            my_regex += re.escape(word).replace("\u0627", "(\u0623|\u0625|\u0627)").replace("أ", "(\u0623|\u0625|\u0627)").replace("إ", "(\u0623|\u0625|\u0627)") + r".*"
         masters = (
             Master.objects.select_related("user")
             .filter(user__username__iregex=r"{}".format(my_regex))
@@ -1446,7 +1446,7 @@ def admin_adding_points_log(request: HttpRequest) -> HttpResponse:
         if search_type == "by-master":
             my_regex = r""
             for word in re.split(r"\s+", q.strip()):
-                my_regex += word.replace("\u0627", "(\u0623|\u0625|\u0627)").replace("أ", "(\u0623|\u0625|\u0627)").replace("إ", "(\u0623|\u0625|\u0627)") + r".*"
+                my_regex += re.escape(word).replace("\u0627", "(\u0623|\u0625|\u0627)").replace("أ", "(\u0623|\u0625|\u0627)").replace("إ", "(\u0623|\u0625|\u0627)") + r".*"
             add_messages = (
                 PointsAdding.objects.select_related(
                     "student", "master_name__user", "cause"
@@ -1462,7 +1462,7 @@ def admin_adding_points_log(request: HttpRequest) -> HttpResponse:
         else:
             my_regex = ""
             for word in re.split(r"\s+", q.strip()):
-                my_regex += word.replace("\u0627", "(\u0623|\u0625|\u0627)").replace("أ", "(\u0623|\u0625|\u0627)").replace("إ", "(\u0623|\u0625|\u0627)") + r".*"
+                my_regex += re.escape(word).replace("\u0627", "(\u0623|\u0625|\u0627)").replace("أ", "(\u0623|\u0625|\u0627)").replace("إ", "(\u0623|\u0625|\u0627)") + r".*"
             add_messages = (
                 PointsAdding.objects.select_related(
                     "student", "master_name__user", "cause"
@@ -1507,7 +1507,7 @@ def admin_specializations(request: HttpRequest) -> HttpResponse:
         if search_type == "by-text":
             my_regex = r""
             for word in re.split(r"\s+", q.strip()):
-                my_regex += word.replace("\u0627", "(\u0623|\u0625|\u0627)").replace("أ", "(\u0623|\u0625|\u0627)").replace("إ", "(\u0623|\u0625|\u0627)") + r".*"
+                my_regex += re.escape(word).replace("\u0627", "(\u0623|\u0625|\u0627)").replace("أ", "(\u0623|\u0625|\u0627)").replace("إ", "(\u0623|\u0625|\u0627)") + r".*"
             students = (
                 Student.objects.exclude(part__isnull=True)
                 .filter(name__iregex=r"{}".format(my_regex))
@@ -1554,7 +1554,7 @@ def admin_test_certificates(request: HttpRequest) -> HttpResponse:
         if search_type == "by-text":
             my_regex = r""
             for word in re.split(r"\s+", q.strip()):
-                my_regex += word.replace("\u0627", "(\u0623|\u0625|\u0627)").replace("أ", "(\u0623|\u0625|\u0627)").replace("إ", "(\u0623|\u0625|\u0627)") + r".*"
+                my_regex += re.escape(word).replace("\u0627", "(\u0623|\u0625|\u0627)").replace("أ", "(\u0623|\u0625|\u0627)").replace("إ", "(\u0623|\u0625|\u0627)") + r".*"
             students = [s for s in Student.objects.filter(
                 name__iregex=r"{}".format(my_regex)
             ).order_by("id") if s.q_test_certificate != "لا يوجد"]
@@ -1874,7 +1874,7 @@ def deleting_money_table(request: HttpRequest) -> HttpResponse:
         if search_type == "by-text":
             my_regex = r""
             for word in re.split(r"\s+", q.strip()):
-                my_regex += word.replace("\u0627", "(\u0623|\u0625|\u0627)").replace("أ", "(\u0623|\u0625|\u0627)").replace("إ", "(\u0623|\u0625|\u0627)") + r".*"
+                my_regex += re.escape(word).replace("\u0627", "(\u0623|\u0625|\u0627)").replace("أ", "(\u0623|\u0625|\u0627)").replace("إ", "(\u0623|\u0625|\u0627)") + r".*"
             deletings = (
                 MoneyDeleting.objects.select_related("student", "cause")
                 .filter(student__name__iregex=r"{}".format(my_regex))
@@ -1915,7 +1915,7 @@ def deleting_money_total_table(request: HttpRequest) -> HttpResponse:
         if search_type == "by-text":
             my_regex = r""
             for word in re.split(r"\s+", q.strip()):
-                my_regex += word.replace("\u0627", "(\u0623|\u0625|\u0627)").replace("أ", "(\u0623|\u0625|\u0627)").replace("إ", "(\u0623|\u0625|\u0627)") + r".*"
+                my_regex += re.escape(word).replace("\u0627", "(\u0623|\u0625|\u0627)").replace("أ", "(\u0623|\u0625|\u0627)").replace("إ", "(\u0623|\u0625|\u0627)") + r".*"
             data = (
                 MoneyDeleting.objects.select_related("student", "cause")
                 .filter(
@@ -2069,7 +2069,7 @@ def students_ajax(request: HttpRequest) -> JsonResponse | HttpResponse:
         if query is not None:
             my_regex = r""
             for word in re.split(r"\s+", query.strip()):
-                my_regex += word.replace("\u0627", "(\u0623|\u0625|\u0627)").replace("أ", "(\u0623|\u0625|\u0627)").replace("إ", "(\u0623|\u0625|\u0627)") + r".*"
+                my_regex += re.escape(word).replace("\u0627", "(\u0623|\u0625|\u0627)").replace("أ", "(\u0623|\u0625|\u0627)").replace("إ", "(\u0623|\u0625|\u0627)") + r".*"
             students = Student.objects.filter(
                 name__iregex=r"{}".format(my_regex)
             ).order_by("id")

@@ -24,6 +24,9 @@ class CustomMiddleware:
         if not Group.objects.filter(name="حديث"):
             Group.objects.create(name="حديث")
 
+        if not Group.objects.filter(name="تسميع خارج الدورة"):
+            Group.objects.create(name="تسميع خارج الدورة")
+
         response = self.get_response(request)
 
         return response

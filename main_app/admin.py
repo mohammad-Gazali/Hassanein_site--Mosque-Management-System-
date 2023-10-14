@@ -21,14 +21,15 @@ class AdminCategory(admin.ModelAdmin):
 @admin.action(description="إخفاء الطلاب المحددين")
 def hide_student(_, __, queryset: QuerySet[models.Student]):
     control_settings = models.ControlSettings.objects.first()
+
     for student in queryset:
         control_settings.hidden_ids.append(int(student.id))
     
     control_settings.save()
 
 
-@admin.action(description="تسجيل حضور الطلاب المحددين الذين سجلوا اليوم")
-def add_coming_for_today_registerd_at_students(_, request: HttpRequest, queryset: QuerySet[models.Student]):
+@admin.action(description="تسجيل حضور الطلاب المحددين الذين لم يسجلوا حضور")
+def add_coming_for_non_before_coming_students(_, request: HttpRequest, queryset: QuerySet[models.Student]):
     master = models.Master.objects.get(user_id=request.user.id)
     control_settings = models.ControlSettings.objects.first()
 
@@ -47,7 +48,7 @@ class AdminStudent(admin.ModelAdmin):
     search_fields = ["name"]
     list_select_related = ["category"]
     list_filter = ["category", "student_group", "registered_at"]
-    actions = [hide_student, add_coming_for_today_registerd_at_students]
+    actions = [hide_student, add_coming_for_non_before_coming_students]
     list_editable = ["student_group"]
 
     # here changed the widget of JSONField into another widget, this widget is imported from django_json_widget.widgets
@@ -237,7 +238,7 @@ admin.site.unregister(User)
 @admin.action(description = "تعطيل المستخدمين العاديين")
 def set_unactive(_, __, queryset: QuerySet[User]):
         for user in queryset:
-            if user.is_superuser:
+            if user.is_superuser or user.groups.filter(name="تسميع خارج الدورة"):
                 continue
             user.is_active = False
             user.save()
