@@ -116,7 +116,7 @@ class Student(models.Model):
             if value == "NEW":
                 list_of_point.append(q_map[key])
 
-        # * message_type_1 here is created at .\views.py, the goal of it is to make prefetch related valid also inside @property method, check it in main_admin view in .\views.py
+        #* message_type_1 here is created at .\views.py, the goal of it is to make prefetch related valid also inside @property method, check it in main_admin view in .\views.py
         for double in self.message_type_1:
             list_of_point.append(double.points)
         return sum(list_of_point)
@@ -125,13 +125,13 @@ class Student(models.Model):
     @property
     def points_of_q_test(self):
         list_of_point = []
-        for __, value in self.q_test.items():
-            for ___, value2 in value.items():
-                for ____, value3 in value2.items():
+        for value in self.q_test.values():
+            for value2 in value.values():
+                for value3 in value2.values():
                     if value3 == "NEW":
                         list_of_point.append(13)
 
-        # * message_type_2 here is created at .\views.py, the goal of it is to make prefetch related valid also inside @property method, check it in main_admin view in .\views.py
+        #* message_type_2 here is created at .\views.py, the goal of it is to make prefetch related valid also inside @property method, check it in main_admin view in .\views.py
         for double in self.message_type_2:
             list_of_point.append(double.points)
         return sum(list_of_point)
@@ -153,9 +153,9 @@ class Student(models.Model):
     @property
     def number_of_q_test(self):
         list_of_chapters_num = []
-        for __, value in self.q_test.items():
-            for ___, value2 in value.items():
-                for ____, value3 in value2.items():
+        for value in self.q_test.values():
+            for value2 in value.values():
+                for value3 in value2.values():
                     if value3 == "NEW":
                         list_of_chapters_num.append(0.25)
         return sum(list_of_chapters_num)
@@ -182,7 +182,7 @@ class Student(models.Model):
     @property
     def number_of_parts_awqaf_normal_tests(self):
         list_of_awqaf_normal_test_num = []
-        for __, value in self.q_awqaf_test.items():
+        for value in self.q_awqaf_test.values():
             if value == "NEW":
                 list_of_awqaf_normal_test_num.append(1)
         return sum(list_of_awqaf_normal_test_num)
@@ -198,7 +198,7 @@ class Student(models.Model):
     @property
     def number_of_parts_awqaf_looking_tests(self):
         list_of_awqaf_looking_test_num = []
-        for __, value in self.q_awqaf_test_looking.items():
+        for value in self.q_awqaf_test_looking.values():
             if value == "NEW":
                 list_of_awqaf_looking_test_num.append(1)
         return sum(list_of_awqaf_looking_test_num)
@@ -214,7 +214,7 @@ class Student(models.Model):
     @property
     def number_of_parts_awqaf_explaining_tests(self):
         list_of_awqaf_explaining_test_num = []
-        for __, value in self.q_awqaf_test_explaining.items():
+        for value in self.q_awqaf_test_explaining.values():
             if value == "NEW":
                 list_of_awqaf_explaining_test_num.append(1)
         return sum(list_of_awqaf_explaining_test_num)
@@ -255,6 +255,21 @@ class Student(models.Model):
         return result
     allah_names_points.fget.short_description = "نقاط أسماء الله الحسنى"
     
+    @property
+    def specializations_points(self):
+        result = 0
+        for relation in self.parts_relation_info:
+            result += relation.part.points
+        return result
+    specializations_points.fget.short_description = "نقاط الاختصاصات"
+
+    @property
+    def awqaf_no_q_test_points(self):
+        result = 0
+        for relation in self.awqaf_no_q_info:
+            result += relation.test.points
+        return result
+    specializations_points.fget.short_description = "نقاط سبر الأوقاف من غير القرآن"
 
     @property
     def all_points_sum(self):
@@ -269,6 +284,8 @@ class Student(models.Model):
             + self.alarbaein_alnawawia_points
             + self.riad_alsaalihin_points
             + self.allah_names_points
+            + self.specializations_points
+            + self.awqaf_no_q_test_points
         )
         all_deleted_points = self.deleted_points_for_money_deleting[0]        
         money_for_deleting = self.deleted_points_for_money_deleting[1]
@@ -282,7 +299,7 @@ class Student(models.Model):
 
 
 class MemorizeNotes(models.Model):
-    master_name = models.ForeignKey(Master, verbose_name="اسم الأستاذ", on_delete=models.CASCADE, null=True)
+    master = models.ForeignKey(Master, verbose_name="اسم الأستاذ", on_delete=models.CASCADE, null=True)
     content = models.CharField(verbose_name="المحتوى", max_length=511)
     student = models.ForeignKey(Student, on_delete=models.CASCADE, verbose_name="اسم الطالب")
     student_string = models.CharField(max_length=511, verbose_name="اسم الطالب", null=True, blank=True)
@@ -313,7 +330,7 @@ class DoubleMessageTypeChoice(models.IntegerChoices):
 
 
 class MemorizeMessage(models.Model):
-    master_name = models.ForeignKey(Master, verbose_name="اسم الأستاذ", on_delete=models.CASCADE, null=True)
+    master = models.ForeignKey(Master, verbose_name="اسم الأستاذ", on_delete=models.CASCADE, null=True)
     student = models.ForeignKey(Student, on_delete=models.CASCADE, verbose_name="اسم الطالب")
     student_string = models.CharField(max_length=511, verbose_name="اسم الطالب", null=True, blank=True)
     sended_at = models.DateTimeField(auto_now_add=True, verbose_name="تاريخ الإرسال")
@@ -342,7 +359,7 @@ class ComingCategory(models.Model):
 
 
 class Coming(models.Model):
-    master_name = models.ForeignKey(Master, verbose_name="اسم الأستاذ", on_delete=models.CASCADE, null=True)
+    master = models.ForeignKey(Master, verbose_name="اسم الأستاذ", on_delete=models.CASCADE, null=True)
     student = models.ForeignKey(Student, verbose_name="اسم الطالب", on_delete=models.CASCADE)
     registered_at = models.DateTimeField(auto_now_add=True, verbose_name="تاريخ التسجيل")
     category = models.ForeignKey(ComingCategory, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="سبب الحضور")
@@ -391,7 +408,7 @@ class PointsAddingCause(models.Model):
 
 
 class PointsAdding(models.Model):
-    master_name = models.ForeignKey(Master, verbose_name="اسم الأستاذ", on_delete=models.CASCADE, null=True)
+    master = models.ForeignKey(Master, verbose_name="اسم الأستاذ", on_delete=models.CASCADE, null=True)
     value = models.IntegerField(verbose_name="القيمة")
     student = models.ForeignKey(Student, on_delete=models.CASCADE, verbose_name="الطالب")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="تاريخ الإضافة")
@@ -445,9 +462,12 @@ class AwqafTestNoQ(models.Model):
 
 
 class AwqafNoQStudentRelation(models.Model):
-    test = models.ForeignKey(AwqafTestNoQ, on_delete=models.CASCADE, verbose_name="سبر الأوقاف")
-    student = models.ForeignKey(Student, on_delete=models.CASCADE, verbose_name="الطالب")
-    is_old = models.BooleanField(default=False, verbose_name="هل السبر قديم")
+    test = models.ForeignKey(AwqafTestNoQ, on_delete=models.CASCADE)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    is_old = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ["test", "student"]
 
 
 

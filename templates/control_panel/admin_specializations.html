@@ -1,5 +1,5 @@
 {% extends 'control_panel/admin_control_base.html' %}
-{% load static %}
+{% load static specializations_filters %}
 
 
 {% block title %}
@@ -41,8 +41,8 @@
                     <th>المعرف</th>
                     <th>الاسم</th>
                     {% for part in parts %}
-                        <th data-sp-item="{{ part.level.specialization.id }}">
-                            {{ part }}
+                        <th data-sp-item="{{ part.subject.specialization.id }}">
+                            {{ part.part_content }}
                         </th>
                     {% endfor %}
                 </tr>
@@ -53,11 +53,17 @@
                         <td>{{ student.id }}</td>
                         <td style="white-space: nowrap">{{ student }}</td>
                         {% for part in parts %}
-                            {% if student in part.students.all %}
-                                <td data-sp-item="{{ part.level.specialization.id }}">تم</td>
-                            {% else %}
-                                <td data-sp-item="{{ part.level.specialization.id }}"></td>
-                            {% endif %}
+                            {% with selected_relation=part.studentspecializationpartrelation_set.all|get_relation:student.id %}
+                                {% if selected_relation in student.studentspecializationpartrelation_set.all %}
+                                    {% if selected_relation.is_old %}
+                                        <td data-sp-item="{{ part.subject.specialization.id }}">قديم</td>
+                                    {% else %}
+                                        <td data-sp-item="{{ part.subject.specialization.id }}">تم</td>
+                                    {% endif %}
+                                {% else %}
+                                    <td data-sp-item="{{ part.subject.specialization.id }}"></td>
+                                {% endif %}
+                            {% endwith %}
                         {% endfor %}
                     </tr>
                 {% endfor %}
@@ -70,15 +76,21 @@
                             <td>{{ student.id }}</td>
                             <td style="white-space: nowrap">{{ student }}</td>
                             {% for part in parts %}
-                                {% if student in part.students.all %}
-                                    <td data-sp-item="{{ part.level.specialization.id }}">
-                                        <input style="cursor: pointer;" class="form-check-input" type="checkbox" name="part_{{ part.id }}_student_{{ student.id }}" checked>
-                                    </td>
-                                {% else %}
-                                    <td data-sp-item="{{ part.level.specialization.id }}">
-                                        <input style="cursor: pointer;" class="form-check-input" type="checkbox" name="part_{{ part.id }}_student_{{ student.id }}">
-                                    </td>
-                                {% endif %}
+                                {% with selected_relation=part.studentspecializationpartrelation_set.all|get_relation:student.id %}
+                                    {% if selected_relation in student.studentspecializationpartrelation_set.all %}
+                                        {% if selected_relation.is_old %}
+                                            <td data-sp-item="{{ part.subject.specialization.id }}">قديم</td>
+                                        {% else %}
+                                        <td data-sp-item="{{ part.subject.specialization.id }}">
+                                            <input style="cursor: pointer;" class="form-check-input" type="checkbox" name="part_{{ part.id }}_student_{{ student.id }}" checked>
+                                        </td>
+                                        {% endif %}
+                                    {% else %}
+                                        <td data-sp-item="{{ part.subject.specialization.id }}">
+                                            <input style="cursor: pointer;" class="form-check-input" type="checkbox" name="part_{{ part.id }}_student_{{ student.id }}">
+                                        </td>
+                                    {% endif %}
+                                {% endwith %}
                             {% endfor %}
                         </tr>
                     {% endfor %}
@@ -97,7 +109,7 @@
             <tbody id="main-tbody-admin-specializations">
                 {% for message in messages %}
                     <tr>
-                        <td style="white-space: nowrap">{{ message.master_name.user.first_name }} {{ message.master_name.user.last_name }}</td>
+                        <td style="white-space: nowrap">{{ message.master.user.first_name }} {{ message.master.user.last_name }}</td>
                         <td style="white-space: nowrap">{{ message.student }}</td>
                         <td style="white-space: nowrap">{{ message.part }}</td>
                         <td style="white-space: nowrap">{{ message.created_at }}</td>

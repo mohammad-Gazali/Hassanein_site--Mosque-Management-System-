@@ -41,6 +41,9 @@ INSTALLED_APPS = [
 
     # external apps
     "django_json_widget",
+
+    # debug only
+    "debug_toolbar",
 ]
 
 MIDDLEWARE = [
@@ -57,6 +60,9 @@ MIDDLEWARE = [
 
     # external middlewares
     "whitenoise.middleware.WhiteNoiseMiddleware",
+
+    # debug only
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 ROOT_URLCONF = "main_project.urls"

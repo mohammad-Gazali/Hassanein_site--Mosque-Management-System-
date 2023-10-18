@@ -26,6 +26,8 @@
                     <th class="hide-for-detail" style="white-space: nowrap;" class="text-center">نقاط الأجزاء المسبورة نظراً في الأوقاف</th>
                     <th class="hide-for-detail" style="white-space: nowrap;" class="text-center">عدد الأجزاء المسبورة تفسيراً في الأوقاف</th>
                     <th class="hide-for-detail" style="white-space: nowrap;" class="text-center">نقاط الأجزاء المسبورة تفسيراً في الأوقاف</th>
+                    <th class="hide-for-detail" style="white-space: nowrap;" class="text-center">نقاط سبر الأوقاف بغير القرآن</th>
+                    <th class="hide-for-detail" style="white-space: nowrap;" class="text-center">نقاط الاختصاصات</th>
                     <th class="hide-for-detail" style="white-space: nowrap;" class="text-center">نقاط مضافة</th>
                     <th class="hide-for-detail" style="white-space: nowrap;" class="text-center">نقاط المخصومة بسبب الغرامات</th>
                     <th style="white-space: nowrap;" class="text-center">مجموع النقاط الكلي</th>
@@ -54,6 +56,8 @@
                         <td class="text-center hide-for-detail" style="white-space: nowrap;">{{ student.awqaf_points_looking_test }}</td>
                         <td class="text-center hide-for-detail" style="white-space: nowrap;">{{ student.number_of_parts_awqaf_explaining_tests }}</td>
                         <td class="text-center hide-for-detail" style="white-space: nowrap;">{{ student.awqaf_points_explaining_test }}</td>
+                        <td class="text-center hide-for-detail" style="white-space: nowrap;">{{ student.awqaf_no_q_test_points }}</td>
+                        <td class="text-center hide-for-detail" style="white-space: nowrap;">{{ student.specializations_points }}</td>
                         <td class="text-center hide-for-detail" style="white-space: nowrap;">{{ student.added_points }}</td>
                         <td class="text-center hide-for-detail" style="white-space: nowrap;">{{ student.deleted_points_for_money_deleting|money_deleting_remove_points:point_value }}</td>
                         <td class="text-center" style="white-space: nowrap; direction: ltr">{{ student.all_points_sum|all_points_handling:point_value }}</td>

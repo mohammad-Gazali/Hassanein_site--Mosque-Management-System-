@@ -37,14 +37,14 @@
                     </option>
                 {% endfor %}
             </select>
-            <select name="level" id="level" class="form-select" disabled>
+            <select name="subject" id="subject" class="form-select" disabled>
                 <option value="0" selected>
-                    اختر مستوى
+                    اختر مقرر
                 </option>
             </select>
             <select name="part" id="part" class="form-select" disabled>
                 <option value="0" selected>
-                    اختر القسم
+                    اختر قسم
                 </option>
             </select>
             <button class="btn btn-success disabled" type="submit">
@@ -54,7 +54,7 @@
         <script>
 
             const specialization = document.getElementById('specialization');
-            const level = document.getElementById('level');
+            const subject = document.getElementById('subject');
             const part = document.getElementById('part');
             const specializationForm = document.getElementById('specializations-form');
             const submitBtn = document.querySelector('#specializations-form button');
@@ -73,7 +73,7 @@
                 emptyPart();
                 part.disabled = true;
 
-                const response = await fetch("{% url 'specializations_levels_ajax' %}", {
+                const response = await fetch("{% url 'specializations_subjects_ajax' %}", {
                     method: "POST",
                     mode: "same-origin",
                     headers: {
@@ -87,11 +87,11 @@
 
                 const data = await response.json();
 
-                addLevels(data, level);
+                addsubjects(data, subject);
             }
 
 
-            const levelChange = async (e) => {
+            const subjectChange = async (e) => {
                 removeFirst(e);
 
                 submitBtn.classList.add("disabled");
@@ -122,23 +122,23 @@
                 }
             }
 
-            function addLevels(data) {
+            function addsubjects(data) {
 
                 const { result } = data;
 
-                emptyLevel();
+                emptysubject();
 
                 result.forEach((item) => {
                     const element = document.createElement('option');
                     element.value = item.id;
-                    element.innerHTML = `المستوى ${item.level_number}`
+                    element.innerHTML = item.name
 
-                    level.appendChild(element)
+                    subject.appendChild(element)
                 });
 
-                level.disabled = false;
+                subject.disabled = false;
 
-                level.onchange = levelChange;
+                subject.onchange = subjectChange;
             }
 
             function addParts(data) {
@@ -149,7 +149,7 @@
                 result.forEach((item) => {
                     const element = document.createElement('option');
                     element.value = item.id;
-                    element.innerHTML = `القسم ${item.part_number} &nbsp; [${item.part_start} - ${item.part_end}]`;
+                    element.innerHTML = item.part_content;
 
                     part.appendChild(element);
                 })
@@ -167,17 +167,17 @@
 
 
             // empty functions
-            function emptyLevel() {
-                Array.from(level.children).forEach((item) => {
+            function emptysubject() {
+                Array.from(subject.children).forEach((item) => {
                     item.remove();
                 })
                 
                 const firstElement = document.createElement('option');
                 firstElement.value = "0";
-                firstElement.innerHTML = "اختر مستوى";
+                firstElement.innerHTML = "اختر مقرر";
                 firstElement.selected = true;
 
-                level.appendChild(firstElement);
+                subject.appendChild(firstElement);
             }
 
             function emptyPart() {

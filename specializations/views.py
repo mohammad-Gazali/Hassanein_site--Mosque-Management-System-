@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import HttpRequest, JsonResponse
-from specializations.models import Specialization, Level, Part, SpecializationMessage
+from specializations.models import Specialization, Subject, Part, SpecializationMessage, StudentSpecializationPartRelation
 from specializations.check_functions import check_specializations
-from main_app.models import Student, Master
+from main_app.models import Master
 import json
 
 
@@ -19,20 +19,25 @@ def main_specialization(request: HttpRequest):
         pid = int(request.POST.get("part"))
         sid = int(request.POST.get("student-id"))
 
-        part = Part.objects.get(pk=pid)
-        student = Student.objects.get(pk=sid)
+        relation = StudentSpecializationPartRelation.objects.filter(
+            student_id=sid,
+            part_id=pid,
+        )
 
-        if student in part.students.all():
+        if relation:
             return render(
                 request,
                 "error_repeated_specialization.html",
                 {"error": "إن هذا القسم قد تم إضافته بالفعل للطالب سابقاً"},
             )
 
-        part.students.add(student)
+        StudentSpecializationPartRelation.objects.create(
+            student_id=sid,
+            part_id=pid,
+        )
 
         SpecializationMessage.objects.create(
-            master_name=master,
+            master=master,
             part_id=pid,
             student_id=sid,
         )
@@ -48,17 +53,17 @@ def main_specialization(request: HttpRequest):
 
 
 # ajax views
-def levels_ajax(request: HttpRequest):
+def subjects_ajax(request: HttpRequest):
     if request.method == "POST":
 
         sid = get_id_from_request(request, "sid")
 
-        levels = Specialization.objects.get(pk=sid).level_set.all()
+        subjects = Specialization.objects.get(pk=sid).subject_set.all()
 
         result = []
 
-        for level in levels:
-            result.append({"id": level.id, "level_number": level.level_number})
+        for subject in subjects:
+            result.append({"id": subject.id, "name": subject.name})
 
         return JsonResponse({"result": result}, status=200)
 
@@ -68,7 +73,7 @@ def parts_ajax(request: HttpRequest):
 
         lid = get_id_from_request(request, "lid")
 
-        parts = Level.objects.get(pk=lid).part_set.all()
+        parts = Subject.objects.get(pk=lid).part_set.all()
 
         result = []
 
@@ -77,8 +82,7 @@ def parts_ajax(request: HttpRequest):
                 {
                     "id": part.id,
                     "part_number": part.part_number,
-                    "part_start": part.part_start,
-                    "part_end": part.part_end,
+                    "part_content": part.part_content,
                 }
             )
 
@@ -91,23 +95,16 @@ def get_id_from_request(request: HttpRequest, key: str) -> int:
 
 
 def apply_edit_changes(edit: list[str]) -> None:
-    parts = []
-    data = []
+    existing_relations_ids = []
     for item in edit:
         part_id = int(item.split("_")[1])
         student_id = int(item.split("_")[3])
 
-        data.append((part_id, student_id))
+        relation, _ = StudentSpecializationPartRelation.objects.get_or_create(
+            part_id=part_id,
+            student_id=student_id,
+        )
 
-        parts.append(part_id)
-
-    parts_ids = list(set(parts))
-
-    parts = Part.objects.filter(pk__in=parts_ids)
-
-    for part in parts:
-        students = []
-        for value in data:
-            if value[0] == part.id:
-                students.append(value[1])
-        part.students.set(students)
+        existing_relations_ids.append(relation.id)
+    
+    StudentSpecializationPartRelation.objects.exclude(id__in=existing_relations_ids).exclude(is_old=True).delete()

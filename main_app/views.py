@@ -30,7 +30,7 @@ from main_app.forms import SettingForm
 from main_app.point_map import apply_q_map
 from main_app.check_functions import check_adding_hadeeth, check_admin, check_coming, check_adding_points
 from main_app.helpers import give_section_from_page, give_num_pages, get_last_sat_date_range
-from specializations.models import Part, SpecializationMessage, Specialization, Level
+from specializations.models import Part, SpecializationMessage, Specialization, Subject, StudentSpecializationPartRelation
 from specializations.views import apply_edit_changes
 from datetime import datetime, date
 import pytz
@@ -54,45 +54,44 @@ def search_results_of_student(request: HttpRequest) -> HttpResponse:
     query_id = request.GET.get("q_search_id")
 
     specializations = Specialization.objects.prefetch_related(
-        "level_set__part_set"
+        Prefetch(
+            "subject_set__part_set__studentspecializationpartrelation_set",
+            queryset=StudentSpecializationPartRelation.objects.select_related("student")
+        )
     ).all()
-    levels = Level.objects.all()
     all_tests = AwqafTestNoQ.objects.all()
-    all_relations = AwqafNoQStudentRelation.objects.all().values(
-        "test_id", "student_id", "is_old"
-    )
+    all_relations = AwqafNoQStudentRelation.objects.all().values("test_id", "student_id", "is_old")
 
     control_settings = ControlSettings.objects.first()
 
     if query_id:
-
         # hiding hidden ids from non-authenticated users
         if request.user.is_authenticated:
             student = Student.objects.filter(pk=query_id).prefetch_related(
-                        Prefetch(
-                            "coming_set",
-                            queryset=Coming.objects.filter(category_id=settings.Q_COMING_CATEGORY_ID).order_by("-registered_at"),
-                            to_attr="last_comings",
-                        ),
-                        Prefetch(
-                            "memorizemessage_set",
-                            queryset=MemorizeMessage.objects.filter(sended_at__range=get_last_sat_date_range()),
-                            to_attr="last_week_messages",
-                        )
-                    )
+                Prefetch(
+                    "coming_set",
+                    queryset=Coming.objects.filter(category_id=settings.Q_COMING_CATEGORY_ID).order_by("-registered_at"),
+                    to_attr="last_comings",
+                ),
+                Prefetch(
+                    "memorizemessage_set",
+                    queryset=MemorizeMessage.objects.filter(sended_at__range=get_last_sat_date_range()),
+                    to_attr="last_week_messages",
+                )
+            )
         else:
             student = Student.objects.filter(pk=query_id).exclude(pk__in=control_settings.hidden_ids).prefetch_related(
-                        Prefetch(
-                            "coming_set",
-                            queryset=Coming.objects.filter(category_id=settings.Q_COMING_CATEGORY_ID).order_by("-registered_at"),
-                            to_attr="last_comings",
-                        ),
-                        Prefetch(
-                            "memorizemessage_set",
-                            queryset=MemorizeMessage.objects.filter(sended_at__range=get_last_sat_date_range()),
-                            to_attr="last_week_messages",
-                        ),
-                    )
+                Prefetch(
+                    "coming_set",
+                    queryset=Coming.objects.filter(category_id=settings.Q_COMING_CATEGORY_ID).order_by("-registered_at"),
+                    to_attr="last_comings",
+                ),
+                Prefetch(
+                    "memorizemessage_set",
+                    queryset=MemorizeMessage.objects.filter(sended_at__range=get_last_sat_date_range()),
+                    to_attr="last_week_messages",
+                ),
+            )
 
         return render(
             request,
@@ -102,7 +101,6 @@ def search_results_of_student(request: HttpRequest) -> HttpResponse:
                 "students": None,
                 "text": False,
                 "specializations": specializations,
-                "levels": levels,
                 "all_tests": all_tests,
                 "all_relations": all_relations,
             },
@@ -110,6 +108,7 @@ def search_results_of_student(request: HttpRequest) -> HttpResponse:
 
     if query_text:
         my_regex = ""
+
         for word in re.split(r"\s+", query_text.strip()):
             my_regex += re.escape(word).replace("\u0627", "(\u0623|\u0625|\u0627)").replace("أ", "(\u0623|\u0625|\u0627)").replace("إ", "(\u0623|\u0625|\u0627)") + r".*"
 
@@ -117,7 +116,7 @@ def search_results_of_student(request: HttpRequest) -> HttpResponse:
             students = (
                 Student.objects.filter(name__iregex="{}".format(my_regex)).prefetch_related(
                     "memorizenotes_set",
-                    "part_set__level__specialization",
+                    "studentspecializationpartrelation_set__part",
                     "awqafnoqstudentrelation_set",
                     Prefetch(
                         "coming_set",
@@ -130,7 +129,7 @@ def search_results_of_student(request: HttpRequest) -> HttpResponse:
                         to_attr="last_week_messages",
                     ),
                 )
-                .select_related("category")
+                .select_related("category", "student_group")
                 .order_by("id")
             )
         else:
@@ -139,7 +138,7 @@ def search_results_of_student(request: HttpRequest) -> HttpResponse:
                 .exclude(pk__in=control_settings.hidden_ids)
                 .prefetch_related(
                     "memorizenotes_set",
-                    "part_set__level__specialization",
+                    "studentspecializationpartrelation_set__part",
                     "awqafnoqstudentrelation_set",
                     Prefetch(
                         "coming_set",
@@ -152,7 +151,7 @@ def search_results_of_student(request: HttpRequest) -> HttpResponse:
                         to_attr="last_week_messages",
                     ),
                 )
-                .select_related("category")
+                .select_related("category", "student_group")
                 .order_by("id")
             )
 
@@ -164,7 +163,6 @@ def search_results_of_student(request: HttpRequest) -> HttpResponse:
                 "one_student": None,
                 "text": True,
                 "specializations": specializations,
-                "levels": levels,
                 "all_tests": all_tests,
                 "all_relations": all_relations,
             },
@@ -283,14 +281,14 @@ def add_q_memorize(request: HttpRequest, sid: int) -> HttpResponse:
         student.save()
 
         new_message = MemorizeMessage.objects.create(
-            master_name=master,
+            master=master,
             student_id=student.id,
             student_string=student,
             first_info=q_memo_after_edit,
             second_info=q_memo_before_edit,
         )
 
-        control_settings = ControlSettings.objects.get(pk=1)
+        control_settings = ControlSettings.objects.first()
 
         if control_settings.double_points:
             DoublePointMessage.objects.create(
@@ -375,7 +373,7 @@ def add_q_test(request: HttpRequest) -> HttpResponse:
                 }
 
                 new_message = MemorizeMessage.objects.create(
-                    master_name=master,
+                    master=master,
                     student_id=student.id,
                     student_string=student,
                     first_info=q_test_normal_show,
@@ -383,7 +381,7 @@ def add_q_test(request: HttpRequest) -> HttpResponse:
                     message_type=2,
                 )
 
-                control_settings = ControlSettings.objects.get(pk=1)
+                control_settings = ControlSettings.objects.first()
 
                 if control_settings.double_points:
                     DoublePointMessage.objects.create(
@@ -422,7 +420,7 @@ def add_q_test(request: HttpRequest) -> HttpResponse:
                 }
 
                 new_message = MemorizeMessage.objects.create(
-                    master_name=master,
+                    master=master,
                     student_id=student.id,
                     student_string=student,
                     first_info=q_test_normal_show,
@@ -430,7 +428,7 @@ def add_q_test(request: HttpRequest) -> HttpResponse:
                     message_type=2,
                 )
 
-                control_settings = ControlSettings.objects.get(pk=1)
+                control_settings = ControlSettings.objects.first()
 
                 if control_settings.double_points:
                     DoublePointMessage.objects.create(
@@ -469,7 +467,7 @@ def add_q_test(request: HttpRequest) -> HttpResponse:
                 }
 
                 new_message = MemorizeMessage.objects.create(
-                    master_name=master,
+                    master=master,
                     student_id=student.id,
                     student_string=student,
                     first_info=q_test_normal_show,
@@ -477,7 +475,7 @@ def add_q_test(request: HttpRequest) -> HttpResponse:
                     message_type=2,
                 )
 
-                control_settings = ControlSettings.objects.get(pk=1)
+                control_settings = ControlSettings.objects.first()
 
                 if control_settings.double_points:
                     DoublePointMessage.objects.create(
@@ -516,7 +514,7 @@ def add_q_test(request: HttpRequest) -> HttpResponse:
                 }
 
                 new_message = MemorizeMessage.objects.create(
-                    master_name=master,
+                    master=master,
                     student_id=student.id,
                     student_string=student,
                     first_info=q_test_normal_show,
@@ -524,7 +522,7 @@ def add_q_test(request: HttpRequest) -> HttpResponse:
                     message_type=2,
                 )
 
-                control_settings = ControlSettings.objects.get(pk=1)
+                control_settings = ControlSettings.objects.first()
 
                 if control_settings.double_points:
                     DoublePointMessage.objects.create(
@@ -576,7 +574,7 @@ def add_q_test(request: HttpRequest) -> HttpResponse:
                 }
 
                 new_message = MemorizeMessage.objects.create(
-                    master_name=master,
+                    master=master,
                     student_id=student.id,
                     student_string=student,
                     first_info=q_test_normal_show,
@@ -584,7 +582,7 @@ def add_q_test(request: HttpRequest) -> HttpResponse:
                     message_type=2,
                 )
 
-                control_settings = ControlSettings.objects.get(pk=1)
+                control_settings = ControlSettings.objects.first()
 
                 if control_settings.double_points:
                     DoublePointMessage.objects.create(
@@ -628,7 +626,7 @@ def add_q_test(request: HttpRequest) -> HttpResponse:
                 }
 
                 new_message = MemorizeMessage.objects.create(
-                    master_name=master,
+                    master=master,
                     student_id=student.id,
                     student_string=student,
                     first_info=q_test_normal_show,
@@ -636,7 +634,7 @@ def add_q_test(request: HttpRequest) -> HttpResponse:
                     message_type=2,
                 )
 
-                control_settings = ControlSettings.objects.get(pk=1)
+                control_settings = ControlSettings.objects.first()
 
                 if control_settings.double_points:
                     DoublePointMessage.objects.create(
@@ -680,7 +678,7 @@ def add_q_test(request: HttpRequest) -> HttpResponse:
             }
 
             new_message = MemorizeMessage.objects.create(
-                master_name=master,
+                master=master,
                 student_id=student.id,
                 student_string=student,
                 first_info=q_test_normal_after_edit,
@@ -688,7 +686,7 @@ def add_q_test(request: HttpRequest) -> HttpResponse:
                 message_type=2,
             )
 
-            control_settings = ControlSettings.objects.get(pk=1)
+            control_settings = ControlSettings.objects.first()
 
             if control_settings.double_points:
                 DoublePointMessage.objects.create(
@@ -719,7 +717,7 @@ class MessagesList(LoginRequiredMixin, ListView):
         master = Master.objects.get(user=self.request.user)
         return (
             query_set.select_related("student", "doublepointmessage")
-            .filter(master_name=master)
+            .filter(master=master)
             .order_by("-sended_at")
         )
 
@@ -730,7 +728,7 @@ class MessageDelete(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def test_func(self):
         master = Master.objects.get(user=self.request.user)
-        return self.get_object().master_name == master
+        return self.get_object().master == master
 
     def get_success_url(self):
 
@@ -795,7 +793,7 @@ def create_memorizing_note(request: HttpRequest) -> HttpResponse:
         student_name = Student.objects.get(pk=sid).name
 
         MemorizeNotes.objects.create(
-            master_name=master,
+            master=master,
             student_id=sid,
             content=content,
             student_string=student_name,
@@ -895,7 +893,7 @@ def add_coming(request: HttpRequest) -> HttpResponse:
             return HttpResponseForbidden("<h1>403</h1><h1>Forbidden</h1>")
 
         Coming.objects.create(
-            master_name=master,
+            master=master,
             student_id=student_id,
             category_id=category_id,
             is_doubled=control_settings.double_points,
@@ -916,7 +914,7 @@ class ComingList(UserPassesTestMixin, LoginRequiredMixin, ListView):
         master = Master.objects.get(user=self.request.user)
         return (
             query_set.select_related("student", "category")
-            .filter(master_name=master)
+            .filter(master=master)
             .order_by("-registered_at")
         )
 
@@ -931,7 +929,7 @@ class ComingDelete(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def test_func(self):
         master = Master.objects.get(user=self.request.user)
-        return (self.get_object().master_name == master) and check_coming(
+        return (self.get_object().master == master) and check_coming(
             self.request.user
         )
 
@@ -973,7 +971,7 @@ def admin_points_information(request: HttpRequest) -> HttpResponse:
     q = request.GET.get("text-search-table") or None
     search_type = request.GET.get("type-search-table-admin-p") or None
 
-    point_value = ControlSettings.objects.get(pk=1).point_value
+    point_value = ControlSettings.objects.first().point_value
 
     students = []
 
@@ -1014,6 +1012,16 @@ def admin_points_information(request: HttpRequest) -> HttpResponse:
                         queryset=MoneyDeleting.objects.filter(active_to_points=True),
                         to_attr="money_deleting_info",
                     ),
+                    Prefetch(
+                        "studentspecializationpartrelation_set",
+                        queryset=StudentSpecializationPartRelation.objects.filter(is_old=False).select_related("part"),
+                        to_attr="parts_relation_info",
+                    ),
+                    Prefetch(
+                        "awqafnoqstudentrelation_set",
+                        queryset=AwqafNoQStudentRelation.objects.filter(is_old=False).select_related("test"),
+                        to_attr="awqaf_no_q_info",
+                    ),
                     "pointsadding_set",
                     "coming_set__category",
                     "moneydeleting_set",
@@ -1052,6 +1060,16 @@ def admin_points_information(request: HttpRequest) -> HttpResponse:
                     "moneydeleting_set",
                     queryset=MoneyDeleting.objects.filter(active_to_points=True),
                     to_attr="money_deleting_info",
+                ),
+                Prefetch(
+                    "studentspecializationpartrelation_set",
+                    queryset=StudentSpecializationPartRelation.objects.filter(is_old=False),
+                    to_attr="parts_relation_info",
+                ),
+                Prefetch(
+                    "awqafnoqstudentrelation_set",
+                    queryset=AwqafNoQStudentRelation.objects.filter(is_old=False),
+                    to_attr="awqaf_no_q_info",
                 ),
                 "pointsadding_set",
                 "coming_set__category",
@@ -1111,12 +1129,15 @@ def admin_awqaf_no_q(request: HttpRequest) -> HttpResponse:
         test_id = int(request.POST.get("type"))
 
         student = get_object_or_404(Student, pk=student_id)
+        test = get_object_or_404(AwqafTestNoQ, pk=test_id)
 
         if not AwqafNoQStudentRelation.objects.filter(
-            student_id=student_id, test_id=test_id
+            student_id=student_id,
+            test_id=test_id,
         ):
             AwqafNoQStudentRelation.objects.create(
-                student_id=student_id, test_id=test_id
+                student_id=student_id,
+                test_id=test_id,
             )
 
         else:
@@ -1217,7 +1238,7 @@ def admin_activity_master(request: HttpRequest) -> HttpResponse:
     search_type = request.GET.get("type-search-table-admin-p") or None
     messages = (
         MemorizeMessage.objects.select_related(
-            "student", "master_name__user", "doublepointmessage"
+            "student", "master__user", "doublepointmessage"
         )
         .filter(sended_at__date=date.today())
         .order_by("-sended_at")
@@ -1229,9 +1250,9 @@ def admin_activity_master(request: HttpRequest) -> HttpResponse:
                 my_regex += re.escape(word).replace("\u0627", "(\u0623|\u0625|\u0627)").replace("أ", "(\u0623|\u0625|\u0627)").replace("إ", "(\u0623|\u0625|\u0627)") + r".*"
             messages = (
                 MemorizeMessage.objects.select_related(
-                    "student", "master_name__user", "doublepointmessage"
+                    "student", "master__user", "doublepointmessage"
                 )
-                .filter(master_name__user__username__iregex=r"{}".format(my_regex))
+                .filter(master__user__username__iregex=r"{}".format(my_regex))
                 .order_by("-sended_at")
             )
             return render(
@@ -1245,7 +1266,7 @@ def admin_activity_master(request: HttpRequest) -> HttpResponse:
                 my_regex += re.escape(word).replace("\u0627", "(\u0623|\u0625|\u0627)").replace("أ", "(\u0623|\u0625|\u0627)").replace("إ", "(\u0623|\u0625|\u0627)") + r".*"
             messages = (
                 MemorizeMessage.objects.select_related(
-                    "student", "master_name__user", "doublepointmessage"
+                    "student", "master__user", "doublepointmessage"
                 )
                 .filter(student_string__iregex=r"{}".format(my_regex))
                 .order_by("-sended_at")
@@ -1268,7 +1289,7 @@ def admin_coming_list(request: HttpRequest) -> HttpResponse:
     q = request.GET.get("text-search-table") or None
     search_type = request.GET.get("type-search-table-admin-p") or None
     coming_list = (
-        Coming.objects.select_related("student", "master_name__user", "category")
+        Coming.objects.select_related("student", "master__user", "category")
         .filter(registered_at__date=date.today())
         .order_by("-registered_at")
     )
@@ -1279,9 +1300,9 @@ def admin_coming_list(request: HttpRequest) -> HttpResponse:
                 my_regex += re.escape(word).replace("\u0627", "(\u0623|\u0625|\u0627)").replace("أ", "(\u0623|\u0625|\u0627)").replace("إ", "(\u0623|\u0625|\u0627)") + r".*"
             coming_list = (
                 Coming.objects.select_related(
-                    "student", "master_name__user", "category"
+                    "student", "master__user", "category"
                 )
-                .filter(master_name__user__username__iregex=r"{}".format(my_regex))
+                .filter(master__user__username__iregex=r"{}".format(my_regex))
                 .order_by("-registered_at")
             )
             return render(
@@ -1295,7 +1316,7 @@ def admin_coming_list(request: HttpRequest) -> HttpResponse:
                 my_regex += re.escape(word).replace("\u0627", "(\u0623|\u0625|\u0627)").replace("أ", "(\u0623|\u0625|\u0627)").replace("إ", "(\u0623|\u0625|\u0627)") + r".*"
             coming_list = (
                 Coming.objects.select_related(
-                    "student", "master_name__user", "category"
+                    "student", "master__user", "category"
                 )
                 .filter(student__name__iregex=r"{}".format(my_regex))
                 .order_by("-registered_at")
@@ -1438,7 +1459,7 @@ def admin_adding_points_log(request: HttpRequest) -> HttpResponse:
     q = request.GET.get("text-search-table") or None
     search_type = request.GET.get("type-search-table-admin-p") or None
     add_messages = (
-        PointsAdding.objects.select_related("student", "master_name__user", "cause")
+        PointsAdding.objects.select_related("student", "master__user", "cause")
         .filter(created_at__date=date.today())
         .order_by("-created_at")
     )
@@ -1449,9 +1470,9 @@ def admin_adding_points_log(request: HttpRequest) -> HttpResponse:
                 my_regex += re.escape(word).replace("\u0627", "(\u0623|\u0625|\u0627)").replace("أ", "(\u0623|\u0625|\u0627)").replace("إ", "(\u0623|\u0625|\u0627)") + r".*"
             add_messages = (
                 PointsAdding.objects.select_related(
-                    "student", "master_name__user", "cause"
+                    "student", "master__user", "cause"
                 )
-                .filter(master_name__user__username__iregex=r"{}".format(my_regex))
+                .filter(master__user__username__iregex=r"{}".format(my_regex))
                 .order_by("-created_at")
             )
             return render(
@@ -1465,7 +1486,7 @@ def admin_adding_points_log(request: HttpRequest) -> HttpResponse:
                 my_regex += re.escape(word).replace("\u0627", "(\u0623|\u0625|\u0627)").replace("أ", "(\u0623|\u0625|\u0627)").replace("إ", "(\u0623|\u0625|\u0627)") + r".*"
             add_messages = (
                 PointsAdding.objects.select_related(
-                    "student", "master_name__user", "cause"
+                    "student", "master__user", "cause"
                 )
                 .filter(student__name__iregex=r"{}".format(my_regex))
                 .order_by("-created_at")
@@ -1496,12 +1517,19 @@ def admin_specializations(request: HttpRequest) -> HttpResponse:
 
     specializations = Specialization.objects.all()
     parts = (
-        Part.objects.select_related("level__specialization")
-        .prefetch_related("students")
+        Part.objects
+        .select_related("subject__specialization")
+        .prefetch_related(
+            Prefetch(
+                "studentspecializationpartrelation_set",
+                queryset=StudentSpecializationPartRelation.objects.select_related("student"),
+            )
+        )
         .all()
-        .order_by("level__specialization", "level", "part_number")
-    )
-    students = Student.objects.exclude(part__isnull=True).order_by("id")
+        .order_by("subject__specialization", "subject", "part_number")
+    )   
+    
+    students = Student.objects.exclude(studentspecializationpartrelation__isnull=True).prefetch_related("studentspecializationpartrelation_set").order_by("id")
 
     if (q is not None) and (search_type is not None):
         if search_type == "by-text":
@@ -1522,7 +1550,7 @@ def admin_specializations(request: HttpRequest) -> HttpResponse:
 
     messages = (
         SpecializationMessage.objects.select_related(
-            "student", "master_name__user", "part__level__specialization"
+            "student", "master__user", "part__subject__specialization"
         )
         .filter(student__in=students)
         .order_by("-created_at")
@@ -1634,7 +1662,7 @@ def adding_points(request: HttpRequest) -> HttpResponse:
         cid = int(request.POST.get("cause-id"))
         
         PointsAdding.objects.create(
-            master_name=master, cause_id=cid, student_id=sid, value=value
+            master=master, cause_id=cid, student_id=sid, value=value
         )
 
         return redirect(request.META.get("HTTP_REFERER"))
@@ -1650,7 +1678,7 @@ def adding_points_log(request: HttpRequest) -> HttpResponse:
 
     points_adding_msgs = (
         PointsAdding.objects.select_related("student", "cause")
-        .filter(master_name=master)
+        .filter(master=master)
         .order_by("-created_at")
     )
 
@@ -1670,7 +1698,7 @@ def deleting_adding_points(request: HttpRequest, aid: int) -> HttpResponse:
         master = Master.objects.get(user=request.user)
         adding_id = int(request.POST.get("id"))
         adding = PointsAdding.objects.get(pk=adding_id)
-        if request.user.is_superuser or adding.master_name == master:
+        if request.user.is_superuser or adding.master == master:
             adding.delete()
         return redirect("adding_points_log")
     return render(request, "adding_points_delete.html", {"id": aid})
@@ -1868,7 +1896,7 @@ def deleting_money_table(request: HttpRequest) -> HttpResponse:
     q = request.GET.get("text-search-table") or None
     search_type = request.GET.get("type-search-table-admin-p") or None
 
-    point_value = ControlSettings.objects.get(pk=1).point_value
+    point_value = ControlSettings.objects.first().point_value
 
     if (q is not None) and (search_type is not None):
         if search_type == "by-text":
@@ -1975,7 +2003,7 @@ def add_hadeeth(request: HttpRequest) -> HttpResponse:
                 student.save()
 
                 memorize_message = MemorizeMessage.objects.create(
-                    master_name=master,
+                    master=master,
                     student=student,
                     student_string=student.name,
                     first_info=None,
@@ -1995,7 +2023,7 @@ def add_hadeeth(request: HttpRequest) -> HttpResponse:
         elif add_hadeeth_type == "alarbaein_alnawawia":
             if student.alarbaein_alnawawia_old + student.alarbaein_alnawawia_new < hadeeth_number <= 50:
                 memorize_message = MemorizeMessage.objects.create(
-                    master_name=master,
+                    master=master,
                     student=student,
                     student_string=student.name,
                     first_info=[f"الحديث {i}" for i in range(student.alarbaein_alnawawia_old + student.alarbaein_alnawawia_new + 1, hadeeth_number + 1)],
@@ -2020,7 +2048,7 @@ def add_hadeeth(request: HttpRequest) -> HttpResponse:
         elif add_hadeeth_type == "riad_alsaalihin":
             if student.riad_alsaalihin_old + student.riad_alsaalihin_new < hadeeth_number:
                 memorize_message = MemorizeMessage.objects.create(
-                    master_name=master,
+                    master=master,
                     student=student,
                     student_string=student.name,
                     first_info=[f"الحديث {i}" for i in range(student.riad_alsaalihin_old + student.riad_alsaalihin_new + 1, hadeeth_number + 1)],

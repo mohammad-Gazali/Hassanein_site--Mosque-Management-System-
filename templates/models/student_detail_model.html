@@ -15,7 +15,7 @@
             <a href="#student-q-test-awqaf-{{ student.id }}" class="btn btn-primary w-100">سبر القرآن في الأوقاف</a>
             <a href="#student-no-q-test-awqaf-{{ student.id }}" class="btn btn-primary w-100">سبر ما عدا القرآن في الأوقاف</a>
             <a href="#student-hadeeth-details-{{ student.id }}" class="btn btn-primary w-100">الأحاديث وأسماء الله الحسنى</a>
-            {% comment %} <a href="#student-specialization-details-{{ student.id }}" class="btn btn-primary w-100">الاختصاصات</a> {% endcomment %}
+            <a href="#student-specialization-details-{{ student.id }}" class="btn btn-primary w-100">الاختصاصات</a>
             <a href="#memorize-notes-{{ student.id }}" class="btn btn-primary w-100">ملاحظات التسميع</a>
         </div>
         <link rel="stylesheet" href="{% static 'css/student_detail_style.css'%}">
@@ -128,7 +128,7 @@
         {% include 'partials/q_test_awqaf.html' with q_awqaf_test=student.q_awqaf_test q_awqaf_test_looking=student.q_awqaf_test_looking q_awqaf_test_explaining=student.q_awqaf_test_explaining id=student.id %}
         {% include 'partials/no_q_test_awqaf.html' with all_tests=all_tests previous_relations=student.awqafnoqstudentrelation_set.all all_relations=all_relations id=student.id %}
         {% include 'partials/hadeeth.html' with student=student %}
-        {% comment %} {% include 'partials/specialization_details.html' with parts=student.part_set.all id=student.id %} {% endcomment %}
+        {% include 'partials/specialization_details.html' with relations=student.studentspecializationpartrelation_set.all id=student.id %}
         {% include 'partials/memorize_notes.html' with student=student id=student.id %}
     </div>
 </div>

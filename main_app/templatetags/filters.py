@@ -1,5 +1,4 @@
 from django import template
-from main_app.models import AwqafNoQStudentRelation
 
 register = template.Library()
 

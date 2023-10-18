@@ -37,7 +37,7 @@ def add_coming_for_non_before_coming_students(_, request: HttpRequest, queryset:
         models.Coming.objects.get_or_create(
             student=student,
             category_id=settings.Q_COMING_CATEGORY_ID,
-            master_name=master,
+            master=master,
             is_doubled=control_settings.double_points,
         )
 
@@ -95,20 +95,20 @@ class AdminStudent(admin.ModelAdmin):
 @admin.register(models.MemorizeMessage)
 class AdminMemorizeMessage(admin.ModelAdmin):
     list_display = ["id", "master_full_name", "student", "message_type", "sended_at"]
-    list_select_related = ["master_name__user", "student"]
+    list_select_related = ["master__user", "student"]
     readonly_fields = [
-        "master_name",
+        "master",
         "student",
         "message_type",
         "sended_at",
         "first_info",
     ]
-    list_filter = ["master_name", "message_type"]
+    list_filter = ["master", "message_type"]
     search_fields = ["student_string"]
     exclude = ["student_string", "second_info"]
 
     def master_full_name(self, obj: models.MemorizeMessage) -> str:
-        return f"{obj.master_name.user.first_name} {obj.master_name.user.last_name}"
+        return f"{obj.master.user.first_name} {obj.master.user.last_name}"
     master_full_name.short_description = "اسم الأستاذ"
 
     # this method prevent admin from deleting objects in this model
@@ -138,14 +138,14 @@ class AdminMemorizeMessage(admin.ModelAdmin):
 @admin.register(models.MemorizeNotes)
 class AdminMemorizeNote(admin.ModelAdmin):
     list_display = ["master_full_name", "student", "sended_at"]
-    list_select_related = ["master_name__user", "student"]
-    readonly_fields = ["master_name", "student", "content", "sended_at"]
-    list_filter = ["master_name"]
+    list_select_related = ["master__user", "student"]
+    readonly_fields = ["master", "student", "content", "sended_at"]
+    list_filter = ["master"]
     search_fields = ["student_string"]
     exclude = ["student_string"]
 
     def master_full_name(self, obj: models.MemorizeNotes) -> str:
-        return f"{obj.master_name.user.first_name} {obj.master_name.user.last_name}"
+        return f"{obj.master.user.first_name} {obj.master.user.last_name}"
     master_full_name.short_description = "اسم الأستاذ"
 
     def has_delete_permission(self, _, __=None):
@@ -167,10 +167,10 @@ class ComingCategoryAdmin(admin.ModelAdmin):
 class ComingAdmin(admin.ModelAdmin):
     list_display = ["student", "master_full_name", "category", "registered_at"]
     list_filter = ["registered_at", "category", "student__category"]
-    list_select_related = ["student", "master_name__user", "category"]
+    list_select_related = ["student", "master__user", "category"]
 
     def master_full_name(self, obj: models.Coming) -> str:
-        return f"{obj.master_name.user.first_name} {obj.master_name.user.last_name}"
+        return f"{obj.master.user.first_name} {obj.master.user.last_name}"
     master_full_name.short_description = "اسم الأستاذ"
 
     def has_delete_permission(self, _, __=None):
@@ -217,10 +217,10 @@ class AwqafTestNoQAdmin(admin.ModelAdmin):
 @admin.register(models.PointsAdding)
 class PointsAddingAdmin(admin.ModelAdmin):
     list_display = ["student", "master_full_name", "cause", "created_at"]
-    list_select_related = ["student", "cause", "master_name__user"]
+    list_select_related = ["student", "cause", "master__user"]
 
     def master_full_name(self, obj: models.MemorizeNotes) -> str:
-        return f"{obj.master_name.user.first_name} {obj.master_name.user.last_name}"
+        return f"{obj.master.user.first_name} {obj.master.user.last_name}"
     master_full_name.short_description = "اسم الأستاذ"
 
     def has_delete_permission(self, _, __=None):

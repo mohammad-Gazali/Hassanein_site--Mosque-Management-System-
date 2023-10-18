@@ -1,33 +1,41 @@
-{% load static %}
+{% load static specializations_filters %}
 
 <section id="student-specialization-details-{{ id }}" class="specialization-details">
     <h6 class="text-white title">
         الاختصاصات
     </h6>
     <div class="d-flex justify-content-center align-items-center flex-wrap gap-3">
-        {% if parts %}
+        {% if relations %}
             {% for specialization in specializations %}
                 <div class="rounded p-2 w-100" style="background-color: #1e7f89;">
                     <h4 class="text-white text-center bg-dark rounded mx-auto py-2 shadow mb-3" style="width: 120px">
                         {{ specialization }}
                     </h4>
                     <div class="d-flex flex-column gap-2">
-                        {% for level in specialization.level_set.all %}
-                            <div class="bg-dark text-white p-2 rounded shadow d-flex gap-2">
+                        {% for subject in specialization.subject_set.all %}
+                            <div class="bg-dark text-white p-2 rounded shadow d-flex flex-column gap-2">
                                 <div class="bg-light rounded text-dark text-center p-2 d-flex justify-content-center align-items-center">
-                                    المستوى {{ level.level_number }}
+                                    {{ subject.name }}
                                 </div>
-                                <div class="d-flex flex-wrap gap-2">
-                                    {% for part in level.part_set.all %}
-                                        {% if part in parts %}
-                                            <div class="p-2 rounded bg-success text-center">
-                                                القسم {{ part.part_number }}
-                                            </div>
-                                        {% else %}
-                                            <div class="p-2 rounded bg-secondary text-centerذ">
-                                                القسم {{ part.part_number }}
-                                            </div>
-                                        {% endif %}
+                                <div class="d-flex justify-content-center flex-wrap gap-2">
+                                    {% for part in subject.part_set.all %}
+                                        {% with selected_relation=part.studentspecializationpartrelation_set.all|get_relation:student.id %}
+                                            {% if selected_relation in student.studentspecializationpartrelation_set.all %}
+                                                {% if selected_relation.is_old %}
+                                                    <div class="p-2 rounded bg-warning text-black text-center">
+                                                        {{ part.part_content }}
+                                                    </div>
+                                                {% else %}
+                                                    <div class="p-2 rounded bg-success text-center">
+                                                        {{ part.part_content }}
+                                                    </div>
+                                                {% endif %}
+                                            {% else %}
+                                                <div class="p-2 rounded bg-secondary text-centerذ">
+                                                    {{ part.part_content }}
+                                                </div>
+                                            {% endif %}
+                                        {% endwith %}
                                     {% endfor %}
                                 </div>
                             </div>
