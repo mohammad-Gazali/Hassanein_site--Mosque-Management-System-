@@ -10,5 +10,5 @@ urlpatterns = [
     path("specializtions/", include("specializations.urls")),
 
     # debug only
-    path("__debug__/", include("debug_toolbar.urls")),
+    # path("__debug__/", include("debug_toolbar.urls")),
 ]
