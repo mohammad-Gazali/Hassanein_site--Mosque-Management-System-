@@ -8,8 +8,8 @@
 
 
 {% block admin_content %}
-    <div class="mt-3 d-flex gap-3 rounded p-3" style="background-color: #0018456b">
-        <div id="basic-buttons-specializations" class="d-flex gap-3">
+    <div class="mt-3 d-flex justify-content-between flex-wrap gap-3 rounded p-3" style="background-color: #0018456b">
+        <div id="basic-buttons-specializations" class="d-flex flex-wrap gap-3">
             <button id="edit-specializations-btn" class="btn btn-warning" style="white-space: nowrap">
                 تعديل <i class="bi bi-gear-fill"></i>
             </button>
@@ -20,12 +20,12 @@
                 تراجع <i class="bi bi-x-lg"></i>
             </button>
         </div>
-        <button id="display-type-specializations-btn" class="btn btn-dark me-auto" data-type="main" style="white-space: nowrap">
+        <button id="display-type-specializations-btn" class="btn btn-dark" data-type="main">
             عرض السجل لتسجيل الاختصاص <i class="bi bi-journal-bookmark-fill"></i>
         </button>
     </div>
     <div id="buttons-filters-bar" class="w-100 d-flex justify-content-center align-items-center flex-wrap gap-2 mt-3 p-3 rounded" style="background-color: #0018456b">
-        <button class="btn btn-success" data-sp="-1" style="width: 200px">
+        <button class="btn btn-primary" data-sp="-1" style="width: 200px">
             الكل
         </button>
         {% for sp in specializations %}
@@ -35,7 +35,7 @@
         {% endfor %}
     </div>
     <div class="table-responsive mb-5 scrollbar-table">
-        <table id="main-table-specializations" class="table table-dark table-bordered table-striped mt-3 mb-0 rounded text-center">
+        <table id="main-table-specializations" class="table table-dark table-bordered table-striped mt-3 mb-0 rounded text-center" style="white-space: nowrap;">
             <thead>
                 <tr>
                     <th>المعرف</th>

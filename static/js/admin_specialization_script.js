@@ -64,28 +64,26 @@ displayTypeSpecializationsBtn.onclick = () => {
 specializationsFilteringBtns.forEach(btn => {
     btn.onclick = () => {
 
-        if (btn.dataset.sp === "-1") {
+        specializationsFilteringBtns.forEach(b => {
+            b.classList.remove("btn-primary");
+            b.classList.add("btn-success");
+        })
+        
+        btn.classList.remove("btn-success");
+        btn.classList.add("btn-primary");
 
+        if (btn.dataset.sp === "-1") {
             filteringCells.forEach(cell => {
                 cell.classList.remove("d-none");
             })
-
         } else {
-
             filteringCells.forEach(cell => {
                 if (cell.dataset.spItem == btn.dataset.sp) {
-
                     cell.classList.remove("d-none");
-
                 } else {
-
                     cell.classList.add("d-none");
-
                 }
             })
-    
-
         }
-
     }
 })
