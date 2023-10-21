@@ -1,0 +1,46 @@
+<div class="d-flex flex-column justify-content-center align-items-center gap-2">
+    {% if messages %}
+        <div class="d-flex flex-wrap justify-content-center gap-2">
+            {% for message in messages %}
+                {% if message.message_type == 1 %}
+                    {% for key, _ in message.first_info.items %}
+                        {% if key|length > 3 or key == 'عبس' %}
+                            <div class="flex-block bg-success text-white">
+                                {{ key }}
+                            </div>
+                        {% else %}
+                            <div class="block bg-success text-white">
+                                {{ key }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% elif message.message_type == 2 %}
+                    <div class="flex-block bg-success text-white px-2">
+                        سبر {{ message.first_info.content }}
+                    </div>
+                {% elif message.message_type == 3 %}
+                    {% for item in message.first_info %}
+                        <div class="flex-block bg-success text-white px-2">
+                            {{ item }} من الأربعين النووية
+                        </div>  
+                    {% endfor %}
+                {% elif message.message_type == 4 %}
+                    {% for item in message.first_info %}
+                        <div class="flex-block bg-success text-white px-2">
+                            {{ item }} من رياض الصالحين
+                        </div>    
+                    {% endfor %}
+                {% else %}
+                    <div class="flex-block bg-success text-white px-2">
+                        أسماء الله الحسنى
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        <p class="text-center text-white">عدد الصفحات: {{ messages|messages_to_num_pages }}</p>
+    {% else %}
+        <div class="flex-block px-2 bg-secondary text-white">
+            لا يوجد
+        </div>
+    {% endif %}
+</div>

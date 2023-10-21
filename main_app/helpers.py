@@ -49,3 +49,9 @@ def get_last_sat_date_range():
     last_sat = today - timezone.timedelta(idx + 1)
     next_sat = last_sat + timezone.timedelta(7)
     return [last_sat, next_sat]
+
+
+def get_last_sat_date_range_for_previous_week():
+    [last_sat, next_sat] = get_last_sat_date_range()
+
+    return [last_sat - timezone.timedelta(7), next_sat - timezone.timedelta(7)]

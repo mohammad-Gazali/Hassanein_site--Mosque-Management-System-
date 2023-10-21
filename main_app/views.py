@@ -30,8 +30,8 @@ from main_app.models import (
 from main_app.forms import SettingForm
 from main_app.point_map import apply_q_map
 from main_app.check_functions import check_adding_hadeeth, check_admin, check_coming, check_adding_points
-from main_app.helpers import give_section_from_page, give_num_pages, get_last_sat_date_range
-from specializations.models import Part, SpecializationMessage, Specialization, Subject, StudentSpecializationPartRelation
+from main_app.helpers import give_section_from_page, give_num_pages, get_last_sat_date_range, get_last_sat_date_range_for_previous_week
+from specializations.models import Part, SpecializationMessage, Specialization, StudentSpecializationPartRelation
 from specializations.views import apply_edit_changes
 from datetime import datetime, date
 import pytz
@@ -65,68 +65,79 @@ def search_results_of_student(request: HttpRequest) -> HttpResponse:
 
     control_settings = ControlSettings.objects.first()
 
-    current_year = timezone.datetime.now().year
-    current_month = timezone.datetime.now().month
+    last_comings_prefetch = Prefetch(
+        "coming_set",
+        queryset=Coming.objects.filter(category_id=settings.Q_COMING_CATEGORY_ID).order_by("-registered_at"),
+        to_attr="last_comings",
+    )
+
+    previous_week_prefetch = Prefetch(
+        "memorizemessage_set",
+        queryset=MemorizeMessage.objects.filter(sended_at__range=get_last_sat_date_range_for_previous_week()),
+        to_attr="previous_week_messages",
+    )
+
+    current_week_prefetch = Prefetch(
+        "memorizemessage_set",
+        queryset=MemorizeMessage.objects.filter(sended_at__range=get_last_sat_date_range()),
+        to_attr="current_week_messages",
+    )
+
+    swap_between_two_halfs = False
+
+    year = timezone.now().year
+    month = timezone.now().month
+
+    previous_month = month - 1 if month - 1 <= 1 else 12
+    next_month = month + 1 if month + 1 <= 12 else 1
+
+    first_half_prefetch = Prefetch(
+        "memorizemessage_set",
+        queryset=MemorizeMessage.objects.filter(sended_at__range=[
+            timezone.datetime(year=year, month=month, day=1),
+            timezone.datetime(year=year, month=month, day=16),
+        ]),
+        to_attr="first_month_half_messages",
+    )
+    
+    second_half_prefetch = Prefetch(
+        "memorizemessage_set",
+        queryset=MemorizeMessage.objects.filter(sended_at__range=[
+            timezone.datetime(year=year, month=month, day=16),
+            timezone.datetime(year=year, month=next_month, day=1),
+        ]),
+        to_attr="second_month_half_messages",
+    )
+
+    if timezone.now().day <= 15:
+        swap_between_two_halfs = True
+
+        second_half_prefetch = Prefetch(
+        "memorizemessage_set",
+            queryset=MemorizeMessage.objects.filter(sended_at__range=[
+                timezone.datetime(year=year, month=previous_month, day=16),
+                timezone.datetime(year=year, month=month, day=1),
+            ]),
+            to_attr="second_month_half_messages",
+        )
 
     if query_id:
         # hiding hidden ids from non-authenticated users
         if request.user.is_authenticated:
             student = Student.objects.filter(pk=query_id).prefetch_related(
-                Prefetch(
-                    "coming_set",
-                    queryset=Coming.objects.filter(category_id=settings.Q_COMING_CATEGORY_ID).order_by("-registered_at"),
-                    to_attr="last_comings",
-                ),
-                Prefetch(
-                    "memorizemessage_set",
-                    queryset=MemorizeMessage.objects.filter(sended_at__range=get_last_sat_date_range()),
-                    to_attr="last_week_messages",
-                ),
-                Prefetch(
-                    "memorizemessage_set",
-                    queryset=MemorizeMessage.objects.filter(sended_at__range=[
-                        timezone.datetime(year=current_year, month=current_month, day=1),
-                        timezone.datetime(year=current_year, month=current_month, day=16),
-                    ]),
-                    to_attr="first_month_half_messages",
-                ),
-                Prefetch(
-                    "memorizemessage_set",
-                    queryset=MemorizeMessage.objects.filter(sended_at__range=[
-                        timezone.datetime(year=current_year, month=current_month, day=16),
-                        timezone.datetime(year=current_year, month=current_month + 1, day=1),
-                    ]),
-                    to_attr="second_month_half_messages",
-                ),
+                last_comings_prefetch,
+                previous_week_prefetch,
+                current_week_prefetch,
+                first_half_prefetch,
+                second_half_prefetch,
             )
         else:
             student = Student.objects.filter(pk=query_id).exclude(pk__in=control_settings.hidden_ids).prefetch_related(
-                Prefetch(
-                    "coming_set",
-                    queryset=Coming.objects.filter(category_id=settings.Q_COMING_CATEGORY_ID).order_by("-registered_at"),
-                    to_attr="last_comings",
-                ),
-                Prefetch(
-                    "memorizemessage_set",
-                    queryset=MemorizeMessage.objects.filter(sended_at__range=get_last_sat_date_range()),
-                    to_attr="last_week_messages",
-                ),
-                Prefetch(
-                    "memorizemessage_set",
-                    queryset=MemorizeMessage.objects.filter(sended_at__range=[
-                        timezone.datetime(year=current_year, month=current_month, day=1),
-                        timezone.datetime(year=current_year, month=current_month, day=16),
-                    ]),
-                    to_attr="first_month_half_messages",
-                ),
-                Prefetch(
-                    "memorizemessage_set",
-                    queryset=MemorizeMessage.objects.filter(sended_at__range=[
-                        timezone.datetime(year=current_year, month=current_month, day=16),
-                        timezone.datetime(year=current_year, month=current_month + 1, day=1),
-                    ]),
-                    to_attr="second_month_half_messages",
-                ),
+                last_comings_prefetch,
+                previous_week_prefetch,
+                current_week_prefetch,
+                first_half_prefetch,
+                second_half_prefetch,
             )
 
         return render(
@@ -139,6 +150,9 @@ def search_results_of_student(request: HttpRequest) -> HttpResponse:
                 "specializations": specializations,
                 "all_tests": all_tests,
                 "all_relations": all_relations,
+                "swap_between_two_halfs": swap_between_two_halfs,
+                "month": month,
+                "previous_month": previous_month,
             },
         )
 
@@ -154,32 +168,11 @@ def search_results_of_student(request: HttpRequest) -> HttpResponse:
                     "memorizenotes_set",
                     "studentspecializationpartrelation_set__part",
                     "awqafnoqstudentrelation_set",
-                    Prefetch(
-                        "coming_set",
-                        queryset=Coming.objects.filter(category_id=settings.Q_COMING_CATEGORY_ID).order_by("-registered_at"),
-                        to_attr="last_comings",
-                    ),
-                    Prefetch(
-                        "memorizemessage_set",
-                        queryset=MemorizeMessage.objects.filter(sended_at__range=get_last_sat_date_range()),
-                        to_attr="last_week_messages",
-                    ),
-                    Prefetch(
-                        "memorizemessage_set",
-                        queryset=MemorizeMessage.objects.filter(sended_at__range=[
-                            timezone.datetime(year=current_year, month=current_month, day=1),
-                            timezone.datetime(year=current_year, month=current_month, day=16),
-                        ]),
-                        to_attr="first_month_half_messages",
-                    ),
-                    Prefetch(
-                        "memorizemessage_set",
-                        queryset=MemorizeMessage.objects.filter(sended_at__range=[
-                            timezone.datetime(year=current_year, month=current_month, day=16),
-                            timezone.datetime(year=current_year, month=current_month + 1, day=1),
-                        ]),
-                        to_attr="second_month_half_messages",
-                    ),
+                    last_comings_prefetch,
+                    previous_week_prefetch,
+                    current_week_prefetch,
+                    first_half_prefetch,
+                    second_half_prefetch,
                 )
                 .select_related("category", "student_group")
                 .order_by("id")
@@ -192,32 +185,11 @@ def search_results_of_student(request: HttpRequest) -> HttpResponse:
                     "memorizenotes_set",
                     "studentspecializationpartrelation_set__part",
                     "awqafnoqstudentrelation_set",
-                    Prefetch(
-                        "coming_set",
-                        queryset=Coming.objects.filter(category_id=settings.Q_COMING_CATEGORY_ID).order_by("-registered_at"),
-                        to_attr="last_comings",
-                    ),
-                    Prefetch(
-                        "memorizemessage_set",
-                        queryset=MemorizeMessage.objects.filter(sended_at__range=get_last_sat_date_range()),
-                        to_attr="last_week_messages",
-                    ),
-                    Prefetch(
-                        "memorizemessage_set",
-                        queryset=MemorizeMessage.objects.filter(sended_at__range=[
-                            timezone.datetime(year=current_year, month=current_month, day=1),
-                            timezone.datetime(year=current_year, month=current_month, day=16),
-                        ]),
-                        to_attr="first_month_half_messages",
-                    ),
-                    Prefetch(
-                        "memorizemessage_set",
-                        queryset=MemorizeMessage.objects.filter(sended_at__range=[
-                            timezone.datetime(year=current_year, month=current_month, day=16),
-                            timezone.datetime(year=current_year, month=current_month + 1, day=1),
-                        ]),
-                        to_attr="second_month_half_messages",
-                    ),
+                    last_comings_prefetch,
+                    previous_week_prefetch,
+                    current_week_prefetch,
+                    first_half_prefetch,
+                    second_half_prefetch,
                 )
                 .select_related("category", "student_group")
                 .order_by("id")
@@ -233,6 +205,9 @@ def search_results_of_student(request: HttpRequest) -> HttpResponse:
                 "specializations": specializations,
                 "all_tests": all_tests,
                 "all_relations": all_relations,
+                "swap_between_two_halfs": swap_between_two_halfs,
+                "month": month,
+                "previous_month": previous_month,
             },
         )
 
