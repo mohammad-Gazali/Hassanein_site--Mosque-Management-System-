@@ -1,4 +1,4 @@
-{% load static filters %}
+{% load static %}
 
 
 <div class="model" id="model-{{ student.id }}-id-{{type}}">
@@ -69,12 +69,12 @@
                 {% include "partials/messages_with_number_of_pages.html" with messages=student.first_month_half_messages %}
                 <hr class="border-light">
                 <h6 class="title text-white" style="background: rgb(109, 40, 193); border: 2px white solid">
-                    التسميعات من {{ month }}/16 إلى آخر {{ month }}
+                    التسميعات من {{ month }}/16 إلى آخر شهر {{ month }}
                 </h6>
                 {% include "partials/messages_with_number_of_pages.html" with messages=student.second_month_half_messages %}
             {% else %}
                 <h6 class="title text-white" style="background: rgb(109, 40, 193); border: 2px white solid">
-                    التسميعات من {{ previous_month }}/16 إلى آخر {{ previous_month }}
+                    التسميعات من {{ previous_month }}/16 إلى آخر شهر {{ previous_month }}
                 </h6>
                 {% include "partials/messages_with_number_of_pages.html" with messages=student.second_month_half_messages %}
                 <hr class="border-light">
