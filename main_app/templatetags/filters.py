@@ -1,7 +1,10 @@
 from django import template
+from main_app.helpers import give_num_pages
+from main_app.models import MemorizeMessage
+from typing import Iterable
+
 
 register = template.Library()
-
 
 @register.filter("quarter")
 def quarter(str):
@@ -55,3 +58,13 @@ def is_new_relation(mylist, relations):
 def all_points_handling(values: list[int], point_value: int) -> int:
     money_points = values[1] / point_value
     return int(values[0] - money_points)
+
+
+@register.filter()
+def messages_to_num_pages(messages: Iterable[MemorizeMessage]) -> float:
+    result = 0
+
+    for message in messages:
+        result += give_num_pages(message)
+
+    return result

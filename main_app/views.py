@@ -6,6 +6,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import HttpRequest, HttpResponse, HttpResponseForbidden, HttpResponseNotAllowed, JsonResponse
 from django.db.models import Prefetch, Sum, Q
 from django.conf import settings
+from django.utils import timezone
 from main_app.models import (
     MemorizeNotes,
     MessageTypeChoice,
@@ -64,6 +65,9 @@ def search_results_of_student(request: HttpRequest) -> HttpResponse:
 
     control_settings = ControlSettings.objects.first()
 
+    current_year = timezone.datetime.now().year
+    current_month = timezone.datetime.now().month
+
     if query_id:
         # hiding hidden ids from non-authenticated users
         if request.user.is_authenticated:
@@ -77,7 +81,23 @@ def search_results_of_student(request: HttpRequest) -> HttpResponse:
                     "memorizemessage_set",
                     queryset=MemorizeMessage.objects.filter(sended_at__range=get_last_sat_date_range()),
                     to_attr="last_week_messages",
-                )
+                ),
+                Prefetch(
+                    "memorizemessage_set",
+                    queryset=MemorizeMessage.objects.filter(sended_at__range=[
+                        timezone.datetime(year=current_year, month=current_month, day=1),
+                        timezone.datetime(year=current_year, month=current_month, day=16),
+                    ]),
+                    to_attr="first_month_half_messages",
+                ),
+                Prefetch(
+                    "memorizemessage_set",
+                    queryset=MemorizeMessage.objects.filter(sended_at__range=[
+                        timezone.datetime(year=current_year, month=current_month, day=16),
+                        timezone.datetime(year=current_year, month=current_month + 1, day=1),
+                    ]),
+                    to_attr="second_month_half_messages",
+                ),
             )
         else:
             student = Student.objects.filter(pk=query_id).exclude(pk__in=control_settings.hidden_ids).prefetch_related(
@@ -90,6 +110,22 @@ def search_results_of_student(request: HttpRequest) -> HttpResponse:
                     "memorizemessage_set",
                     queryset=MemorizeMessage.objects.filter(sended_at__range=get_last_sat_date_range()),
                     to_attr="last_week_messages",
+                ),
+                Prefetch(
+                    "memorizemessage_set",
+                    queryset=MemorizeMessage.objects.filter(sended_at__range=[
+                        timezone.datetime(year=current_year, month=current_month, day=1),
+                        timezone.datetime(year=current_year, month=current_month, day=16),
+                    ]),
+                    to_attr="first_month_half_messages",
+                ),
+                Prefetch(
+                    "memorizemessage_set",
+                    queryset=MemorizeMessage.objects.filter(sended_at__range=[
+                        timezone.datetime(year=current_year, month=current_month, day=16),
+                        timezone.datetime(year=current_year, month=current_month + 1, day=1),
+                    ]),
+                    to_attr="second_month_half_messages",
                 ),
             )
 
@@ -128,6 +164,22 @@ def search_results_of_student(request: HttpRequest) -> HttpResponse:
                         queryset=MemorizeMessage.objects.filter(sended_at__range=get_last_sat_date_range()),
                         to_attr="last_week_messages",
                     ),
+                    Prefetch(
+                        "memorizemessage_set",
+                        queryset=MemorizeMessage.objects.filter(sended_at__range=[
+                            timezone.datetime(year=current_year, month=current_month, day=1),
+                            timezone.datetime(year=current_year, month=current_month, day=16),
+                        ]),
+                        to_attr="first_month_half_messages",
+                    ),
+                    Prefetch(
+                        "memorizemessage_set",
+                        queryset=MemorizeMessage.objects.filter(sended_at__range=[
+                            timezone.datetime(year=current_year, month=current_month, day=16),
+                            timezone.datetime(year=current_year, month=current_month + 1, day=1),
+                        ]),
+                        to_attr="second_month_half_messages",
+                    ),
                 )
                 .select_related("category", "student_group")
                 .order_by("id")
@@ -149,6 +201,22 @@ def search_results_of_student(request: HttpRequest) -> HttpResponse:
                         "memorizemessage_set",
                         queryset=MemorizeMessage.objects.filter(sended_at__range=get_last_sat_date_range()),
                         to_attr="last_week_messages",
+                    ),
+                    Prefetch(
+                        "memorizemessage_set",
+                        queryset=MemorizeMessage.objects.filter(sended_at__range=[
+                            timezone.datetime(year=current_year, month=current_month, day=1),
+                            timezone.datetime(year=current_year, month=current_month, day=16),
+                        ]),
+                        to_attr="first_month_half_messages",
+                    ),
+                    Prefetch(
+                        "memorizemessage_set",
+                        queryset=MemorizeMessage.objects.filter(sended_at__range=[
+                            timezone.datetime(year=current_year, month=current_month, day=16),
+                            timezone.datetime(year=current_year, month=current_month + 1, day=1),
+                        ]),
+                        to_attr="second_month_half_messages",
                     ),
                 )
                 .select_related("category", "student_group")

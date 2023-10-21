@@ -46,6 +46,6 @@ def get_last_sat_date_range():
 
     idx = (today.weekday() + 1) % 7
 
-    last_sat = today - timezone.timedelta(idx+1)
+    last_sat = today - timezone.timedelta(idx + 1)
     next_sat = last_sat + timezone.timedelta(7)
     return [last_sat, next_sat]
