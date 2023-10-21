@@ -103,7 +103,7 @@
             </div>
             <hr class="border-light">
             <h6 class="title text-white" style="background: rgb(109, 40, 193); border: 2px white solid">
-                تسميعات أول نصف شهر
+                تسميعات من بداية الشهر إلى 15 الشهر
             </h6>
             <div class="d-flex flex-column justify-content-center align-items-center gap-2">
                 {% if student.first_month_half_messages %}
@@ -144,7 +144,7 @@
                             {% endif %}
                         {% endfor %}
                     </div>
-                    <p class="text-center text-white">عدد الصفحات: {{ student.last_week_messages|messages_to_num_pages }}</p>
+                    <p class="text-center text-white">عدد الصفحات: {{ student.first_month_half_messages|messages_to_num_pages }}</p>
                 {% else %}
                     <div class="flex-block px-2 bg-secondary text-white">
                         لا يوجد
@@ -153,7 +153,7 @@
             </div>
             <hr class="border-light">
             <h6 class="title text-white" style="background: rgb(109, 40, 193); border: 2px white solid">
-                تسميعات ثاني نصف شهر
+                تسميعات من 16 الشهر إلى نهايته
             </h6>
             <div class="d-flex flex-column justify-content-center align-items-center gap-2">
                 {% if student.second_month_half_messages %}
@@ -194,7 +194,7 @@
                             {% endif %}
                         {% endfor %}
                     </div>
-                    <p class="text-center text-white">عدد الصفحات: {{ student.last_week_messages|messages_to_num_pages }}</p>
+                    <p class="text-center text-white">عدد الصفحات: {{ student.second_month_half_messages|messages_to_num_pages }}</p>
                 {% else %}
                     <div class="flex-block px-2 bg-secondary text-white">
                         لا يوجد
