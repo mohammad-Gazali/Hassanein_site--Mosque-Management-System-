@@ -111,7 +111,7 @@
                                     <tr>
                                         <td>{{ student.id }}</td>
                                         <td>{{ student.name }}</td>
-                                        <td>{% if student.sum_pages == 0 %}لم يسمع{% else %}{{ student.sum_pages }}{% endif %}</td>
+                                        <td>{% if student.sum_pages == 0 %}لم يسمع{% else %}{{ student.sum_pages|floatformat }}{% endif %}</td>
                                     </tr>
                                 {% endfor %}
                             </tbody>
