@@ -18,7 +18,11 @@
                     {% endfor %}
                 {% elif message.message_type == 2 %}
                     <div class="flex-block bg-success text-white px-2">
-                        سبر {{ message.first_info.content }}
+                        {% if message.second_info.type == "whole" %}
+                            سبر {{ message.second_info.part }}
+                        {% else %}
+                            سبر {{ message.first_info.content }}
+                        {% endif %}
                     </div>
                 {% elif message.message_type == 3 %}
                     {% for item in message.first_info %}
