@@ -1152,10 +1152,19 @@ def admin_awqaf(request: HttpRequest) -> HttpResponse:
         student = Student.objects.get(pk=student_id)
 
         if test_type == "normal":
+            for section, val in student.q_awqaf_test.items():
+                if val == "OLD" and section in new_sections:
+                    new_sections[section] = "OLD"
             student.q_awqaf_test.update(new_sections)
         elif test_type == "looking":
+            for section, val in student.q_awqaf_test_looking.items():
+                if val == "OLD" and section in new_sections:
+                    new_sections[section] = "OLD"
             student.q_awqaf_test_looking.update(new_sections)
         else:
+            for section, val in student.q_awqaf_test_explaining.items():
+                if val == "OLD" and section in new_sections:
+                    new_sections[section] = "OLD"
             student.q_awqaf_test_explaining.update(new_sections)
 
         student.save()
@@ -1172,7 +1181,6 @@ def admin_awqaf_no_q(request: HttpRequest) -> HttpResponse:
         test_id = int(request.POST.get("type"))
 
         student = get_object_or_404(Student, pk=student_id)
-        test = get_object_or_404(AwqafTestNoQ, pk=test_id)
 
         if not AwqafNoQStudentRelation.objects.filter(
             student_id=student_id,
@@ -1185,7 +1193,10 @@ def admin_awqaf_no_q(request: HttpRequest) -> HttpResponse:
 
         else:
             return render(
-                request, "error_page.html", {"error": "هذا السبر قد تم تسجيله مسبقاً", "student": student,}
+                request, "error_page.html", {
+                    "error": "هذا السبر قد تم تسجيله مسبقاً",
+                    "student": student,
+                },
             )
 
     return render(request, "awqaf_tests.html", {"test_types": test_types})
