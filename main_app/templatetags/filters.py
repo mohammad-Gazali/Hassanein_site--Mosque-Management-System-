@@ -67,4 +67,4 @@ def messages_to_num_pages(messages: Iterable[MemorizeMessage]) -> float:
     for message in messages:
         result += give_num_pages(message)
 
-    return result
+    return round(result, 1)
