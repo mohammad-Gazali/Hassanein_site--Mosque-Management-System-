@@ -71,10 +71,7 @@ for i in range(1, 31):
 
 # start q_awqaf_test
 
-DEFAULT_DICT_FOR_q_awqaf_test = {}
-
-for i in range(1, 31):
-    DEFAULT_DICT_FOR_q_awqaf_test["الجزء " + str(i)] = "NON"
+DEFAULT_DICT_FOR_q_awqaf_test = {str(i): "NON" for i in range(1, 31)}
 
 # end q_awqaf_test
 
