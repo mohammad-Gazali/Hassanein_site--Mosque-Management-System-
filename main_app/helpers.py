@@ -25,7 +25,7 @@ def give_num_pages(info):
                 result += q_map[item] / 5
 
     # q_test
-    else:
+    elif info.message_type == 2:
         if data["type"] == "quarter":
             result += 2.5
         elif data["type"] == "half":
