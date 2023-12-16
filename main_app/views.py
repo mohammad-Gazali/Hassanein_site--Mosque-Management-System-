@@ -90,6 +90,8 @@ def search_results_of_student(request: HttpRequest) -> HttpResponse:
 
     previous_month = month - 1 if month - 1 >= 1 else 12
     next_month = month + 1 if month + 1 <= 12 else 1
+    year_for_previous_month = year if previous_month != 12 else year - 1
+    year_for_next_month = year if next_month != 1 else year + 1
 
     first_half_prefetch = Prefetch(
         "memorizemessage_set",
@@ -104,7 +106,7 @@ def search_results_of_student(request: HttpRequest) -> HttpResponse:
         "memorizemessage_set",
         queryset=MemorizeMessage.objects.filter(sended_at__range=[
             timezone.datetime(year=year, month=month, day=16, tzinfo=pytz.UTC),
-            timezone.datetime(year=year, month=next_month, day=1, tzinfo=pytz.UTC),
+            timezone.datetime(year=year_for_next_month, month=next_month, day=1, tzinfo=pytz.UTC),
         ]),
         to_attr="second_month_half_messages",
     )
@@ -115,7 +117,7 @@ def search_results_of_student(request: HttpRequest) -> HttpResponse:
         second_half_prefetch = Prefetch(
         "memorizemessage_set",
             queryset=MemorizeMessage.objects.filter(sended_at__range=[
-                timezone.datetime(year=year, month=previous_month, day=16, tzinfo=pytz.UTC),
+                timezone.datetime(year=year_for_previous_month, month=previous_month, day=16, tzinfo=pytz.UTC),
                 timezone.datetime(year=year, month=month, day=1, tzinfo=pytz.UTC),
             ]),
             to_attr="second_month_half_messages",
