@@ -7,3 +7,4 @@ staticfiles
 __pycache__
 list.txt
 .vscode
+media

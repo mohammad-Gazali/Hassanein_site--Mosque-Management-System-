@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}ملفات للتنزيل{% endblock title %}
+
+{% block content %}
+    <section class="common-box container">
+        {% for category in assets_categories %}
+            <h3 class="text-white title {% if forloop.counter != 1 %}mt-5{% endif %}">
+                {{ category }}
+            </h3>
+            <div class="d-flex flex-column gap-3">
+                {% for asset in category.assetfile_set.all %}
+                    <a class="btn btn-success w-100" download="{{ asset }}" href="{{ asset.file.url }}">
+                        {{ asset }}
+                    </a>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </section>
+{% endblock content %}

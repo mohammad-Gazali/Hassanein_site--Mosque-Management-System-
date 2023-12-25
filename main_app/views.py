@@ -26,6 +26,7 @@ from main_app.models import (
     AwqafTestNoQ,
     AwqafNoQStudentRelation,
     StudentGroup,
+    AssetsCategory,
 )
 from main_app.forms import SettingForm
 from main_app.point_map import apply_q_map
@@ -2144,6 +2145,8 @@ def edit_parts_received(request: HttpRequest) -> HttpResponse:
     return redirect(request.META.get("HTTP_REFERER"))
 
 
+def assets_files(request: HttpRequest) -> HttpResponse:
+    return render(request, "assets_files.html", {"assets_categories": AssetsCategory.objects.prefetch_related("assetfile_set").all()})
 
 
 # ajax views

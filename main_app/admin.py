@@ -264,3 +264,14 @@ class AdminUser(UserAdmin):
 @admin.register(models.StudentGroup)
 class AdminStudentGroup(admin.ModelAdmin):
     pass
+
+
+@admin.register(models.AssetsCategory)
+class AdminAssetsCategory(admin.ModelAdmin):
+    pass
+
+
+@admin.register(models.AssetFile)
+class AdminAssetFile(admin.ModelAdmin):
+    list_display = ["name", "category"]
+    list_filter = ["category"]

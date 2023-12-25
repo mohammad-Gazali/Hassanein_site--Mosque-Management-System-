@@ -29,6 +29,9 @@
                 <li class="nav-item">
                     <a href="{% url 'home' %}" class="nav-link me-auto">الصفحة الرئيسية</a>
                 </li>
+                <li class="nav-item">
+                    <a href="{% url 'assets_files' %}" class="nav-link me-auto">الملفات</a>
+                </li>
                 {% if user.is_authenticated %}
                     <li class="nav-item">
                         <a href="{% url 'master_activity' %}" class="nav-link me-auto">نشاطات الأستاذ</a>
