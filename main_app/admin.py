@@ -17,39 +17,54 @@ admin.site.site_header = f"إدارة مسجد {settings.MASJED_NAME}"
 class AdminCategory(admin.ModelAdmin):
     list_display = ["name"]
 
-
-@admin.action(description="إخفاء الطلاب المحددين")
-def hide_student(_, __, queryset: QuerySet[models.Student]):
-    control_settings = models.ControlSettings.objects.first()
-
-    for student in queryset:
-        control_settings.hidden_ids.append(int(student.id))
-    
-    control_settings.save()
-
-
-@admin.action(description="تسجيل حضور الطلاب المحددين الذين لم يسجلوا حضور")
-def add_coming_for_non_before_coming_students(_, request: HttpRequest, queryset: QuerySet[models.Student]):
-    master = models.Master.objects.get(user_id=request.user.id)
-    control_settings = models.ControlSettings.objects.first()
-
-    for student in queryset:
-        models.Coming.objects.get_or_create(
-            student=student,
-            category_id=settings.Q_COMING_CATEGORY_ID,
-            master=master,
-            is_doubled=control_settings.double_points,
-        )
-
-
 @admin.register(models.Student)
 class AdminStudent(admin.ModelAdmin):
-    list_display = ["name", "age", "category", "student_group", "mother_name", "registered_at"]
+    list_display = ["name", "mother_name", "category", "student_group", "registered_at"]
     search_fields = ["name"]
     list_select_related = ["category"]
     list_filter = ["category", "student_group", "registered_at"]
-    actions = [hide_student, add_coming_for_non_before_coming_students]
-    list_editable = ["student_group"]
+    list_editable = ["student_group", "category"]
+
+    def hide_student(self, _, queryset: QuerySet[models.Student]):
+        control_settings = models.ControlSettings.objects.first()
+
+        for student in queryset:
+            control_settings.hidden_ids.append(int(student.id))
+        
+        control_settings.save()
+
+    def add_coming_for_non_before_coming_students(self, request: HttpRequest, queryset: QuerySet[models.Student]):
+        master = models.Master.objects.get(user_id=request.user.id)
+        control_settings = models.ControlSettings.objects.first()
+
+        for student in queryset:
+            models.Coming.objects.get_or_create(
+                student=student,
+                category_id=settings.Q_COMING_CATEGORY_ID,
+                master=master,
+                is_doubled=control_settings.double_points,
+            )
+
+
+    def get_actions(self, request: HttpRequest):
+        actions = super().get_actions(request)
+
+        actions["hide_student"] = (self.hide_student, "hide_student", "إخفاء الطلاب المحددين")
+        actions["add_coming_for_non_before_coming_students"] = (self.hide_student, "add_coming_for_non_before_coming_students", "تسجيل حضور الطلاب المحددين الذين لم يسجلوا حضور")
+
+        def action_category_maker(value):
+            def action_func(_, __, queryset: QuerySet[models.Student]):
+                for student in queryset:
+                    student.category = value
+                    student.save()
+            return action_func
+
+        actions["set_no_category"] = (action_category_maker(None), "set_no_category", "إزالة الفئة للطلاب المحددين")
+
+        for category in models.Category.objects.all():
+            actions[f"set_category_{category.pk}"] = (action_category_maker(category), f"set_category_{category.pk}", f"التعديل لفئة {category}")
+
+        return actions
 
     # here changed the widget of JSONField into another widget, this widget is imported from django_json_widget.widgets
     # we should firstly install the module 'django-json-widget' by using 'pip install django-json-widget', then we should go INSTALLED_APPS in settings.py and add 'django_json_widget'
