@@ -1842,6 +1842,34 @@ def students_reports(request: HttpRequest) -> HttpResponse:
                 }
             )
 
+        elif reports_type == "categories":
+            reports = []
+            students_categories = Category.objects.all()
+
+            for category in students_categories:
+                students = []
+                sum_pages = 0
+                for student in category.student_set.all():
+                    student_sum = 0
+                    for message in student.memorizemessage_set.filter(sended_at__range=[start, end], message_type__in=[MessageTypeChoice.MEMO, MessageTypeChoice.TEST]):
+                        student_sum += give_num_pages(message)
+                        sum_pages += give_num_pages(message)
+                    students.append({"id": student.id, "name": student.name, "sum_pages": student_sum})
+                reports.append({"category": category, "sum_pages": sum_pages, "students": students})
+
+            reports.sort(key=lambda x: x["sum_pages"], reverse=True)
+
+            return render(
+                request,
+                "reports/reports_results.html",
+                {
+                    "reports": reports,
+                    "start": request.POST.get("start"),
+                    "end": request.POST.get("end"),
+                    "type": reports_type,
+                }
+            )
+
         else:
             result = {}
             student = Student.objects.get(pk=sid)

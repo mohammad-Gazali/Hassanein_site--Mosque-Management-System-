@@ -13,7 +13,7 @@ const csrfMiddlewareToken = document.querySelector('#reports-form-students-repor
 
 Array.from(studentsReportsRadioInputs).forEach((item, index) => {
     item.onchange = () => {
-        if (index !== 2) {
+        if (index !== 3) {
             studentsReportsSearchStudentSection.classList.add('d-none')
             studentsReportsDisplayingStudentsFormBody.classList.add('d-none')
             studentsReportsReportsForm.onsubmit = (e) => {
