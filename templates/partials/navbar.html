@@ -56,7 +56,7 @@
                             <a href="{% url 'specializations_main' %}" class="nav-link me-auto">الاختصاصات</a>
                         </li>
                     {% endif %}
-                    {% if 'تقارير' in groups or user.is_superuser %}
+                    {% if 'التقارير' in groups or user.is_superuser %}
                         <li class="nav-item">
                             <a href="{% url 'students_reports' %}" class="nav-link me-auto">تقارير الطلاب</a>
                         </li>
