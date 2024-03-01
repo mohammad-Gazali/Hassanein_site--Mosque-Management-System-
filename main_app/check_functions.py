@@ -14,3 +14,7 @@ def check_adding_points(user: AbstractUser) -> bool:
 def check_adding_hadeeth(user: AbstractUser) -> bool:
     groups = map(lambda x: x.name, user.groups.all())
     return user.is_superuser or ("حديث" in groups)
+
+def check_reports(user: AbstractUser) -> bool:
+    groups = map(lambda x: x.name, user.groups.all())
+    return user.is_superuser or ("التقارير" in groups)

@@ -30,7 +30,7 @@ from main_app.models import (
 )
 from main_app.forms import SettingForm
 from main_app.point_map import apply_q_map
-from main_app.check_functions import check_adding_hadeeth, check_admin, check_coming, check_adding_points
+from main_app.check_functions import check_adding_hadeeth, check_admin, check_coming, check_adding_points, check_reports
 from main_app.helpers import give_section_from_page, give_num_pages, get_last_sat_date_range, get_last_sat_date_range_for_previous_week
 from specializations.models import Part, SpecializationMessage, Specialization, StudentSpecializationPartRelation
 from specializations.views import apply_edit_changes
@@ -1769,7 +1769,7 @@ def deleting_adding_points_admin(_, aid: int):
     return redirect("admin_adding_points_log")
 
 
-@user_passes_test(check_admin)
+@user_passes_test(check_reports)
 @login_required
 def students_reports(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
