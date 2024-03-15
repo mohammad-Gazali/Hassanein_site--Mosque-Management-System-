@@ -31,7 +31,7 @@ from main_app.models import (
 from main_app.forms import SettingForm
 from main_app.point_map import apply_q_map
 from main_app.check_functions import check_adding_hadeeth, check_admin, check_coming, check_adding_points, check_reports
-from main_app.helpers import give_section_from_page, give_num_pages, get_last_sat_date_range, get_last_sat_date_range_for_previous_week
+from main_app.helpers import give_section_from_page, give_num_pages, get_last_sat_date_range, get_last_sat_date_range_for_previous_week, check_q_memo_for_section, check_q_test_for_student
 from specializations.models import Part, SpecializationMessage, Specialization, StudentSpecializationPartRelation
 from specializations.views import apply_edit_changes
 from datetime import datetime, date
@@ -383,6 +383,31 @@ def add_q_test(request: HttpRequest) -> HttpResponse:
 
         # section <==> الجزء
         number_of_section = math.ceil(int(part_number_normal) / 2)
+
+        # checking the q_memo of the section before continue
+        if not check_q_memo_for_section(student, number_of_section):
+            return render(
+                request,
+                "error_page.html",
+                {
+                    "error": f"لا يمكن سبر أي قسم من الجزء {number_of_section} ما لم يتم تسميعه كاملاً",
+                    "student": student,
+                },
+            )
+
+        # checking the q_test of all sections is completed, for
+        # example if section 20 is not completed then the student
+        # can't q_test from any section (except for the non-completed but
+        # start with it)
+        if not check_q_test_for_student(student, number_of_section):
+            return render(
+                request,
+                "error_page.html",
+                {
+                    "error": f"لا يمكن سبر أي قسم من الجزء {number_of_section}, ما لم يتم الانتهاء من الأجزاء الأخرى غير الكاملة بالسبر",
+                    "student": student,
+                },
+            )
 
         # part <==> الحزب
         part = normal_test[f"الجزء {number_of_section}"][
