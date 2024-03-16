@@ -67,7 +67,7 @@ def check_q_memo_for_section(student, section: int) -> bool:
         return all(converted_bool[:21])
 
     if 1 < section <= 29:
-        return all(converted_bool[section * 20 + 1:section * 20 + 21])
+        return all(converted_bool[(section - 1) * 20 + 1:section * 20 + 1])
 
     if section == 30:
         return all(converted_bool[581:])
