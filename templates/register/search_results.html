@@ -39,12 +39,14 @@
                         </div>
                     </div>
                     <div class="p-2">
+                        <div data-model-target="#model-{{ student.id }}-id-detail" class="btn btn-primary position-absolute-bottom mt-3 translate-middle col-6 text-white text-nowrap">عرض التفاصيل</div>
+                        {% include 'models/student_detail_register_model.html' with student=student key="تفاصيل الطالب" type="detail" %}
                         {% if student.registered %}
                             <div class="alert alert-info text-center">
                                 تم التسجيل
                             </div>
                         {% else %}
-                            <a class="btn btn-primary position-absolute-bottom mt-3 translate-middle col-6 text-white" href="{% url "register_student" student.id %}">
+                            <a class="btn btn-success position-absolute-bottom mt-3 translate-middle col-6 text-white" href="{% url "register_student" student.id %}">
                                 تسجيل
                             </a>
                         {% endif %}
@@ -57,4 +59,7 @@
             {% endfor %}
         </div>
     </section>
+    <div id="overlay"></div>
+    <script src="{% static 'js/popped_up_models.js' %}"></script>
+    <script src="{% static 'js/search_results_script.js' %}"></script>
 {% endblock content %}

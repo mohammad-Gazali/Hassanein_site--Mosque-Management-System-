@@ -1,0 +1,51 @@
+{% load static %}
+
+
+<div class="model" id="model-{{ student.id }}-id-{{type}}">
+    <div class="model-header">
+        <div class="title-model">{{key}} : {{student.name}}</div>
+        <button data-close-button class="close-btn">&times;</button>
+    </div>
+    <div class="model-body">
+        <div class="container d-flex flex-wrap gap-3 justify-content-center align-items-center">
+            <a href="#student-information-{{ student.id }}" class="btn btn-primary w-100">معلومات الطالب</a>
+            <a href="#instructions-{{ student.id }}" class="btn btn-primary w-100">طريقة عرض التسميعات والسبر</a>
+            <a href="#student-q-memorizing-{{ student.id }}" class="btn btn-primary w-100">التسميعات</a>
+            <a href="#student-q-test-{{ student.id }}" class="btn btn-primary w-100">السبر</a>
+            <a href="#student-q-test-awqaf-{{ student.id }}" class="btn btn-primary w-100">سبر القرآن في الأوقاف</a>
+            <a href="#student-no-q-test-awqaf-{{ student.id }}" class="btn btn-primary w-100">سبر ما عدا القرآن في الأوقاف</a>
+            <a href="#student-hadeeth-details-{{ student.id }}" class="btn btn-primary w-100">الأحاديث وأسماء الله الحسنى</a>
+            <a href="#student-specialization-details-{{ student.id }}" class="btn btn-primary w-100">الاختصاصات</a>
+            <a href="#memorize-notes-{{ student.id }}" class="btn btn-primary w-100">ملاحظات التسميع</a>
+        </div>
+        <link rel="stylesheet" href="{% static 'css/student_detail_style.css'%}">
+        <section id="instructions-{{ student.id }}" class="instructions">
+            <h6 class="text-white title" style="width: 70%">
+                طريقة عرض التسميعات والسبر
+            </h6>
+            <p class="text-center text-white p-3 container" style="background-color: #1c283f; border-radius: 5px">يتم تظليل المربعات التي تحمل أرقام الصفحات أو أسماء السور بألوان ذات دلالات مختلفة, في الجدول أدناه توضيح لمعاني الألوان</p>
+            <div class="basics-of-memorizing-and-testing">
+                <ul class="list-group p-0" style="width: 80%;">
+                    <li class="list-group-item border text-white position-relative" style="background-color: rgb(145, 145, 145, 0.2);">
+                        <div class="block bg-success position-absolute top-50 translate-middle end-0" style="vertical-align: middle;"></div>
+                        <p class="mt-2" style="margin-right: 37px;">يشير إلى التسميع أو السبر الجديد (هذا العام)</p>
+                    </li>
+                    <li class="list-group-item border text-white position-relative" style="background-color: rgb(145, 145, 145, 0.2);">
+                        <div class="block bg-warning position-absolute top-50 translate-middle end-0" style="vertical-align: middle;"></div>
+                        <p class="mt-2" style="margin-right: 37px;">يشير إلى التسميع أو السبر القديم (سابقاً)</p>
+                    </li>
+                    <li class="list-group-item border text-white position-relative" style="background-color: rgb(145, 145, 145, 0.2);">
+                        <div class="block bg-secondary position-absolute top-50 translate-middle end-0" style="vertical-align: middle;"></div>
+                        <p class="mt-2" style="margin-right: 37px;">يشير إلى السور التي لم تُسمع أو تُسبر</p>
+                    </li>
+                </ul>
+            </div>
+        </section>
+        {% include 'partials/q_memorizing.html' with q_memorizing=student.q_memorizing id=student.id %}
+        {% include 'partials/q_test.html' with q_test=student.q_test id=student.id %}
+        {% include 'partials/q_test_awqaf.html' with q_awqaf_test=student.q_awqaf_test q_awqaf_test_looking=student.q_awqaf_test_looking q_awqaf_test_explaining=student.q_awqaf_test_explaining id=student.id %}
+        {% include 'partials/no_q_test_awqaf.html' with all_tests=all_tests previous_relations=student.awqafnoqstudentrelation_set.all all_relations=all_relations id=student.id %}
+        {% include 'partials/hadeeth.html' with student=student %}
+        {% include 'partials/memorize_notes.html' with student=student id=student.id %}
+    </div>
+</div>

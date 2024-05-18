@@ -5,7 +5,6 @@
 {% endblock title %}
 
 {% block content %}
-    
     <form class="container rounded p-3 my-5" style="
     background-color: rgba(135, 135, 161, 0.103);
     border: 1px solid rgba(255, 255, 255, 0.098);
@@ -14,6 +13,9 @@
         <h2 class="title text-white mb-4">
             تسجيل طالب جديد
         </h2>
+        <p class="text-white">
+            كل حقل بجانبه رمز (<span class="text-danger">*</span>) هو حقل اجباري
+        </p>
         <div class="d-grid gap-4">
             {% include "common/form.html" with form=form hide_errors=True %}
         </div>

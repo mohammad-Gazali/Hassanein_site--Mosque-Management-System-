@@ -2204,21 +2204,18 @@ def assets_files(request: HttpRequest) -> HttpResponse:
 
 
 def register(request: HttpRequest) -> HttpResponse:
-    if request.session.get("has_registered"):
-        return HttpResponseForbidden("<h1>Already registered</h1>")
     return render(request, "register/index.html")
 
 def register_search_results(request: HttpRequest) -> HttpResponse:
-    if request.session.get("has_registered"):
-        return HttpResponseForbidden("<h1>Already registered</h1>")
-
     query_text = request.GET.get("q_text")
     query_id = request.GET.get("q_search_id")
+
+    all_tests = AwqafTestNoQ.objects.all()
 
     if query_id:
         student = Student.objects.filter(pk=query_id)
 
-        return render(request, "register/search_results.html", { "students": student })
+        return render(request, "register/search_results.html", { "students": student, "all_tests": all_tests })
 
     if query_text:
         my_regex = ""
@@ -2232,15 +2229,12 @@ def register_search_results(request: HttpRequest) -> HttpResponse:
             .order_by("id")
         )
 
-        return render(request, "register/search_results.html", { "students": students })
+        return render(request, "register/search_results.html", { "students": students, "all_tests": all_tests })
 
     return HttpResponseBadRequest("<h1>You must provide an id or text</h1>")
 
 
 def register_student(request: HttpRequest, id: int) -> HttpResponse:
-    if request.session.get("has_registered"):
-        return HttpResponseForbidden("<h1>Already registered</h1>")
-
     student = get_object_or_404(Student, pk=id)
 
     student.registered = True
@@ -2252,9 +2246,6 @@ def register_student(request: HttpRequest, id: int) -> HttpResponse:
 
 
 def create_new_stduent(request: HttpRequest) -> HttpResponse:
-    if request.session.get("has_registered"):
-        return HttpResponseForbidden("<h1>Already registered</h1>")
-
     form = NewStudentForm(request.POST or None)
 
     if form.is_valid():
