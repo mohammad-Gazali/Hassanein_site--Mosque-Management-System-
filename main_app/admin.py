@@ -19,10 +19,10 @@ class AdminCategory(admin.ModelAdmin):
 
 @admin.register(models.Student)
 class AdminStudent(admin.ModelAdmin):
-    list_display = ["name", "mother_name", "category", "student_group", "registered_at"]
+    list_display = ["name", "mother_name", "category", "student_group", "registered", "registered_at"]
     search_fields = ["name"]
     list_select_related = ["category"]
-    list_filter = ["category", "student_group", "registered_at"]
+    list_filter = ["category", "student_group", "registered_at", "registered"]
     list_editable = ["student_group", "category"]
 
     def hide_student(self, _, queryset: QuerySet[models.Student]):
@@ -290,3 +290,27 @@ class AdminAssetsCategory(admin.ModelAdmin):
 class AdminAssetFile(admin.ModelAdmin):
     list_display = ["name", "category"]
     list_filter = ["category"]
+
+
+@admin.action(description="إضافة الطلاب")
+def add_students_action(_, __, queryset: QuerySet[models.NewStudent]):
+    for ns in queryset:
+        name = f"{ns.first_name} {ns.father_name} {ns.last_name}"
+        models.Student.objects.create(
+            name=name,
+            mother_name=ns.mother_name,
+            birthdate=ns.birthdate,
+            static_phone=ns.static_phone,
+            cell_phone=ns.cell_phone,
+            father_phone=ns.father_phone,
+            mother_phone=ns.mother_phone,
+            father_work=ns.father_work,
+            notes=ns.notes,
+            registered=True,
+        )
+        ns.delete()
+
+@admin.register(models.NewStudent)
+class AdminNewStudent(admin.ModelAdmin):
+    list_display = ["first_name", "last_name", "father_name", "mother_name", "birthdate"]
+    actions = [add_students_action]

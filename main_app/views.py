@@ -3,10 +3,11 @@ from django.urls import reverse_lazy, reverse
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.generic import ListView, DeleteView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.http import HttpRequest, HttpResponse, HttpResponseForbidden, HttpResponseNotAllowed, JsonResponse
+from django.http import HttpRequest, HttpResponse, HttpResponseForbidden, HttpResponseNotAllowed, HttpResponseBadRequest, JsonResponse
 from django.db.models import Prefetch, Sum, Q
 from django.conf import settings
 from django.utils import timezone
+from django.contrib import messages
 from main_app.models import (
     MemorizeNotes,
     MessageTypeChoice,
@@ -28,7 +29,7 @@ from main_app.models import (
     StudentGroup,
     AssetsCategory,
 )
-from main_app.forms import SettingForm
+from main_app.forms import SettingForm, NewStudentForm
 from main_app.point_map import apply_q_map
 from main_app.check_functions import check_adding_hadeeth, check_admin, check_coming, check_adding_points, check_reports
 from main_app.helpers import give_section_from_page, give_num_pages, get_last_sat_date_range, get_last_sat_date_range_for_previous_week, check_q_memo_for_section, check_q_test_for_student
@@ -2201,6 +2202,68 @@ def edit_parts_received(request: HttpRequest) -> HttpResponse:
 def assets_files(request: HttpRequest) -> HttpResponse:
     return render(request, "assets_files.html", {"assets_categories": AssetsCategory.objects.prefetch_related("assetfile_set").all()})
 
+
+def register(request: HttpRequest) -> HttpResponse:
+    if request.session.get("has_registered"):
+        return HttpResponseForbidden("<h1>Already registered</h1>")
+    return render(request, "register/index.html")
+
+def register_search_results(request: HttpRequest) -> HttpResponse:
+    if request.session.get("has_registered"):
+        return HttpResponseForbidden("<h1>Already registered</h1>")
+
+    query_text = request.GET.get("q_text")
+    query_id = request.GET.get("q_search_id")
+
+    if query_id:
+        student = Student.objects.filter(pk=query_id)
+
+        return render(request, "register/search_results.html", { "students": student })
+
+    if query_text:
+        my_regex = ""
+
+        for word in re.split(r"\s+", query_text.strip()):
+            my_regex += re.escape(word).replace("\u0627", "(\u0623|\u0625|\u0627)").replace("أ", "(\u0623|\u0625|\u0627)").replace("إ", "(\u0623|\u0625|\u0627)") + r".*"
+
+        students = (
+            Student.objects.filter(name__iregex="{}".format(my_regex))
+            .select_related("category", "student_group")
+            .order_by("id")
+        )
+
+        return render(request, "register/search_results.html", { "students": students })
+
+    return HttpResponseBadRequest("<h1>You must provide an id or text</h1>")
+
+
+def register_student(request: HttpRequest, id: int) -> HttpResponse:
+    if request.session.get("has_registered"):
+        return HttpResponseForbidden("<h1>Already registered</h1>")
+
+    student = get_object_or_404(Student, pk=id)
+
+    student.registered = True
+    student.save()
+
+    request.session["has_registered"] = True
+    messages.success(request, "تم التسجيل بنجاح")
+    return redirect("home")
+
+
+def create_new_stduent(request: HttpRequest) -> HttpResponse:
+    if request.session.get("has_registered"):
+        return HttpResponseForbidden("<h1>Already registered</h1>")
+
+    form = NewStudentForm(request.POST or None)
+
+    if form.is_valid():
+        form.save()
+        request.session["has_registered"] = True
+        messages.success(request, "تم التسجيل بنجاح")
+        return redirect("home")
+
+    return render(request, "register/create_new_student.html", {"form": form})
 
 # ajax views
 def students_ajax(request: HttpRequest) -> JsonResponse | HttpResponse:

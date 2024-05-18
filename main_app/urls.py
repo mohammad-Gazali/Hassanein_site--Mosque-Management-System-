@@ -48,4 +48,10 @@ urlpatterns = [
     path("json/switch/money-delete", views.switch_deleting_active_to_points_state, name="switch_money_deleting_ajax"),
     path("json/add-hidden-id", views.adding_hidden_id, name="adding_hidden_id_ajax"),
     path("json/remove-hidden-id", views.removing_hidden_id, name="remove_hidden_id_ajax"),
+
+    # register
+    path("register", views.register, name="register_index"),
+    path("register/search_results", views.register_search_results, name="register_search_results"),
+    path("register/student/<int:id>", views.register_student, name="register_student"),
+    path("register/create", views.create_new_stduent, name="create_new_student")
 ]

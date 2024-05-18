@@ -3,6 +3,25 @@
 {% block title %}موقع مسجد {{ masjed_name }}{% endblock title %}
 
 {% block content %}
+    {% if not request.session.has_registered %}
+        <div class="alert alert-info mt-5">
+            <h3 class="alert-heading">
+                إعلان الدورة الجديدة
+            </h3>
+            تم بفضل الله البدء بالتسجيل لدورة صيف لعام 2024.
+            <br>
+            <a class="btn btn-success mt-3" href="{% url "register_index" %}">
+                التسجيل في الدورة
+            </a>
+        </div>
+    {% endif %}
+    {% if messages %}
+        {% for mesasge in messages %}
+            <div class="alert alert-success mt-5">
+                تم التسجيل بنجاح
+            </div>
+        {% endfor %}
+    {% endif %}
     {% include 'partials/search.html' %}
     {% if ramadan or title %}
         {% include 'partials/event.html' with title=title ramadan=ramadan %}

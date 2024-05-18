@@ -73,6 +73,9 @@ class Student(models.Model):
     student_group = models.ForeignKey(StudentGroup, on_delete=models.SET_NULL, verbose_name="مجموعة الطالب", null=True, blank=True)
     parts_received = models.CharField(max_length=255, verbose_name="الأجزاء المستلمة", null=True, blank=True)
 
+    # temp
+    registered = models.BooleanField(default=False, verbose_name="مسجل السنة")
+
     def __str__(self):
         return self.name
 
@@ -493,6 +496,26 @@ class AssetFile(models.Model):
         verbose_name = "ملف للتحميل"
         verbose_name_plural = "ملفات للتحميل"
 
+
+class NewStudent(models.Model):
+    first_name = models.CharField(max_length=255, verbose_name="الاسم")
+    last_name = models.CharField(max_length=255, verbose_name="الكنية")
+    father_name = models.CharField(max_length=255, verbose_name="اسم الأب")
+    mother_name = models.CharField(max_length=255, verbose_name="اسم الأم")
+    birthdate = models.DateField(verbose_name="تاريخ الميلاد")
+    static_phone = models.CharField(max_length=20, verbose_name="الهاتف الأرضي", blank=True, null=True)
+    cell_phone = models.CharField(max_length=20, verbose_name="الجوال", blank=True, null=True)
+    father_phone = models.CharField(max_length=20, verbose_name="جوال الأب", blank=True, null=True)
+    mother_phone = models.CharField(max_length=20, verbose_name="جوال الأم", null=True, blank=True)
+    father_work = models.CharField(max_length=255, null=True, blank=True, verbose_name="عمل الأب")
+    notes = models.CharField(max_length=511, null=True, blank=True, verbose_name="ملاحظات")
+
+    def __str__(self) -> str:
+        return f"{self.first_name} {self.last_name}"
+
+    class Meta:
+        verbose_name = "طالب جديد"
+        verbose_name_plural = "طلاب جدد"
 
 
 # * Signals Section
