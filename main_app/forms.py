@@ -40,7 +40,7 @@ class NewStudentForm(forms.ModelForm):
             "class": "form-control", 
             "type": "date",
             "min": "2005-01-01",
-            "max": "20017-01-01",
+            "max": "2017-01-01",
         })
     )
     student_class = forms.CharField(
