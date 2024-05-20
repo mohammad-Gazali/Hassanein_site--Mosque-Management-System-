@@ -7,11 +7,17 @@
     <div class="alert alert-info mt-5 mx-auto" style="max-width: 700px">
         <img 
         class="img-thumbnail"
-        src="{% static "imgs/summer.webp" %}" 
+        {% if masjed_name == "الحسنين" %}
+            src="{% static "imgs/hassanein.jpg" %}"
+        {% elif masjed_name == "السلام" %}
+            src="{% static "imgs/salam.jpg" %}"
+        {% elif masjed_name == "القزاز" %}
+            src="{% static "imgs/qazzaz.jpg" %}"
+        {% endif %}
         alt="summer"
         >
         <a class="btn btn-lg btn-success mt-3 d-block" href="{% url "register_index" %}">
-            التسجيل في الدورة
+            التسجيل في الدورة الصيفية
         </a>
     </div>
     {% if messages %}

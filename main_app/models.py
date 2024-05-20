@@ -497,12 +497,26 @@ class AssetFile(models.Model):
         verbose_name_plural = "ملفات للتحميل"
 
 
+class StudentClass(models.TextChoices):
+    TWO = "ثاني", "ثاني"
+    THREE = "ثالث", "ثالث"
+    FOUR = "رابع", "رابع"
+    FIVE = "خامس", "خامس"
+    SIX = "سادس", "سادس"
+    SEVEN = "سابع", "سابع"
+    EIGHT = "ثامن", "ثامن"
+    NINE = "عاشر", "عاشر"
+    TEN = "حادي عشر", "حادي عشر"
+    TWELVE = "بكالوريا", "بكالوريا"
+    
+
 class NewStudent(models.Model):
     first_name = models.CharField(max_length=255, verbose_name="الاسم")
     last_name = models.CharField(max_length=255, verbose_name="الكنية")
     father_name = models.CharField(max_length=255, verbose_name="اسم الأب")
     mother_name = models.CharField(max_length=255, verbose_name="اسم الأم")
     birthdate = models.DateField(verbose_name="تاريخ الميلاد")
+    student_class = models.CharField(max_length=20, choices=StudentClass.choices, verbose_name="الصف الدراسي")
     static_phone = models.CharField(max_length=20, verbose_name="الهاتف الأرضي", blank=True, null=True)
     cell_phone = models.CharField(max_length=20, verbose_name="الجوال", blank=True, null=True)
     father_phone = models.CharField(max_length=20, verbose_name="جوال الأب", blank=True, null=True)

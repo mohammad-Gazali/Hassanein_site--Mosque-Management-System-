@@ -1,5 +1,5 @@
 from django import forms
-from main_app.models import ControlSettings, NewStudent
+from main_app.models import ControlSettings, NewStudent, StudentClass
 
 
 class SettingForm(forms.ModelForm):
@@ -36,7 +36,19 @@ class NewStudentForm(forms.ModelForm):
     )
     birthdate = forms.CharField(
         label="تاريخ الميلاد",
-        widget=forms.DateInput(attrs={"class": "form-control", "type": "date"})
+        widget=forms.DateInput(attrs={
+            "class": "form-control", 
+            "type": "date",
+            "min": "2005-01-01",
+            "max": "20017-01-01",
+        })
+    )
+    student_class = forms.CharField(
+        label="الصف الدراسي",
+        widget=forms.Select(
+            choices=StudentClass.choices,
+            attrs={"class": "form-control"},
+        )
     )
     static_phone = forms.CharField(
         label="الهاتف الأرضي",

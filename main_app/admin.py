@@ -312,5 +312,6 @@ def add_students_action(_, __, queryset: QuerySet[models.NewStudent]):
 
 @admin.register(models.NewStudent)
 class AdminNewStudent(admin.ModelAdmin):
-    list_display = ["first_name", "last_name", "father_name", "mother_name", "birthdate"]
+    list_display = ["first_name", "last_name", "father_name", "mother_name", "birthdate", "student_class"]
     actions = [add_students_action]
+    list_filter = ["student_class"]
