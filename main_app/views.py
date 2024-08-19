@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.generic import ListView, DeleteView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import HttpRequest, HttpResponse, HttpResponseForbidden, HttpResponseNotAllowed, HttpResponseBadRequest, JsonResponse
+from django.db import transaction
 from django.db.models import Prefetch, Sum, Q
 from django.conf import settings
 from django.utils import timezone
@@ -1233,6 +1234,7 @@ def admin_awqaf_no_q(request: HttpRequest) -> HttpResponse:
 
 @user_passes_test(check_admin)
 @login_required
+@transaction.atomic
 def admin_awqaf_table(request: HttpRequest) -> HttpResponse:
     q = request.GET.get("text-search-table") or None
     search_type = request.GET.get("type-search-table-admin-p") or None
