@@ -1249,44 +1249,46 @@ def admin_awqaf_table(request: HttpRequest) -> HttpResponse:
         .order_by("id")
     )
 
-    if request.method == "POST":
+    # Problem was in `not in` operator
+    #
+    # if request.method == "POST":
 
-        relations = AwqafNoQStudentRelation.objects.select_related(
-            "student", "test"
-        ).filter(is_old=False, student__in=students)
+    #     relations = AwqafNoQStudentRelation.objects.select_related(
+    #         "student", "test"
+    #     ).filter(is_old=False, student__in=students)
 
-        form_items = list(request.POST)[1:]
+    #     form_items = list(request.POST)[1:]
 
-        list_ids = [
-            {"test_id": int(i.split("-")[1]), "student_id": int(i.split("-")[3])}
-            for i in form_items
-        ]
+    #     list_ids = [
+    #         {"test_id": int(i.split("-")[1]), "student_id": int(i.split("-")[3])}
+    #         for i in form_items
+    #     ]
 
-        filter_query = Q()
+    #     filter_query = Q()
 
-        for item in list_ids:
-            filter_query = filter_query | Q(**item)
+    #     for item in list_ids:
+    #         filter_query = filter_query | Q(**item)
 
-        relations_from_form = AwqafNoQStudentRelation.objects.select_related(
-            "student", "test"
-        ).filter(filter_query)
+    #     relations_from_form = AwqafNoQStudentRelation.objects.select_related(
+    #         "student", "test"
+    #     ).filter(filter_query)
 
-        for relation in relations:
-            if relation not in relations_from_form:
-                relation.delete()
-            else:
-                list_ids.remove(
-                    {"test_id": relation.test_id, "student_id": relation.student_id}
-                )
+    #     for relation in relations:
+    #         if relation not in relations_from_form:
+    #             relation.delete()
+    #         else:
+    #             list_ids.remove(
+    #                 {"test_id": relation.test_id, "student_id": relation.student_id}
+    #             )
 
-        AwqafNoQStudentRelation.objects.bulk_create(
-            [
-                AwqafNoQStudentRelation(
-                    test_id=item["test_id"], student_id=item["student_id"]
-                )
-                for item in list_ids
-            ]
-        )
+    #     AwqafNoQStudentRelation.objects.bulk_create(
+    #         [
+    #             AwqafNoQStudentRelation(
+    #                 test_id=item["test_id"], student_id=item["student_id"]
+    #             )
+    #             for item in list_ids
+    #         ]
+    #     )
 
     if (q is not None) and (search_type is not None):
         if search_type == "by-text":
@@ -1900,7 +1902,7 @@ def students_reports(request: HttpRequest) -> HttpResponse:
 
         else:
             result = {}
-            student = Student.objects.get(pk=sid)
+            student = get_object_or_404(Student, pk=sid)
             result["student"] = student
             messages = student.memorizemessage_set.filter(
                 sended_at__range=[start, end], message_type__in=[MessageTypeChoice.MEMO, MessageTypeChoice.TEST]
