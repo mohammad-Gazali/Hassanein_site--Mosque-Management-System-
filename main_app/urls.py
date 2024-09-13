@@ -53,5 +53,8 @@ urlpatterns = [
     path("register", views.register, name="register_index"),
     path("register/search_results", views.register_search_results, name="register_search_results"),
     path("register/student/<int:id>", views.register_student, name="register_student"),
-    path("register/create", views.create_new_stduent, name="create_new_student")
+    path("register/create", views.create_new_stduent, name="create_new_student"),
+
+    # file
+    path("file", views.points_excel)
 ]

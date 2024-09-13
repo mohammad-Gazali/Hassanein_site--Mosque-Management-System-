@@ -126,10 +126,6 @@ class AdminMemorizeMessage(admin.ModelAdmin):
         return f"{obj.master.user.first_name} {obj.master.user.last_name}"
     master_full_name.short_description = "اسم الأستاذ"
 
-    # this method prevent admin from deleting objects in this model
-    def has_delete_permission(self, _, __=None):
-        return False
-
     def has_change_permission(self, _, __=None) -> bool:
         return False
 
@@ -163,9 +159,6 @@ class AdminMemorizeNote(admin.ModelAdmin):
         return f"{obj.master.user.first_name} {obj.master.user.last_name}"
     master_full_name.short_description = "اسم الأستاذ"
 
-    def has_delete_permission(self, _, __=None):
-        return False
-
     def has_change_permission(self, _, __=None) -> bool:
         return False
 
@@ -188,9 +181,6 @@ class ComingAdmin(admin.ModelAdmin):
         return f"{obj.master.user.first_name} {obj.master.user.last_name}"
     master_full_name.short_description = "اسم الأستاذ"
 
-    def has_delete_permission(self, _, __=None):
-        return False
-
     def has_change_permission(self, _, __=None):
         return False
 
@@ -203,9 +193,6 @@ class DoublePointMessageAdmin(admin.ModelAdmin):
     list_display = ["student", "points", "sended_at"]
     list_select_related = ["student"]
     readonly_fields = ["student", "points", "content"]
-
-    def has_delete_permission(self, _, __=None):
-        return False
 
     def has_change_permission(self, _, __=None):
         return False
@@ -237,9 +224,6 @@ class PointsAddingAdmin(admin.ModelAdmin):
     def master_full_name(self, obj: models.MemorizeNotes) -> str:
         return f"{obj.master.user.first_name} {obj.master.user.last_name}"
     master_full_name.short_description = "اسم الأستاذ"
-
-    def has_delete_permission(self, _, __=None):
-        return False
 
     def has_change_permission(self, _, __=None):
         return False

@@ -37,6 +37,8 @@ from main_app.helpers import give_section_from_page, give_num_pages, get_last_sa
 from specializations.models import Part, SpecializationMessage, Specialization, StudentSpecializationPartRelation
 from specializations.views import apply_edit_changes
 from datetime import datetime, date
+from openpyxl import Workbook
+from io import BytesIO
 import pytz
 import math
 import json
@@ -1155,6 +1157,109 @@ def admin_points_information(request: HttpRequest) -> HttpResponse:
         {"students": students, "val": q, "point_value": point_value},
     )
 
+def points_excel(request):
+    RING_ID = 5
+    MASJED = 'السلام'
+
+    students = Student.objects.prefetch_related(
+        Prefetch(
+            "doublepointmessage_set",
+            queryset=DoublePointMessage.objects.filter(message_type=1),
+            to_attr="message_type_1", # * this is the name of the attribute we will use to access specific query in points_of_q_memo property method inside Student model
+        ),
+        Prefetch(
+            "doublepointmessage_set",
+            queryset=DoublePointMessage.objects.filter(message_type=2),
+            to_attr="message_type_2", # * this is the name of the attribute we will use to access specific query in points_of_q_test property method inside Student model
+        ),
+        Prefetch(
+            "doublepointmessage_set",
+            queryset=DoublePointMessage.objects.filter(message_type=3),
+            to_attr="message_type_3",
+        ),
+        Prefetch(
+            "doublepointmessage_set",
+            queryset=DoublePointMessage.objects.filter(message_type=4),
+            to_attr="message_type_4",
+        ),
+        Prefetch(
+            "doublepointmessage_set",
+            queryset=DoublePointMessage.objects.filter(message_type=5),
+            to_attr="message_type_5",
+        ),
+        Prefetch(
+            "moneydeleting_set",
+            queryset=MoneyDeleting.objects.filter(active_to_points=True),
+            to_attr="money_deleting_info",
+        ),
+        Prefetch(
+            "studentspecializationpartrelation_set",
+            queryset=StudentSpecializationPartRelation.objects.filter(is_old=False).select_related("part"),
+            to_attr="parts_relation_info",
+        ),
+        Prefetch(
+            "awqafnoqstudentrelation_set",
+            queryset=AwqafNoQStudentRelation.objects.filter(is_old=False).select_related("test"),
+            to_attr="awqaf_no_q_info",
+        ),
+        "pointsadding_set",
+        "coming_set__category",
+        "moneydeleting_set",
+    )
+    
+    wb = Workbook()
+    sheet = wb.active
+
+    sheet.title = "المحصلة"
+
+    sheet.cell(row=1, column=1, value="المعرف")
+    sheet.cell(row=1, column=2, value="الاسم الثلاثي")
+    sheet.cell(row=1, column=3, value="اسم الأم")
+    sheet.cell(row=1, column=4, value="تاريخ التولد")
+    sheet.cell(row=1, column=5, value="فئة الطالب")
+    sheet.cell(row=1, column=6, value="نقاط الحلقات")
+    sheet.cell(row=1, column=7, value="النقاط المخصومة")
+    sheet.cell(row=1, column=8, value="الغرامات المالية")
+    sheet.cell(row=1, column=9, value="كلي النقاط")
+    sheet.cell(row=1, column=10, value="ملاحظات")
+
+    for row, s in enumerate(students, 2):
+        data = s.all_points_sum
+        money_points = data[1] / ControlSettings.objects.first().point_value
+        all_points = math.ceil(data[0] - money_points)
+
+        category = str(s.category) if s.category else ""
+
+        # :)
+        ring_points = sum(map(lambda s: s.value, s.pointsadding_set.filter(cause_id=RING_ID)))
+
+        deleted_points = sum(map(lambda s: s.value, s.moneydeleting_set.filter(active_to_points=True, is_money_main_value=False)))
+
+        sheet.cell(row=row, column=1, value=s.id)
+        sheet.cell(row=row, column=2, value=s.name)
+        sheet.cell(row=row, column=3, value=s.mother_name)
+        sheet.cell(row=row, column=4, value=s.birthdate)
+        sheet.cell(row=row, column=5, value=category)
+        sheet.cell(row=row, column=6, value=ring_points)
+        sheet.cell(row=row, column=7, value=deleted_points)
+        sheet.cell(row=row, column=8, value=data[1])
+        sheet.cell(row=row, column=9, value=all_points)
+        sheet.cell(row=row, column=10, value=s.notes)
+
+    data = BytesIO()
+
+    wb.save(data)
+
+    data.seek(0)
+
+    response = HttpResponse(
+        data, 
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8'
+    )
+
+    response['Content-Disposition'] = f'attachment; filename="نقاط مسجد {MASJED}.xlsx"'
+
+    return response
 
 class AdminSettingsSiteView(UserPassesTestMixin, LoginRequiredMixin, UpdateView):
     model = ControlSettings
